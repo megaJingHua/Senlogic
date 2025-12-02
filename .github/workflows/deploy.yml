@@ -30,7 +30,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./dist   # ← React/Vite 預設輸出目錄
+          path: ./build   # ← 這裡改成 build！
           
   deploy:
     runs-on: ubuntu-latest
