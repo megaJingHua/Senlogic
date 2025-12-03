@@ -1,8 +1,12 @@
 import { motion } from 'motion/react';
 import { Star, Trophy, Target, Zap } from 'lucide-react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
+import { useState } from 'react';
+import { MemoryGame } from './MemoryGame';
 
 export function GamesSection() {
+  const [selectedGame, setSelectedGame] = useState<number | null>(null);
+
   const games = [
     {
       id: 1,
@@ -66,6 +70,11 @@ export function GamesSection() {
     { icon: Target, label: '完美通關', count: 8 },
     { icon: Zap, label: '連勝紀錄', count: 23 }
   ];
+
+  // 如果選擇了記憶大師遊戲，顯示遊戲畫面
+  if (selectedGame === 3) {
+    return <MemoryGame onClose={() => setSelectedGame(null)} />;
+  }
 
   return (
     <section className="container mx-auto px-4 py-12">
@@ -165,6 +174,7 @@ export function GamesSection() {
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
                     className="bg-gradient-to-r from-orange-400 to-amber-500 text-white px-6 py-2 rounded-full shadow-md hover:shadow-lg transition-shadow"
+                    onClick={() => setSelectedGame(game.id)}
                   >
                     開始玩
                   </motion.button>
