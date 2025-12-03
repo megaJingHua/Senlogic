@@ -3,6 +3,11 @@ import { Star, Trophy, Target, Zap } from 'lucide-react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import { useState } from 'react';
 import { MemoryGame } from './MemoryGame';
+import { MathAdventure } from './MathAdventure';
+import { AlphabetForest } from './AlphabetForest';
+import { PuzzleParadise } from './PuzzleParadise';
+import { MusicRhythm } from './MusicRhythm';
+import { ScienceExperiment } from './ScienceExperiment';
 
 export function GamesSection() {
   const [selectedGame, setSelectedGame] = useState<number | null>(null);
@@ -71,9 +76,24 @@ export function GamesSection() {
     { icon: Zap, label: '連勝紀錄', count: 23 }
   ];
 
-  // 如果選擇了記憶大師遊戲，顯示遊戲畫面
+  // 根據選擇的遊戲顯示對應的遊戲畫面
+  if (selectedGame === 1) {
+    return <MathAdventure onClose={() => setSelectedGame(null)} />;
+  }
+  if (selectedGame === 2) {
+    return <AlphabetForest onClose={() => setSelectedGame(null)} />;
+  }
   if (selectedGame === 3) {
     return <MemoryGame onClose={() => setSelectedGame(null)} />;
+  }
+  if (selectedGame === 4) {
+    return <PuzzleParadise onClose={() => setSelectedGame(null)} />;
+  }
+  if (selectedGame === 5) {
+    return <MusicRhythm onClose={() => setSelectedGame(null)} />;
+  }
+  if (selectedGame === 6) {
+    return <ScienceExperiment onClose={() => setSelectedGame(null)} />;
   }
 
   return (
