@@ -13,6 +13,8 @@ export default function App() {
   const handleArticleClick = (articleId: number) => {
     setSelectedArticleId(articleId);
     setActiveSection('article-detail');
+    // Scroll to top when entering article detail
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleBackToParenting = () => {

@@ -1,14 +1,27 @@
 import { motion } from 'motion/react';
-import { Code, Terminal, Cpu, Rocket, GitBranch, Zap, Eye, Calendar } from 'lucide-react';
+import { Code, Terminal, Cpu, Rocket, GitBranch, Zap, Eye, Calendar, MessageCircle } from 'lucide-react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Typewriter } from './Typewriter';
+import { ScrollToTop } from './ScrollToTop';
+import { RichText } from './RichText';
 import piniaImage from 'figma:asset/bb39f016a3dd8893163ade79d95a27bddfd0cbdf.png';
 
 export function TechSection() {
   const [showVue30Days, setShowVue30Days] = useState(false);
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
   const [selectedTech, setSelectedTech] = useState<string | null>(null);
+  const [showUiPathOrchestrator, setShowUiPathOrchestrator] = useState(false);
+  const [showEngineerDaily, setShowEngineerDaily] = useState(false);
+  const [selectedChat, setSelectedChat] = useState<number>(0);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
+
+  // Scroll to top when entering article detail pages
+  useEffect(() => {
+    if (selectedDay !== null || showUiPathOrchestrator || showEngineerDaily) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [selectedDay, showUiPathOrchestrator, showEngineerDaily]);
 
   const vue30Days = [
     { 
@@ -444,7 +457,7 @@ function getTodoIndex(todo) {
             title: '🚪 Vue Router 是什麼？',
             description: '就像家裡有走廊和門牌號碼，讓你可以走到不同的房間。在網站裡，這個「房間」就是不同的頁面。',
             examples: [
-              { path: '/', description: '首頁' },
+              { path: '/', description: '首��' },
               { path: '/about', description: '關於我們' },
               { path: '/game', description: '遊戲區' }
             ]
@@ -452,7 +465,7 @@ function getTodoIndex(todo) {
           {
             type: 'steps',
             title: '📦 今天的實作是什麼?',
-            description: '點擊「首頁」出現首頁內容，點擊「關於」出現介紹內容。就像家裡不用蓋兩間房子，同一個大門進去，走不同走廊就能到不同房間。',
+            description: '點擊「首頁」出現首頁內容，點擊「關於」出現介紹內容。就像家裡不用蓋兩間房子，同一個大門進去，走不同走廊就能到�����同房間。',
             steps: [
               {
                 number: 1,
@@ -837,7 +850,147 @@ onUnmounted(() => console.log('🌙 元件卸載 → 餐館打烊'))
         ]
       }
     },
-    { day: 8, date: '2025-11-08', title: 'provide/inject —— 跨層的紅包傳遞', intro: '爺爺直接把紅包給孫子，不用父母轉交。' },
+    { 
+      day: 8, 
+      date: '2025-11-08', 
+      title: 'provide/inject —— 跨層的紅包傳遞', 
+      intro: '爺爺直接把紅包給孫子，不用父母轉交。',
+      content: {
+        sections: [
+          {
+            type: 'intro',
+            text: '在 Vue 專案裡，元件之間最常見的傳值方式是 **props**（父傳子）。但如果資料要從「爺爺 → 孫子」跨過好幾層，props 就會變得冗長。👉 Vue 提供 **provide / inject**，讓「祖先元件」直接把資料提供給「後代元件」，中間的父母不用再幫忙轉交。'
+          },
+          {
+            type: 'perspective',
+            title: '👩‍🍼 寶媽角度',
+            content: '過年發紅包：爺爺要給孫子紅包，不需要先交給爸爸再轉交。爺爺直接塞給孫子，最快最省事。',
+            highlight: '這樣就算中間有很多人，也不會搞混。',
+            conclusion: '直接傳遞最有效率。'
+          },
+          {
+            type: 'perspective',
+            title: '💻 工程師角度',
+            content: 'provide/inject 是 Vue3 提供的跨層級傳值機制。',
+            listItems: [
+              {
+                title: '基本用法',
+                items: [
+                  'provide(key, value)：祖先元件提供資料',
+                  'inject(key)：後代元件取得資料'
+                ]
+              },
+              {
+                title: '適用場景',
+                items: [
+                  '全域設定（主題顏色、語言切換）',
+                  '不常更新、但多層元件都需要用的資料'
+                ]
+              },
+              {
+                title: '對比',
+                items: [
+                  'props/emit：適合父子層級的資料傳遞',
+                  'provide/inject：適合跨多層級的資料傳遞'
+                ]
+              }
+            ]
+          },
+          {
+            type: 'demo',
+            title: '📦 今天的實作',
+            description: '需求：',
+            tasks: [
+              '爺爺提供一個 theme 主題字串。',
+              '爸爸只是中間人，不處理資料。',
+              '孫子直接透過 inject 取到 theme。'
+            ],
+            codeSections: [
+              {
+                number: 1,
+                title: '1. App.vue',
+                description: '',
+                code: `<template>
+  <Grandpa />
+</template>
+
+<script setup>
+import Grandpa from './Grandpa.vue'
+</script>`,
+                language: 'vue'
+              },
+              {
+                number: 2,
+                title: '2. Grandpa.vue',
+                description: '爺爺提供主題資料',
+                code: `<template>
+  <div>
+    <h2>我是爺爺</h2>
+    <Parent />
+  </div>
+</template>
+
+<script setup>
+import { provide, ref } from 'vue'
+import Parent from './Parent.vue'
+
+const theme = ref('🌞 Light Mode')
+provide('theme', theme)
+</script>`,
+                language: 'vue'
+              },
+              {
+                number: 3,
+                title: '3. Parent.vue',
+                description: '爸爸不處理資料，只負責渲染子元件',
+                code: `<template>
+  <div>
+    <h3>我是爸爸</h3>
+    <Child />
+  </div>
+</template>
+
+<script setup>
+import Child from './Child.vue'
+</script>`,
+                language: 'vue'
+              },
+              {
+                number: 4,
+                title: '4. Child.vue',
+                description: '孫子直接取得爺爺提供的主題',
+                code: `<template>
+  <div>
+    <h4>我是孫子，拿到主題：{{ theme }}</h4>
+  </div>
+</template>
+
+<script setup>
+import { inject } from 'vue'
+
+const theme = inject('theme')
+</script>`,
+                language: 'vue'
+              }
+            ]
+          },
+          {
+            type: 'summary',
+            title: '✅ 學完重點',
+            points: [
+              {
+                title: '寶媽角度',
+                description: '爺爺直接把紅包交給孫子，中間的人不用管。'
+              },
+              {
+                title: '工程師角度',
+                description: 'provide/inject 適合跨層級傳值，避免 props 層層傳遞的麻煩。'
+              }
+            ]
+          }
+        ]
+      }
+    },
     { 
       day: 9, 
       date: '2025-11-09',
@@ -1034,17 +1187,933 @@ const show = ref(false)
         ]
       }
     },
-    { day: 11, date: '2025-11-11', title: 'Transition —— 元件的華麗走秀', intro: 'Transition 幫元素加進出場動畫。' },
-    { day: 12, date: '2025-11-12', title: 'Composition API 重構 —— 收納箱整理', intro: 'Composition API 幫程式收納整理，方便重用。' },
-    { day: 13, date: '2025-11-13', title: '自訂 Hook —— 媽媽的獨門秘方', intro: '把重複邏輯抽成 Hook，隨時重用。' },
-    { day: 14, date: '2025-11-14', title: 'Ref vs Reactive —— 存錢筒與全家帳本', intro: 'ref 管單一值，reactive 管整個物件。' },
-    { day: 15, date: '2025-11-15', title: '事件修飾符 — 規則小貼紙', intro: '修飾符幫事件加規則，避免亂跑。' },
-    { day: 16, date: '2025-11-16', title: 'v-if / v-show —— 燈泡 vs 窗簾', intro: 'v-if 是有或沒有，v-show 是隱藏。' },
-    { day: 17, date: '2025-11-17', title: 'v-for —— 批量烤餅乾', intro: 'v-for 批次渲染，就像一次烤一盤餅乾。' },
-    { day: 18, date: '2025-11-18', title: '表單修飾符 —— 自動修正小幫手', intro: '修飾符幫表單資料更乾淨。' },
-    { day: 19, date: '2025-11-19', title: 'Pinia 資料持久化 —— 冰箱的備用電池', intro: 'Pinia 配合 localStorage，重新整理頁面資料仍然存在。' },
-    { day: 20, date: '2025-11-20', title: 'Router 巢狀路由 —— 房子裡的房間', intro: '巢狀路由讓頁面能有子頁面，例如 /user/1/profile。' },
-    { day: 21, date: '2025-11-21', title: 'Router 守衛 —— 門口的保全', intro: 'beforeEach 檢查登入或權限，決定能否進頁面。' },
+    { 
+      day: 11, 
+      date: '2025-11-11', 
+      title: 'Transition —— 元件的華麗走秀', 
+      intro: 'Transition 幫元素加進出場動畫。',
+      content: {
+        sections: [
+          {
+            type: 'intro',
+            title: '## 簡介',
+            text: '在 Vue 中，當元素進入或離開畫面時，可以加上**過場動畫**。\n\n👉 這讓使用者感覺畫面更流暢、自然。'
+          },
+          {
+            type: '寶媽角度',
+            title: '## 👩‍🍼 寶媽角度',
+            text: '兔寶換衣服走出房間：\n\n- 換衣服（進入動畫）\n- 揮手再見（離開動畫）\n\n一個小小的動作，加上過場效果，看起來就很優雅。'
+          },
+          {
+            type: '工程師角度',
+            title: '## 💻 工程師角度',
+            text: '- 使用 `<transition>` 包裹元素。\n- Vue 會在元素顯示/消失時，自動套上 class：\n  - `v-enter-from`、`v-enter-active`、`v-enter-to`\n  - `v-leave-from`、`v-leave-active`、`v-leave-to`\n- 可以透過 CSS 控制動畫效果。'
+          },
+          {
+            type: '今天的實作',
+            title: '## 📦 今天的實作',
+            description: '建立一個按鈕，點擊後顯示/隱藏文字，並附上淡入淡出效果。',
+            steps: [
+              {
+                title: '1. App.vue',
+                code: `<template>
+  <button @click="show = !show">切換文字</button>
+  <transition name="fade">
+    <p v-if="show">Hello Vue Transition!</p>
+  </transition>
+</template>
+
+<script setup>
+import { ref } from 'vue'
+const show = ref(true)
+</script>
+
+<style scoped>
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+}
+</style>`
+              }
+            ]
+          },
+          {
+            type: 'summary',
+            title: '✅ 學完重點',
+            points: [
+              { icon: '👩‍🍼', text: '寶媽角度：加上走秀效果，動作更優雅。' },
+              { icon: '💻', text: '工程師角度：透過 `<transition>` 與 CSS class，實現元素的進出場動畫。' }
+            ]
+          }
+        ]
+      }
+    },
+    { 
+      day: 12, 
+      date: '2025-11-12', 
+      title: 'Composition API 重構 —— 收納箱整理', 
+      intro: 'Composition API 幫程式收納整理，方便重用。',
+      content: {
+        sections: [
+          {
+            type: 'intro',
+            title: '## 簡介',
+            text: 'Vue3 提供 **Composition API**，讓我們能把資料、方法、監聽集中在一起，方便拆分與重用。'
+          },
+          {
+            type: '寶媽角度',
+            title: '## 👩‍🍼 寶媽角度',
+            text: '整理衣櫃：\n\n- 把襪子放一籃\n- 衣服放一籃\n- 帽子放一籃\n\n👉 分門別類，找東西更快。'
+          },
+          {
+            type: '工程師角度',
+            title: '## 💻 工程師角度',
+            text: '- 使用 `setup()` 統一管理 state 與 methods。\n- 可將邏輯抽出成「自訂 hook」（函式）。\n- 適合多人協作與大專案結構化管理。'
+          },
+          {
+            type: '今天的實作',
+            title: '## 📦 今天的實作',
+            description: '將計數器邏輯抽離成 `useCounter.js`。',
+            steps: [
+              {
+                title: '1. useCounter.js',
+                code: `import { ref } from 'vue'
+
+export function useCounter() {
+  const count = ref(0)
+  function increment() {
+    count.value++
+  }
+  return { count, increment }
+}`
+              },
+              {
+                title: '2. App.vue',
+                code: `<template>
+  <p>數字：{{ count }}</p>
+  <button @click="increment">+1</button>
+</template>
+
+<script setup>
+import { useCounter } from './useCounter'
+const { count, increment } = useCounter()
+</script>`
+              }
+            ]
+          },
+          {
+            type: 'summary',
+            title: '✅ 學完重點',
+            points: [
+              { icon: '👩‍🍼', text: '寶媽角度：收納箱整理，生活更整齊。' },
+              { icon: '💻', text: '工程師角度：Composition API 提供更清晰的程式結構，便於重用。' }
+            ]
+          }
+        ]
+      }
+    },
+    { 
+      day: 13, 
+      date: '2025-11-13', 
+      title: '自訂 Hook —— 媽媽的獨門秘方', 
+      intro: '把重複邏輯抽成 Hook，隨時重用。',
+      content: {
+        sections: [
+          {
+            type: 'intro',
+            text: '有些功能經常會重複使用，可以抽成「自訂 Hook 函式」，就像家傳食譜，隨時套用。'
+          },
+          {
+            type: 'perspective',
+            title: '👩‍🍼 寶媽角度',
+            content: '兔媽有一瓶「獨家滷肉秘方」，每次煮飯加一點，味道就到位。',
+            highlight: '不用每次重新調配，直接使用現成的秘方。',
+            conclusion: '獨門秘方讓煮飯更輕鬆。'
+          },
+          {
+            type: 'perspective',
+            title: '💻 工程師角度',
+            content: '自訂 Hook 是將常用邏輯抽成可重用的函式。',
+            listItems: [
+              {
+                title: '命名規範',
+                items: [
+                  '以 useXxx 命名',
+                  '例如：useNow、useCounter、useLocalStorage'
+                ]
+              },
+              {
+                title: '使用方式',
+                items: [
+                  '任何元件都能直接 import 使用',
+                  '返回響應式資料和方法'
+                ]
+              },
+              {
+                title: '常見應用',
+                items: [
+                  '倒數計時器',
+                  '表單驗證',
+                  'localStorage 存取'
+                ]
+              }
+            ]
+          },
+          {
+            type: 'demo',
+            title: '📦 今天的實作',
+            description: '製作一個「現在時間 Hook」。',
+            tasks: [],
+            codeSections: [
+              {
+                number: 1,
+                title: '1. useNow.js',
+                description: '自訂 Hook 函式',
+                code: `import { ref, onMounted, onUnmounted } from 'vue'
+
+export function useNow() {
+  const now = ref(new Date().toLocaleTimeString())
+  let timer = null
+
+  onMounted(() => {
+    timer = setInterval(() => {
+      now.value = new Date().toLocaleTimeString()
+    }, 1000)
+  })
+
+  onUnmounted(() => clearInterval(timer))
+
+  return { now }
+}`,
+                language: 'javascript'
+              },
+              {
+                number: 2,
+                title: '2. App.vue',
+                description: '在元件中使用自訂 Hook',
+                code: `<template>
+  <p>現在時間：{{ now }}</p>
+</template>
+
+<script setup>
+import { useNow } from './useNow'
+const { now } = useNow()
+</script>`,
+                language: 'vue'
+              }
+            ]
+          },
+          {
+            type: 'summary',
+            title: '✅ 學完重點',
+            points: [
+              {
+                title: '寶媽角度',
+                description: '獨門秘方，隨時能重複使用。'
+              },
+              {
+                title: '工程師角度',
+                description: '自訂 Hook 提升程式可重用性，讓專案更乾淨。'
+              }
+            ]
+          }
+        ]
+      }
+    },
+    { 
+      day: 14, 
+      date: '2025-11-14', 
+      title: 'Ref vs Reactive —— 存錢筒與全家帳本', 
+      intro: 'ref 管單一值，reactive 管整個物件。',
+      content: {
+        sections: [
+          {
+            type: 'intro',
+            text: 'Vue3 有兩種響應式 API：**ref** 與 **reactive**。👉 它們都能讓資料變動時，自動更新畫面。'
+          },
+          {
+            type: 'perspective',
+            title: '👩‍🍼 寶媽角度',
+            content: '兩種資料管理方式的比喻：',
+            listItems: [
+              {
+                title: '比喻說明',
+                items: [
+                  'ref：像一個小存錢筒，專門放單一金額',
+                  'reactive：像全家的帳簿，裡面記錄多種支出收入'
+                ]
+              }
+            ]
+          },
+          {
+            type: 'perspective',
+            title: '💻 工程師角度',
+            content: 'ref 和 reactive 的差異與使用場景：',
+            listItems: [
+              {
+                title: 'ref',
+                items: [
+                  '建立基本型別（字串、數字、布林）的響應式資料',
+                  '需要透過 .value 來存取和修改',
+                  '適合單一值的管理'
+                ]
+              },
+              {
+                title: 'reactive',
+                items: [
+                  '建立物件/陣列的響應式資料',
+                  '直接存取屬性，不需要 .value',
+                  '適合複雜資料結構'
+                ]
+              },
+              {
+                title: '其他工具',
+                items: [
+                  'toRefs：把 reactive 的所有屬性拆分成 ref',
+                  'toRef：把 reactive 的單一屬性拆分成 ref'
+                ]
+              }
+            ]
+          },
+          {
+            type: 'demo',
+            title: '📦 今天的實作',
+            description: '',
+            tasks: [],
+            code: `<template>
+  <p>ref 數字：{{ count }}</p>
+  <button @click="count++">+1</button>
+
+  <p>reactive 帳本：{{ book.income }} 收入 / {{ book.expense }} 支出</p>
+  <button @click="book.expense += 100">花錢</button>
+</template>
+
+<script setup>
+import { ref, reactive } from 'vue'
+
+const count = ref(0)
+const book = reactive({ income: 5000, expense: 2000 })
+</script>`,
+            filename: 'App.vue'
+          },
+          {
+            type: 'summary',
+            title: '✅ 學完重點',
+            points: [
+              {
+                title: '寶媽角度',
+                description: '存錢筒 vs 全家帳本，應用情境不同。'
+              },
+              {
+                title: '工程師角度',
+                description: 'ref 適合單一值，reactive 適合物件/陣列。'
+              }
+            ]
+          }
+        ]
+      }
+    },
+    { 
+      day: 15, 
+      date: '2025-11-15', 
+      title: '事件修飾符 — 規則小貼紙', 
+      intro: '修飾符幫事件加規則，避免亂跑。',
+      content: {
+        sections: [
+          {
+            type: 'intro',
+            text: '事件修飾符幫我們「控制事件的行為」，就像在門口貼規則標語。'
+          },
+          {
+            type: 'perspective',
+            title: '👩‍🍼 寶媽角度',
+            content: '門口貼「禁止外送進入」的貼紙，外送員就會停在門口，不會亂跑進來。',
+            highlight: '規則貼紙可以控制行為，讓事情按照你的意思走。',
+            conclusion: '貼紙規則讓環境更有秩序。'
+          },
+          {
+            type: 'perspective',
+            title: '💻 工程師角度',
+            content: '常見的事件修飾符：',
+            listItems: [
+              {
+                title: '常見修飾符',
+                items: [
+                  '.stop：阻止事件冒泡',
+                  '.prevent：阻止預設行為',
+                  '.once：事件只觸發一次',
+                  '.self：只有自己觸發才執行'
+                ]
+              }
+            ]
+          },
+          {
+            type: 'demo',
+            title: '📦 今天的實作',
+            description: '一個表單，點提交按鈕時阻止刷新。',
+            tasks: [],
+            code: `<template>
+  <form @submit.prevent="submitForm">
+    <input v-model="name" placeholder="輸入名字" />
+    <button type="submit">送出</button>
+  </form>
+</template>
+
+<script setup>
+import { ref } from 'vue'
+const name = ref('')
+function submitForm() {
+  alert(\`Hello, \${name.value}\`)
+}
+</script>`,
+            filename: 'App.vue'
+          },
+          {
+            type: 'summary',
+            title: '✅ 學完重點',
+            points: [
+              {
+                title: '寶媽角度',
+                description: '規則貼紙，控制行為。'
+              },
+              {
+                title: '工程師角度',
+                description: '事件修飾符讓事件更好掌控，避免不必要的行為。'
+              }
+            ]
+          }
+        ]
+      }
+    },
+    { 
+      day: 16, 
+      date: '2025-11-16', 
+      title: 'v-if / v-show —— 燈泡 vs 窗簾', 
+      intro: 'v-if 是有或沒有，v-show 是隱藏。',
+      content: {
+        sections: [
+          {
+            type: 'intro',
+            text: 'Vue 中常見的條件渲染方式：**v-if** 與 **v-show**。👉 雖然都能顯示/隱藏元素，但背後運作不同。'
+          },
+          {
+            type: 'perspective',
+            title: '👩‍🍼 寶媽角度',
+            content: '兩種顯示/隱藏的比喻：',
+            listItems: [
+              {
+                title: '比喻說明',
+                items: [
+                  'v-if：像決定「要不要裝燈泡」。沒有就真的不存在',
+                  'v-show：像「拉窗簾」。東西還在，但被遮住'
+                ]
+              }
+            ]
+          },
+          {
+            type: 'perspective',
+            title: '💻 工程師角度',
+            content: 'v-if 和 v-show 的差異：',
+            listItems: [
+              {
+                title: 'v-if',
+                items: [
+                  '真正新增或移除 DOM',
+                  '適合不常切換的情況',
+                  '初始為 false 時不會渲染'
+                ]
+              },
+              {
+                title: 'v-show',
+                items: [
+                  '改變 CSS display 屬性',
+                  '適合頻繁切換的情況',
+                  '初始就會渲染，只是隱藏'
+                ]
+              }
+            ]
+          },
+          {
+            type: 'demo',
+            title: '📦 今天的實作',
+            description: '顯示/隱藏訊息。',
+            tasks: [],
+            code: `<template>
+  <button @click="show = !show">切換顯示</button>
+
+  <p v-if="show">這是 v-if 顯示的文字</p>
+  <p v-show="show">這是 v-show 顯示的文字</p>
+</template>
+
+<script setup>
+import { ref } from 'vue'
+const show = ref(true)
+</script>`,
+            filename: 'App.vue'
+          },
+          {
+            type: 'summary',
+            title: '✅ 學完重點',
+            points: [
+              {
+                title: '寶媽角度',
+                description: '燈泡（if） vs 窗簾（show）。'
+              },
+              {
+                title: '工程師角度',
+                description: 'v-if 適合不常切換，v-show 適合頻繁切換。'
+              }
+            ]
+          }
+        ]
+      }
+    },
+    { 
+      day: 17, 
+      date: '2025-11-17', 
+      title: 'v-for —— 批量烤餅乾', 
+      intro: 'v-for 批次渲染，就像一次烤一盤餅乾。',
+      content: {
+        sections: [
+          {
+            type: 'intro',
+            text: '**v-for** 可以用來批次渲染列表，不用重複寫相同元素。'
+          },
+          {
+            type: 'perspective',
+            title: '👩‍🍼 寶媽角度',
+            content: '烤餅乾：只要準備一份麵糰，就能一次烤出 12 塊餅乾。',
+            highlight: '不用一個一個慢慢做，用模板批量生產。',
+            conclusion: '效率提升，省時省力。'
+          },
+          {
+            type: 'perspective',
+            title: '💻 工程師角度',
+            content: 'v-for 的使用方式：',
+            listItems: [
+              {
+                title: '語法',
+                items: [
+                  '基本語法：v-for="(item, index) in items"',
+                  'item 是當前元素，index 是索引（可選）',
+                  '可以遍歷陣列、物件、數字範圍'
+                ]
+              },
+              {
+                title: 'key 的重要性',
+                items: [
+                  '需要加上 :key 屬性',
+                  '幫助 Vue 高效追蹤每個元素',
+                  '確保元素的正確性與效能'
+                ]
+              }
+            ]
+          },
+          {
+            type: 'demo',
+            title: '📦 今天的實作',
+            description: '渲染待辦清單。',
+            tasks: [],
+            code: `<template>
+  <ul>
+    <li v-for="(todo, i) in todos" :key="i">{{ todo }}</li>
+  </ul>
+</template>
+
+<script setup>
+import { ref } from 'vue'
+const todos = ref(['買菜', '洗衣服', '拖地'])
+</script>`,
+            filename: 'App.vue'
+          },
+          {
+            type: 'summary',
+            title: '✅ 學完重點',
+            points: [
+              {
+                title: '寶媽角度',
+                description: '一次烤一盤餅乾，省時省力。'
+              },
+              {
+                title: '工程師角度',
+                description: '記得加 :key，確保效能與正確性。'
+              }
+            ]
+          }
+        ]
+      }
+    },
+    { 
+      day: 18, 
+      date: '2025-11-18', 
+      title: '表單修飾符 —— 自動修正小幫手', 
+      intro: '修飾符幫表單資料更乾淨。',
+      content: {
+        sections: [
+          {
+            type: 'intro',
+            text: 'Vue 的表單支援 **修飾符**，幫助處理輸入行為。'
+          },
+          {
+            type: 'perspective',
+            title: '👩‍🍼 寶媽角度',
+            content: '兔寶寫字，鉛筆自動幫忙修正錯字。',
+            highlight: '就像有個小幫手在旁邊，自動修正常見的錯誤。',
+            conclusion: '讓輸入更準確，減少後續處理的麻煩。'
+          },
+          {
+            type: 'perspective',
+            title: '💻 工程師角度',
+            content: '常用的表單修飾符：',
+            listItems: [
+              {
+                title: '常用修飾符',
+                items: [
+                  '.trim：自動去掉前後空格',
+                  '.number：輸入轉成數字',
+                  '.lazy：只有失焦時才更新資料'
+                ]
+              }
+            ]
+          },
+          {
+            type: 'demo',
+            title: '📦 今天的實作',
+            description: '',
+            tasks: [],
+            code: `<template>
+  <input v-model.trim="name" placeholder="名字（自動去空格）" />
+  <input v-model.number="age" placeholder="年齡（自動轉數字）" />
+  <p>姓名：{{ name }}，年齡：{{ age }}</p>
+</template>
+
+<script setup>
+import { ref } from 'vue'
+const name = ref('')
+const age = ref(null)
+</script>`,
+            filename: 'App.vue'
+          },
+          {
+            type: 'summary',
+            title: '✅ 學完重點',
+            points: [
+              {
+                title: '寶媽角度',
+                description: '小幫手幫你修正錯誤。'
+              },
+              {
+                title: '工程師角度',
+                description: '表單修飾符讓資料更乾淨可靠。'
+              }
+            ]
+          }
+        ]
+      }
+    },
+    { 
+      day: 19, 
+      date: '2025-11-19', 
+      title: 'Pinia 資料持久化 —— 冰箱的備用電池', 
+      intro: 'Pinia 配合 localStorage，重新整理頁面資料仍然存在。',
+      content: {
+        sections: [
+          {
+            type: 'intro',
+            text: 'Pinia 預設的資料存在記憶體中，重新整理頁面就會消失。\n\n👉 為了讓資料「記得住」，我們可以把它存在 **localStorage / sessionStorage**，這就是資料持久化。'
+          },
+          {
+            type: 'perspective',
+            title: '👩‍🍼 寶媽角度',
+            content: '冰箱突然停電，裡面的食材會壞掉。',
+            highlight: '如果加上「備用電池」，斷電時還能繼續保存。',
+            conclusion: '👉 Pinia 加上持久化，就算關掉網頁，資料還在。'
+          },
+          {
+            type: 'perspective',
+            title: '💻 工程師角度',
+            content: '資料持久化的方式：',
+            listItems: [
+              {
+                title: '儲存方式',
+                items: [
+                  'localStorage：關掉瀏覽器後資料仍存在',
+                  'sessionStorage：關閉分頁後資料消失'
+                ]
+              },
+              {
+                title: '常見做法',
+                items: [
+                  '使用 Pinia 插件自動同步 state 到 localStorage',
+                  '或者在 actions 裡手動存取'
+                ]
+              }
+            ]
+          },
+          {
+            type: 'demo',
+            title: '📦 今天的實作',
+            description: '',
+            tasks: [
+              {
+                step: 1,
+                title: 'plugins/persist.js',
+                code: `export function persistPlugin({ store }) {
+  const saved = localStorage.getItem(store.$id)
+  if (saved) store.$state = JSON.parse(saved)
+
+  store.$subscribe((_, state) => {
+    localStorage.setItem(store.$id, JSON.stringify(state))
+  })
+}`
+              },
+              {
+                step: 2,
+                title: 'main.js',
+                code: `import { createPinia } from 'pinia'
+import { persistPlugin } from './plugins/persist'
+
+const pinia = createPinia()
+pinia.use(persistPlugin)
+
+app.use(pinia)`
+              },
+              {
+                step: 3,
+                title: 'stores/counter.js',
+                code: `import { defineStore } from 'pinia'
+
+export const useCounterStore = defineStore('counter', {
+  state: () => ({ count: 0 }),
+  actions: {
+    increment() { this.count++ }
+  }
+})`
+              }
+            ],
+            additionalNote: '重新整理頁面後，count 仍然保留。'
+          },
+          {
+            type: 'summary',
+            title: '✅ 學完重點',
+            points: [
+              {
+                title: '寶媽角度',
+                description: '冰箱有備用電池，斷電也能保存食材。'
+              },
+              {
+                title: '工程師角度',
+                description: 'Pinia 可結合 localStorage 做持久化，避免刷新丟失資料。'
+              }
+            ]
+          }
+        ]
+      }
+    },
+    { 
+      day: 20, 
+      date: '2025-11-20', 
+      title: 'Router 巢狀路由 —— 房子裡的房間', 
+      intro: '巢狀路由讓頁面能有子頁面，例如 /user/1/profile。',
+      content: {
+        sections: [
+          {
+            type: 'intro',
+            text: '除了基本路由，Vue Router 還支援 **巢狀路由**，讓一個頁面裡可以再切換不同子頁面。\n\n👉 常見應用：使用者中心（/user → 個人資料 / 訂單 / 收藏）。'
+          },
+          {
+            type: 'perspective',
+            title: '👩‍🍼 寶媽角度',
+            content: '透天厝：',
+            highlight: '一樓是客廳\n二樓有兩間臥室\n三樓是書房',
+            conclusion: '👉 一個門牌號碼（user/1），裡面還有不同房間（profile、orders）。'
+          },
+          {
+            type: 'perspective',
+            title: '💻 工程師角度',
+            content: '巢狀路由設定：',
+            listItems: [
+              {
+                title: '路由結構',
+                items: [
+                  '使用 children 屬性定義子路由',
+                  '<router-view> 會決定子路由的顯示位置',
+                  '子路由路徑會自動拼接父路由路徑'
+                ]
+              }
+            ],
+            codeExample: {
+              code: `{
+  path: '/user/:id',
+  component: User,
+  children: [
+    { path: 'profile', component: Profile },
+    { path: 'orders', component: Orders }
+  ]
+}`,
+              language: 'javascript'
+            }
+          },
+          {
+            type: 'demo',
+            title: '📦 今天的實作',
+            description: '',
+            tasks: [
+              {
+                step: 1,
+                title: 'router/index.js',
+                code: `import { createRouter, createWebHistory } from 'vue-router'
+import User from '../views/User.vue'
+import Profile from '../views/Profile.vue'
+import Orders from '../views/Orders.vue'
+
+const routes = [
+  {
+    path: '/user/:id',
+    component: User,
+    children: [
+      { path: 'profile', component: Profile },
+      { path: 'orders', component: Orders }
+    ]
+  }
+]
+
+const router = createRouter({
+  history: createWebHistory(),
+  routes
+})
+
+export default router`
+              },
+              {
+                step: 2,
+                title: 'User.vue',
+                code: `<template>
+  <div>
+    <h2>使用者 ID：{{ route.params.id }}</h2>
+    <router-link :to="\`/user/\${route.params.id}/profile\`">個人資料</router-link>
+    <router-link :to="\`/user/\${route.params.id}/orders\`">訂單</router-link>
+    <router-view />
+  </div>
+</template>
+
+<script setup>
+import { useRoute } from 'vue-router'
+const route = useRoute()
+</script>`
+              }
+            ]
+          },
+          {
+            type: 'summary',
+            title: '✅ 學完重點',
+            points: [
+              {
+                title: '寶媽角度',
+                description: '房子裡還有不同房間，住在同一戶但功能不同。'
+              },
+              {
+                title: '工程師角度',
+                description: '巢狀路由讓頁面能分層顯示，適合使用者中心或多層級內容。'
+              }
+            ]
+          }
+        ]
+      }
+    },
+    { 
+      day: 21, 
+      date: '2025-11-21', 
+      title: 'Router 守衛 —— 門口的保全', 
+      intro: 'beforeEach 檢查登入或權限，決定能否進頁面。',
+      content: {
+        sections: [
+          {
+            type: 'intro',
+            text: '有些頁面不是人人都能進入，例如「會員專區」需要先登入。\n\n👉 Vue Router 提供 **導航守衛（Navigation Guards）**，讓我們能在進入頁面前做檢查。'
+          },
+          {
+            type: 'perspective',
+            title: '👩‍🍼 寶媽角度',
+            content: '社區遊戲室：',
+            highlight: '保全會檢查你有沒有帶住戶證，沒有就不能進去。',
+            conclusion: '確保只有符合條件的人才能進入特定區域。'
+          },
+          {
+            type: 'perspective',
+            title: '💻 工程師角度',
+            content: '導航守衛的類型：',
+            listItems: [
+              {
+                title: '守衛類型',
+                items: [
+                  'beforeEach：進入路由前檢查',
+                  'afterEach：切換後執行'
+                ]
+              },
+              {
+                title: '常見應用',
+                items: [
+                  '登入驗證',
+                  '權限檢查',
+                  '紀錄訪問日誌'
+                ]
+              }
+            ]
+          },
+          {
+            type: 'demo',
+            title: '📦 今天的實作',
+            description: '',
+            tasks: [],
+            code: `import { createRouter, createWebHistory } from 'vue-router'
+import Home from '../views/Home.vue'
+import Secret from '../views/Secret.vue'
+
+const routes = [
+  { path: '/', component: Home },
+  { path: '/secret', component: Secret }
+]
+
+const router = createRouter({
+  history: createWebHistory(),
+  routes
+})
+
+// 模擬登入檢查
+let isLogin = false
+
+router.beforeEach((to, from, next) => {
+  if (to.path === '/secret' && !isLogin) {
+    alert('❌ 請先登入！')
+    next('/')
+  } else {
+    next()
+  }
+})
+
+export default router`,
+            filename: 'router/index.js'
+          },
+          {
+            type: 'summary',
+            title: '✅ 學完重點',
+            points: [
+              {
+                title: '寶媽角度',
+                description: '保全檢查證件，沒證件不能進。'
+              },
+              {
+                title: '工程師角度',
+                description: 'Router 守衛讓你在切換頁面前做檢查，控制權限。'
+              }
+            ]
+          }
+        ]
+      }
+    },
     { day: 22, date: '2025-11-22', title: '非同步資料 fetch —— 叫外送', intro: '用 fetch/axios 請求資料，更新畫面。' },
     { day: 23, date: '2025-11-23', title: 'Loading 狀態 —— 廚房準備中', intro: '加上 loading 狀態提示資料載入中。' },
     { day: 24, date: '2025-11-24', title: '錯誤處理 —— 缺貨的餐點', intro: '請求可能失敗，需要錯誤提示。' },
@@ -1070,58 +2139,125 @@ const show = ref(false)
     },
     {
       id: 2,
-      title: 'TypeScript 高級類型系統實戰',
-      excerpt: '掌握 TypeScript 的高級類型特性，包括泛型、條件類型、映射類型等進階技巧...',
-      category: 'TypeScript',
-      date: '2024-11-25',
-      views: 987,
-      tags: ['TypeScript', 'Programming'],
-      icon: '📘',
-      color: 'from-blue-400 to-indigo-500'
+      title: 'UiPath Orchestrator 完整指南',
+      excerpt: '深入學習 UiPath Orchestrator 中央控制平台，掌握機器人管理、排程部署、監控追蹤等企業級 RPA 自動化核心技術！',
+      category: 'UiPath',
+      date: '2025-12-03',
+      views: 2450,
+      tags: ['UiPath', 'RPA', 'Automation', 'Orchestrator'],
+      icon: '🤖',
+      color: 'from-orange-500 to-orange-600'
+    }
+  ];
+
+  const engineerChats = [
+    {
+      id: 0,
+      title: '與同事的日常',
+      participants: ['我', '小明 (前端)', '阿華 (後端)'],
+      avatar: '👨‍💻',
+      messages: [
+        { sender: '小明 (前端)', avatar: '👨', time: '09:15', content: '早安！昨天那個 API 串接好了嗎？', isMe: false },
+        { sender: '我', avatar: '👤', time: '09:17', content: '早！搞定了，但發現一個問題...response 的日期格式跟文件不一樣 😅', isMe: true },
+        { sender: '阿華 (後端)', avatar: '👨‍💼', time: '09:18', content: '什麼！讓我看看', isMe: false },
+        { sender: '我', avatar: '👤', time: '09:19', content: '文件寫 "YYYY-MM-DD"，但實際回傳是 timestamp', isMe: true },
+        { sender: '阿華 (後端)', avatar: '👨‍💼', time: '09:21', content: '啊...那個是我上週改的，忘記更新文件了 🤦‍♂️', isMe: false },
+        { sender: '小明 (前端)', avatar: '👨', time: '09:22', content: '經典劇情 XD 文件永遠是最後更新的', isMe: false },
+        { sender: '我', avatar: '👤', time: '09:23', content: '沒關係啦，我加個轉換函數就好。阿華記得補文件喔～', isMe: true },
+        { sender: '阿華 (後端)', avatar: '👨‍💼', time: '09:25', content: '收到！我現在就去改 📝', isMe: false },
+      ]
+    },
+    {
+      id: 1,
+      title: '主管的需求變更',
+      participants: ['我', 'Tony 主管'],
+      avatar: '👔',
+      messages: [
+        { sender: 'Tony 主管', avatar: '👔', time: '14:30', content: '嗨，那個新功能做得怎麼樣了？', isMe: false },
+        { sender: '我', avatar: '👤', time: '14:32', content: '主管好！進度順利，預計明天可以上測試環境', isMe: true },
+        { sender: 'Tony 主管', avatar: '👔', time: '14:33', content: '太好了！對了，老闆剛剛看了 demo，希望能加個匯出 Excel 的功能', isMe: false },
+        { sender: '我', avatar: '👤', time: '14:35', content: '(內心：又來了...) 了解，這個需求...大概需要多少時間？', isMe: true },
+        { sender: 'Tony 主管', avatar: '👔', time: '14:36', content: '應該不難吧？就加個按鈕下載 Excel 而已', isMe: false },
+        { sender: '我', avatar: '👤', time: '14:38', content: '嗯...要處理資料格式、欄位對應、樣式設定，還要考慮大量資料的效能，預估需要 2-3 天', isMe: true },
+        { sender: 'Tony 主管', avatar: '👔', time: '14:40', content: '這麼久？😮', isMe: false },
+        { sender: '我', avatar: '👤', time: '14:42', content: '如果只要基本的匯出，1天可以搞定。但如果要美觀的格式和自訂欄位，就需要 2-3 天', isMe: true },
+        { sender: 'Tony 主管', avatar: '👔', time: '14:45', content: '好吧，先做基本版，之後有需要再優化。辛苦了！', isMe: false },
+        { sender: '我', avatar: '👤', time: '14:46', content: '收到！我會盡快完成 💪', isMe: true },
+      ]
+    },
+    {
+      id: 2,
+      title: '使用者回饋',
+      participants: ['我', '王小姐 (使用者)', 'Sarah (客服)'],
+      avatar: '👥',
+      messages: [
+        { sender: 'Sarah (客服)', avatar: '👩‍💼', time: '10:05', content: '@工程師 有使用者反應系統有問題', isMe: false },
+        { sender: '我', avatar: '👤', time: '10:07', content: '什麼問題？我看一下', isMe: true },
+        { sender: 'Sarah (客服)', avatar: '👩‍💼', time: '10:08', content: '王小姐說她按了送出鈕後，畫面就一直轉圈圈', isMe: false },
+        { sender: '王小姐 (使用者)', avatar: '👩', time: '10:10', content: '對啊！我等了 5 分鐘都沒反應，是不是壞掉了？', isMe: false },
+        { sender: '我', avatar: '👤', time: '10:12', content: '王小姐您好，請問您是在哪個頁面遇到這個問題？可以截圖給我看嗎？', isMe: true },
+        { sender: '王小姐 (使用者)', avatar: '👩', time: '10:15', content: '[圖片] 就是這個「批次上傳」的頁面', isMe: false },
+        { sender: '我', avatar: '👤', time: '10:18', content: '了解！請問您上傳的檔案大概多大？', isMe: true },
+        { sender: '王小姐 (使用者)', avatar: '👩', time: '10:20', content: '大概 50MB 左右，有 5000 筆資料', isMe: false },
+        { sender: '我', avatar: '👤', time: '10:22', content: '找到原因了！目前系統對大檔案的處理時間較長，建議您分批上傳，每次 1000 筆左右會比較穩定', isMe: true },
+        { sender: '王小姐 (使用者)', avatar: '👩', time: '10:25', content: '原來如此！那我重新分批試試看，謝謝！', isMe: false },
+        { sender: '我', avatar: '👤', time: '10:27', content: '不客氣！我也會優化大檔案的處理流程，預計下週更新後就不會有這個問題了 👍', isMe: true },
+        { sender: 'Sarah (客服)', avatar: '👩‍💼', time: '10:30', content: '感謝工程師！', isMe: false },
+      ]
     },
     {
       id: 3,
-      title: 'Next.js 14 App Router 最佳實踐',
-      excerpt: 'App Router 的完整指南，從基礎到進階，包含 Server Actions、Streaming 等實戰經驗...',
-      category: 'Next.js',
-      date: '2024-11-22',
-      views: 1567,
-      tags: ['Next.js', 'React', 'SSR'],
-      icon: '▲',
-      color: 'from-gray-700 to-gray-900'
+      title: 'Code Review 時間',
+      participants: ['我', 'David (資深工程師)'],
+      avatar: '🔍',
+      messages: [
+        { sender: 'David (資深工程師)', avatar: '🧑‍🏫', time: '16:00', content: '看了你的 PR，整體寫得不錯！', isMe: false },
+        { sender: '我', avatar: '👤', time: '16:02', content: '謝謝 David！有什麼需要改進的地方嗎？', isMe: true },
+        { sender: 'David (資深工程師)', avatar: '🧑‍🏫', time: '16:03', content: '有幾個小建議：第 45 行的 forEach 可以改用 map 會更簡潔', isMe: false },
+        { sender: '我', avatar: '👤', time: '16:05', content: '喔對！我怎麼沒想到，馬上改', isMe: true },
+        { sender: 'David (資深工程師)', avatar: '🧑‍🏫', time: '16:07', content: '還有這個 API 呼叫建議加上 try-catch，避免錯誤沒被捕捉到', isMe: false },
+        { sender: '我', avatar: '👤', time: '16:10', content: '好的！我補上錯誤處理', isMe: true },
+        { sender: 'David (資深工程師)', avatar: '🧑‍🏫', time: '16:15', content: '另外，變數命名可以更語意化一點，"data" 改成 "userList" 會更清楚', isMe: false },
+        { sender: '我', avatar: '👤', time: '16:18', content: '了解！我全部改完再請您 review', isMe: true },
+        { sender: 'David (資深工程師)', avatar: '🧑‍🏫', time: '16:20', content: '👍 加油！寫程式要時刻想著「3個月後的自己看得懂嗎」', isMe: false },
+        { sender: '我', avatar: '👤', time: '16:22', content: '受教了！這個觀念很重要 🙏', isMe: true },
+      ]
     },
     {
       id: 4,
-      title: 'Tailwind CSS 性能優化指南',
-      excerpt: '學習如何優化 Tailwind CSS 的構建大小，提升載入速度，並實現最佳的開發體驗...',
-      category: 'CSS',
-      date: '2024-11-20',
-      views: 823,
-      tags: ['CSS', 'Tailwind', 'Performance'],
-      icon: '🎨',
-      color: 'from-sky-400 to-cyan-500'
+      title: '週五下午的緊急 Bug',
+      participants: ['我', '小美 (QA)', '阿傑 (前端)'],
+      avatar: '🐛',
+      messages: [
+        { sender: '小美 (QA)', avatar: '👩‍💻', time: '16:30', content: '糟糕！production 環境發現嚴重 bug！', isMe: false },
+        { sender: '我', avatar: '👤', time: '16:31', content: '什麼！週五下午發現 bug 是最可怕的... 😱', isMe: true },
+        { sender: '阿傑 (前端)', avatar: '👨‍💻', time: '16:32', content: '是哪裡出問題？', isMe: false },
+        { sender: '小美 (QA)', avatar: '👩‍💻', time: '16:33', content: '結帳頁面點擊「確認付款」後沒反應，而且沒有錯誤訊息', isMe: false },
+        { sender: '我', avatar: '👤', time: '16:35', content: '讓我看看 console... 喔不，是今天早上的部署改壞的', isMe: true },
+        { sender: '阿傑 (前端)', avatar: '👨‍💻', time: '16:36', content: '能先 rollback 嗎？', isMe: false },
+        { sender: '我', avatar: '👤', time: '16:37', content: '我先檢查一下影響範圍... 找到了！是 API 路徑打錯了', isMe: true },
+        { sender: '小美 (QA)', avatar: '👩‍💻', time: '16:40', content: '可以快速修復嗎？還是要 rollback？', isMe: false },
+        { sender: '我', avatar: '👤', time: '16:42', content: '改一個字而已，我立刻部署修正版', isMe: true },
+        { sender: '阿傑 (前端)', avatar: '👨‍💻', time: '16:50', content: '測試過了，已經正常！', isMe: false },
+        { sender: '小美 (QA)', avatar: '👩‍💻', time: '16:52', content: '確認修復！大家辛苦了 🎉', isMe: false },
+        { sender: '我', avatar: '👤', time: '16:55', content: '好險趕在下班前搞定... 差點要加班了 😅', isMe: true },
+      ]
     },
     {
       id: 5,
-      title: 'Web 動畫完全指南',
-      excerpt: '從 CSS 動畫到 Motion，全面掌握現代 Web 動畫技術，打造流暢的用戶體驗...',
-      category: 'Animation',
-      date: '2024-11-18',
-      views: 1102,
-      tags: ['Animation', 'Motion', 'UX'],
-      icon: '✨',
-      color: 'from-purple-400 to-pink-500'
-    },
-    {
-      id: 6,
-      title: '前端性能監控與優化',
-      excerpt: '建立完整的前端性能監控系統，識別瓶頸並實施有效的優化策略...',
-      category: 'Performance',
-      date: '2024-11-15',
-      views: 756,
-      tags: ['Performance', 'Monitoring'],
-      icon: '⚡',
-      color: 'from-yellow-400 to-orange-500'
+      title: '上班按摩記',
+      participants: ['Mega', '主管', '小組長'],
+      avatar: '💆',
+      messages: [
+        { sender: '主管', avatar: '👔', time: '14:15', content: '@mega 你先申請安裝 UiPath Studio, 以後開發交給你了', isMe: false },
+        { sender: 'Mega', avatar: '👤', time: '14:17', content: '但等一下我要去按摩，可以晚一點申請嗎?', isMe: true },
+        { sender: '主管', avatar: '👔', time: '14:18', content: '誰說你上班可以按摩', isMe: false },
+        { sender: '小組長', avatar: '👨‍💼', time: '14:19', content: '人資', isMe: false },
+        { sender: '主管', avatar: '👔', time: '14:20', content: '我是壞主管~', isMe: false },
+        { sender: 'Mega', avatar: '👤', time: '14:21', content: '打咩! 我錯過兩次了~', isMe: true },
+        { sender: '主管', avatar: '👔', time: '14:22', content: '沒事去吧 886', isMe: false },
+        { sender: 'Mega', avatar: '👤', time: '14:23', content: '88!晚點回來，然後就下班(擊掌', isMe: true },
+      ]
     }
   ];
 
@@ -1130,21 +2266,177 @@ const show = ref(false)
     { icon: GitBranch, label: 'Git', color: 'bg-orange-500' },
     { icon: Terminal, label: '.NET', color: 'bg-purple-600' },
     { icon: Code, label: 'C#', color: 'bg-violet-600' },
-    { icon: Cpu, label: 'SQL', color: 'bg-blue-600' }
+    { icon: Cpu, label: 'SQL', color: 'bg-blue-600' },
+    { icon: Rocket, label: 'UiPath', color: 'bg-orange-600' }
   ];
 
-  const codeText = `const 歡迎 = () => {
-  return (
-    <div>
-      <h1>持續學習，不斷進步 🚀</h1>
-      <p>分享知識，共同成長 💡</p>
-    </div>
-  );
-};`;
+  // Live chat messages state for homepage
+  const [visibleMessages, setVisibleMessages] = useState(0);
+  const [currentChatIndex, setCurrentChatIndex] = useState(0);
+  
+  // Auto-play chat messages on homepage
+  useEffect(() => {
+    if (!showEngineerDaily && !selectedDay && !showUiPathOrchestrator) {
+      const chat = engineerChats[currentChatIndex];
+      if (visibleMessages < chat.messages.length) {
+        const timer = setTimeout(() => {
+          setVisibleMessages(prev => prev + 1);
+        }, 2000); // Show new message every 2 seconds
+        return () => clearTimeout(timer);
+      } else {
+        // Wait 5 seconds before switching to next chat
+        const switchTimer = setTimeout(() => {
+          setCurrentChatIndex(prev => (prev + 1) % engineerChats.length);
+          setVisibleMessages(0);
+        }, 5000);
+        return () => clearTimeout(switchTimer);
+      }
+    }
+  }, [visibleMessages, currentChatIndex, showEngineerDaily, selectedDay, showUiPathOrchestrator]);
+
+  // Auto-scroll to bottom when new message appears
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTo({
+        top: chatContainerRef.current.scrollHeight,
+        behavior: 'smooth'
+      });
+    }
+  }, [visibleMessages]);
 
   return (
     <section className="container mx-auto px-4 py-12">
-      {selectedDay !== null ? (
+      {showEngineerDaily ? (
+        /* Engineer Daily 543 View - Teams Style UI */
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
+        >
+          <div className="mb-8">
+            <motion.button
+              whileHover={{ scale: 1.05, x: -5 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => {
+                setShowEngineerDaily(false);
+                setSelectedChat(0);
+              }}
+              className="inline-flex items-center gap-2 text-pink-600 hover:text-pink-700 mb-4"
+            >
+              <span className="text-2xl">←</span>
+              <span>返回技術文章</span>
+            </motion.button>
+          </div>
+
+          {/* Teams Style Chat Interface */}
+          <div className="bg-white rounded-3xl shadow-xl overflow-hidden" style={{ height: '80vh' }}>
+            <div className="grid grid-cols-12 h-full">
+              {/* Left Sidebar - Chat List */}
+              <div className="col-span-12 md:col-span-4 bg-gray-50 border-r border-gray-200 flex flex-col">
+                <div className="bg-gradient-to-r from-pink-500 to-purple-600 p-6 text-white">
+                  <h2 className="text-white mb-2">工程師's 543</h2>
+                  <p className="text-white/90 text-sm">真實職場對話紀錄 💬</p>
+                </div>
+                
+                <div className="flex-1 overflow-y-auto p-4 space-y-2">
+                  {engineerChats.map((chat) => (
+                    <motion.div
+                      key={chat.id}
+                      whileHover={{ scale: 1.02, x: 5 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => setSelectedChat(chat.id)}
+                      className={`p-4 rounded-xl cursor-pointer transition-all ${
+                        selectedChat === chat.id
+                          ? 'bg-pink-100 border-2 border-pink-400'
+                          : 'bg-white border border-gray-200 hover:border-pink-300'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3 mb-2">
+                        <div className="text-2xl">{chat.avatar}</div>
+                        <div className="flex-1 min-w-0">
+                          <h3 className={`truncate ${selectedChat === chat.id ? 'text-pink-700' : 'text-gray-900'}`}>
+                            {chat.title}
+                          </h3>
+                          <p className="text-xs text-gray-500 truncate">
+                            {chat.participants.join(', ')}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="text-xs text-gray-400">
+                        {chat.messages.length} 則訊息
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Right Side - Chat Messages */}
+              <div className="col-span-12 md:col-span-8 flex flex-col bg-white">
+                {/* Chat Header */}
+                <div className="border-b border-gray-200 p-6 bg-gray-50">
+                  <div className="flex items-center gap-3">
+                    <div className="text-3xl">{engineerChats[selectedChat].avatar}</div>
+                    <div>
+                      <h3 className="text-gray-900">{engineerChats[selectedChat].title}</h3>
+                      <p className="text-sm text-gray-500">
+                        {engineerChats[selectedChat].participants.join(' • ')}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Messages */}
+                <div className="flex-1 overflow-y-auto p-6 space-y-4">
+                  {engineerChats[selectedChat].messages.map((message, idx) => (
+                    <motion.div
+                      key={idx}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: idx * 0.05 }}
+                      className={`flex gap-3 ${message.isMe ? 'flex-row-reverse' : 'flex-row'}`}
+                    >
+                      {/* Avatar */}
+                      <div className="flex-shrink-0">
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center text-xl">
+                          {message.avatar}
+                        </div>
+                      </div>
+
+                      {/* Message Content */}
+                      <div className={`flex-1 max-w-md ${message.isMe ? 'items-end' : 'items-start'} flex flex-col`}>
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className={`text-xs ${message.isMe ? 'text-gray-500 order-2' : 'text-gray-700'}`}>
+                            {message.sender}
+                          </span>
+                          <span className={`text-xs text-gray-400 ${message.isMe ? 'order-1' : 'order-2'}`}>
+                            {message.time}
+                          </span>
+                        </div>
+                        <div
+                          className={`rounded-2xl px-4 py-3 ${
+                            message.isMe
+                              ? 'bg-gradient-to-r from-pink-500 to-purple-600 text-white'
+                              : 'bg-gray-100 text-gray-800'
+                          }`}
+                        >
+                          <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+
+                {/* Input Area (Disabled - Read Only) */}
+                <div className="border-t border-gray-200 p-4 bg-gray-50">
+                  <div className="bg-gray-200 rounded-full px-4 py-3 text-gray-500 text-sm text-center">
+                    📖 這是歷史對話紀錄，僅供閱讀
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      ) : selectedDay !== null ? (
         /* Day Detail View */
         <motion.div
           initial={{ opacity: 0 }}
@@ -1183,7 +2475,9 @@ const show = ref(false)
                       {section.type === 'intro' && (
                         <div className="bg-emerald-50 border-l-4 border-emerald-500 rounded-r-2xl p-6">
                           <h2 className="text-gray-900 mb-3">簡介</h2>
-                          <p className="text-gray-700 leading-relaxed">{section.text}</p>
+                          <p className="text-gray-700 leading-relaxed">
+                            <RichText text={section.text} />
+                          </p>
                         </div>
                       )}
 
@@ -1204,7 +2498,9 @@ const show = ref(false)
                                   <div className="text-4xl flex-shrink-0">{item.icon}</div>
                                   <div>
                                     <h3 className="text-gray-900 mb-2">{item.title}</h3>
-                                    <p className="text-gray-700">{item.text}</p>
+                                    <p className="text-gray-700">
+                                      <RichText text={item.text} />
+                                    </p>
                                   </div>
                                 </div>
                               </motion.div>
@@ -1214,10 +2510,12 @@ const show = ref(false)
                       )}
 
                       {/* Demo Section */}
-                      {section.type === 'demo' && !section.codeSections && (
+                      {section.type === 'demo' && !section.codeSections && !section.steps && (
                         <div>
                           <h2 className="text-gray-900 mb-4">{section.title}</h2>
-                          <p className="text-gray-700 mb-4">{section.description}</p>
+                          <p className="text-gray-700 mb-4">
+                            <RichText text={section.description} />
+                          </p>
                           {section.tasks && section.tasks.length > 0 && (
                             <div className="bg-white border-2 border-emerald-200 rounded-2xl p-6 mb-6">
                               {section.tasks.map((task: string, i: number) => (
@@ -1250,7 +2548,9 @@ const show = ref(false)
                       {section.type === 'demo' && section.codeSections && (
                         <div>
                           <h2 className="text-gray-900 mb-4">{section.title}</h2>
-                          <p className="text-gray-700 mb-4">{section.description}</p>
+                          <p className="text-gray-700 mb-4">
+                            <RichText text={section.description} />
+                          </p>
                           <div className="bg-white border-2 border-emerald-200 rounded-2xl p-6 mb-6">
                             {section.tasks.map((task: string, i: number) => (
                               <div key={i} className="flex items-center gap-3 mb-2 last:mb-0">
@@ -1381,7 +2681,9 @@ const show = ref(false)
                       {section.type === 'concept' && (
                         <div>
                           <h2 className="text-gray-900 mb-6">{section.title}</h2>
-                          <p className="text-gray-700 leading-relaxed mb-4">{section.description}</p>
+                          <p className="text-gray-700 leading-relaxed mb-4">
+                            <RichText text={section.description} />
+                          </p>
                           <div className="grid grid-cols-2 gap-4">
                             {section.examples.map((example: any, i: number) => (
                               <div key={i} className="bg-gray-100 rounded-2xl p-4">
@@ -1397,16 +2699,19 @@ const show = ref(false)
                       {section.type === 'steps' && (
                         <div>
                           <h2 className="text-gray-900 mb-6">{section.title}</h2>
-                          <p className="text-gray-700 leading-relaxed mb-4">{section.description}</p>
-                          <ol className="list-decimal pl-6">
+                          <p className="text-gray-700 leading-relaxed mb-4">
+                            <RichText text={section.description} />
+                          </p>
+                          <ol className="list-decimal pl-6 space-y-4">
                             {section.steps.map((step: any, i: number) => (
                               <li key={i} className="mb-4">
-                                <div className="flex items-center gap-2">
-                                  <span className="text-emerald-500 font-bold">{step.number}.</span>
-                                  <span className="text-gray-900 font-bold">{step.title}</span>
-                                </div>
-                                {step.description && <p className="text-gray-700 leading-relaxed mt-2">{step.description}</p>}
-                                <div className="bg-gray-900 rounded-2xl overflow-hidden mt-4">
+                                <div className="text-gray-900 font-bold mb-2">{step.title}</div>
+                                {step.description && (
+                                  <p className="text-gray-700 leading-relaxed mb-3">
+                                    <RichText text={step.description} />
+                                  </p>
+                                )}
+                                <div className="bg-gray-900 rounded-2xl overflow-hidden">
                                   <div className="flex items-center gap-2 px-4 py-3 bg-gray-800">
                                     <div className="w-3 h-3 rounded-full bg-red-500" />
                                     <div className="w-3 h-3 rounded-full bg-yellow-500" />
@@ -1430,14 +2735,20 @@ const show = ref(false)
                         <div>
                           <h2 className="text-gray-900 mb-6">{section.title}</h2>
                           <div className="bg-gradient-to-br from-emerald-50 to-green-50 rounded-2xl p-6 border border-emerald-200">
-                            <p className="text-gray-700 leading-relaxed mb-4">{section.content}</p>
+                            <p className="text-gray-700 leading-relaxed mb-4">
+                              <RichText text={section.content} />
+                            </p>
                             {section.highlight && (
                               <div className="bg-white/50 rounded-xl p-4 mb-4 border-l-4 border-emerald-500">
-                                <p className="text-emerald-800">👉 {section.highlight}</p>
+                                <p className="text-emerald-800">
+                                  👉 <RichText text={section.highlight} />
+                                </p>
                               </div>
                             )}
                             {section.conclusion && (
-                              <p className="text-gray-700 leading-relaxed mb-4">{section.conclusion}</p>
+                              <p className="text-gray-700 leading-relaxed mb-4">
+                                <RichText text={section.conclusion} />
+                              </p>
                             )}
                             {section.concepts && (
                               <div className="mt-4">
@@ -1580,6 +2891,60 @@ const show = ref(false)
                         </div>
                       )}
 
+                      {/* 寶媽角度 Section */}
+                      {section.type === '寶媽角度' && (
+                        <div className="bg-gradient-to-br from-pink-50 to-rose-50 border-2 border-pink-200 rounded-2xl p-6">
+                          <h2 className="text-gray-900 mb-4 flex items-center gap-2">
+                            <span className="text-3xl">👩‍🍼</span>
+                            寶媽角度
+                          </h2>
+                          <div className="text-gray-700 leading-relaxed whitespace-pre-line">{section.text}</div>
+                        </div>
+                      )}
+
+                      {/* 工程師角度 Section */}
+                      {section.type === '工程師角度' && (
+                        <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-2xl p-6">
+                          <h2 className="text-gray-900 mb-4 flex items-center gap-2">
+                            <span className="text-3xl">💻</span>
+                            工程師角度
+                          </h2>
+                          <div className="text-gray-700 leading-relaxed whitespace-pre-line">{section.text}</div>
+                        </div>
+                      )}
+
+                      {/* 今天的實作 Section */}
+                      {section.type === '今天的實作' && (
+                        <div>
+                          <h2 className="text-gray-900 mb-4 flex items-center gap-2">
+                            <span className="text-3xl">📦</span>
+                            今天的實作
+                          </h2>
+                          {section.description && (
+                            <p className="text-gray-700 mb-6">{section.description}</p>
+                          )}
+                          
+                          {section.steps && section.steps.map((step: any, i: number) => (
+                            <div key={i} className="mb-6 last:mb-0">
+                              <h3 className="text-gray-900 mb-3">{step.title}</h3>
+                              <div className="bg-gray-900 rounded-2xl overflow-hidden">
+                                <div className="flex items-center gap-2 px-4 py-3 bg-gray-800">
+                                  <div className="w-3 h-3 rounded-full bg-red-500" />
+                                  <div className="w-3 h-3 rounded-full bg-yellow-500" />
+                                  <div className="w-3 h-3 rounded-full bg-green-500" />
+                                  <span className="ml-2 text-gray-400">{step.title}</span>
+                                </div>
+                                <pre className="p-6 overflow-x-auto">
+                                  <code className="text-green-400 font-mono text-sm leading-relaxed whitespace-pre">
+                                    {step.code}
+                                  </code>
+                                </pre>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
                       {/* Summary Section */}
                       {section.type === 'summary' && (
                         <div>
@@ -1593,14 +2958,18 @@ const show = ref(false)
                                       <span className="text-2xl">{point.icon}</span>
                                       <div className="flex-1">
                                         {point.title && <h4 className="text-white mb-2">{point.title}</h4>}
-                                        <p className="text-white/90">{point.text || point.description}</p>
+                                        <p className="text-white/90">
+                                          <RichText text={point.text || point.description} />
+                                        </p>
                                       </div>
                                     </div>
                                   )}
                                   {!point.icon && (
                                     <>
                                       {point.title && <h4 className="text-white mb-2">{point.title}</h4>}
-                                      <p className="text-white/90">{point.description}</p>
+                                      <p className="text-white/90">
+                                        <RichText text={point.description} />
+                                      </p>
                                     </>
                                   )}
                                 </div>
@@ -1720,6 +3089,423 @@ const show = ref(false)
             </motion.div>
           </div>
         </motion.div>
+      ) : selectedTech === 'UiPath' ? (
+        /* UiPath Article List View */
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
+        >
+          <div className="mb-8">
+            <motion.button
+              whileHover={{ scale: 1.05, x: -5 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setSelectedTech(null)}
+              className="inline-flex items-center gap-2 text-orange-600 hover:text-orange-700 mb-4"
+            >
+              <span className="text-2xl">←</span>
+              <span>返回技術文章</span>
+            </motion.button>
+            
+            {/* UiPath Orchestrator Article Card */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.2 }}
+              whileHover={{ scale: 1.02, y: -5 }}
+              onClick={() => {
+                setSelectedTech(null);
+                setShowUiPathOrchestrator(true);
+              }}
+              className="relative overflow-hidden rounded-3xl cursor-pointer"
+            >
+              <div className="bg-gradient-to-r from-orange-500 to-orange-600 p-8 md:p-12 flex items-center">
+                <div className="grid md:grid-cols-2 gap-8 items-center w-full">
+                  <motion.div
+                    initial={{ x: -50, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ delay: 0.4 }}
+                  >
+                    <div className="flex items-center gap-2 text-white/90 mb-4">
+                      <span className="bg-white/20 backdrop-blur-sm px-4 py-1 rounded-full">
+                        RPA 技術
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <Calendar className="w-4 h-4" />
+                        2025-12-03
+                      </span>
+                    </div>
+
+                    <h2 className="text-white mb-4">UiPath Orchestrator 完整指南</h2>
+                    <p className="text-white/90 mb-6">
+                      深入理解 UiPath 機器人的中央控制平台，掌握 RPA 部署、排程、監控的核心概念與實務應用。
+                    </p>
+
+                    <div className="flex flex-wrap gap-2 mb-6">
+                      {['Orchestrator', 'RPA', '自動化', '企業級'].map((tag, i) => (
+                        <span key={i} className="bg-white/20 backdrop-blur-sm text-white px-3 py-1 rounded-full">
+                          #{tag}
+                        </span>
+                      ))}
+                    </div>
+
+                    <div className="flex items-center gap-4">
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        className="bg-white text-orange-600 px-6 py-3 rounded-full hover:shadow-xl transition-shadow"
+                      >
+                        閱讀文章 →
+                      </motion.button>
+                      <div className="flex items-center gap-2 text-white/80">
+                        <Eye className="w-5 h-5" />
+                        <span>2,450</span>
+                      </div>
+                    </div>
+                  </motion.div>
+
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: 0.6, type: "spring" }}
+                    className="relative"
+                  >
+                    <div className="text-9xl text-center">
+                      🚀
+                    </div>
+                    <motion.div
+                      animate={{ y: [0, -20, 0] }}
+                      transition={{ duration: 3, repeat: Infinity }}
+                      className="absolute -top-8 -right-8 text-6xl opacity-50"
+                    >
+                      🤖
+                    </motion.div>
+                    <motion.div
+                      animate={{ y: [0, 20, 0] }}
+                      transition={{ duration: 3, delay: 1, repeat: Infinity }}
+                      className="absolute -bottom-8 -left-8 text-6xl opacity-50"
+                    >
+                      ⚙️
+                    </motion.div>
+                  </motion.div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </motion.div>
+      ) : showUiPathOrchestrator ? (
+        /* UiPath Orchestrator Detail View */
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
+        >
+          <div className="mb-8">
+            <motion.button
+              whileHover={{ scale: 1.05, x: -5 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setShowUiPathOrchestrator(false)}
+              className="inline-flex items-center gap-2 text-orange-600 hover:text-orange-700 mb-4"
+            >
+              <span className="text-2xl">←</span>
+              <span>返回技術文章</span>
+            </motion.button>
+            
+            <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
+              {/* Header */}
+              <div className="bg-gradient-to-r from-orange-500 to-orange-600 p-8 text-white">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="bg-white/20 backdrop-blur-sm rounded-2xl px-6 py-3">
+                    <span className="text-3xl">🚀</span>
+                  </div>
+                </div>
+                <h1 className="text-white mb-2">UiPath Orchestrator 完整指南</h1>
+                <p className="text-white/90">RPA 機器人的中央控制平台</p>
+              </div>
+
+              {/* Content */}
+              <div className="p-8 md:p-12 space-y-8">
+                {/* 什麼是 Orchestrator */}
+                <div className="bg-blue-50 rounded-2xl p-6">
+                  <h3 className="text-blue-900 mb-4">🟦 什麼是 UiPath Orchestrator？（一句話版本）</h3>
+                  <p className="text-gray-700 mb-4">
+                    Orchestrator 是 UiPath 機器人的「中央控制平台」。
+                    它負責部署流程、排程、監控、管理資源，讓 RPA 在企業中可以穩定運作。
+                  </p>
+                  <p className="text-gray-700 mb-2">它就像：</p>
+                  <ul className="list-disc list-inside space-y-2 text-gray-700 ml-4">
+                    <li>GitLab / Jenkins 是程式的部署中心</li>
+                    <li>Argo CD 是服務的部署中心</li>
+                    <li><strong>Orchestrator 就是 RPA 的部署與控制中心</strong></li>
+                  </ul>
+                </div>
+
+                {/* Orchestrator 的定位 */}
+                <div className="bg-green-50 rounded-2xl p-6">
+                  <h3 className="text-green-900 mb-4">🟩 Orchestrator 的定位（最重要概念）</h3>
+                  <p className="text-gray-700 mb-4">
+                    Orchestrator 不負責「撰寫 RPA 流程」，那是在 Studio 做的。
+                    它的角色是：
+                  </p>
+                  <ul className="space-y-2 text-gray-700">
+                    <li>✔ 1. 管理流程的版本</li>
+                    <li>✔ 2. 把流程部署到機器人</li>
+                    <li>✔ 3. 設定排程（讓流程自動執行）</li>
+                    <li>✔ 4. 控制機器資源（哪台電腦跑）</li>
+                    <li>✔ 5. 管理敏感資料（API Key、帳密）</li>
+                    <li>✔ 6. 管理大量資料處理（Queues）</li>
+                    <li>✔ 7. 收集機器人執行紀錄（Logs）</li>
+                    <li>✔ 8. 提供 API 讓外部系統觸發流程（CI/CD、後端系統都能叫 Runnable）</li>
+                  </ul>
+                </div>
+
+                {/* 五大核心區塊 */}
+                <div className="bg-red-50 rounded-2xl p-6">
+                  <h3 className="text-red-900 mb-4">🟥 Orchestrator 的五大核心區塊（最重要的教學）</h3>
+                  <p className="text-gray-700 mb-6">
+                    下面這五個你學會 → 你就真的懂 Orchestrator 的 90% 功能。
+                  </p>
+
+                  <div className="space-y-6">
+                    {/* ① Machines */}
+                    <div className="border-l-4 border-orange-500 pl-6">
+                      <h4 className="text-gray-900 mb-3">① Machines（機器）——哪台電腦可以跑 RPA？</h4>
+                      <p className="text-gray-700 mb-3">
+                        機器人不是在雲端跑，而是在某台：
+                      </p>
+                      <ul className="list-disc list-inside space-y-1 text-gray-700 ml-4 mb-3">
+                        <li>你的電腦</li>
+                        <li>公司 VM</li>
+                        <li>伺服器</li>
+                        <li>VDI</li>
+                      </ul>
+                      <p className="text-gray-700 mb-2">Orchestrator 需先知道「哪台電腦要跑流程」。</p>
+                      <p className="text-gray-700 mb-2">Machines 就是用來：</p>
+                      <ul className="list-disc list-inside space-y-1 text-gray-700 ml-4">
+                        <li>註冊一台���腦</li>
+                        <li>指定它是 Attended 或 Unattended robot</li>
+                        <li>綁定 License</li>
+                        <li>控制它能不能執行流程</li>
+                      </ul>
+                    </div>
+
+                    {/* ② Processes */}
+                    <div className="border-l-4 border-blue-500 pl-6">
+                      <h4 className="text-gray-900 mb-3">② Processes（流程）——從 Studio 上傳的流程放在哪？</h4>
+                      <p className="text-gray-700 mb-3">
+                        流程是在 Studio 做好的。但它不會自動跑，必須：
+                      </p>
+                      <ul className="list-disc list-inside space-y-1 text-gray-700 ml-4 mb-3">
+                        <li>Publish（從 Studio 上傳到 Orchestrator）</li>
+                        <li>建立 Process（定義這隻流程怎麼跑）</li>
+                      </ul>
+                      <p className="text-gray-700 mb-2">Process 決定：</p>
+                      <ul className="list-disc list-inside space-y-1 text-gray-700 ml-4 mb-3">
+                        <li>用哪個 Robot 來跑？</li>
+                        <li>用哪個版本？</li>
+                        <li>用哪些參數？</li>
+                      </ul>
+                      <p className="text-gray-700">這就像：</p>
+                      <ul className="list-disc list-inside space-y-1 text-gray-700 ml-4">
+                        <li>後端程式上傳到 GitLab</li>
+                        <li>再透過 Argo 部署成可以執行的版本</li>
+                      </ul>
+                    </div>
+
+                    {/* ③ Jobs */}
+                    <div className="border-l-4 border-green-500 pl-6">
+                      <h4 className="text-gray-900 mb-3">③ Jobs（執行紀錄）——每次執行的結果</h4>
+                      <p className="text-gray-700 mb-2">Jobs 是用來：</p>
+                      <ul className="list-disc list-inside space-y-1 text-gray-700 ml-4 mb-3">
+                        <li>手動啟動流程</li>
+                        <li>查看流程是否執行成功</li>
+                        <li>查看失敗原因</li>
+                        <li>重新執行流程</li>
+                      </ul>
+                      <p className="text-gray-700 mb-2">這裡會看到：</p>
+                      <ul className="list-disc list-inside space-y-1 text-gray-700 ml-4 mb-3">
+                        <li>成功 / 失敗 / In Progress</li>
+                        <li>Log（這對 Debug 最關鍵）</li>
+                        <li>執行時間</li>
+                        <li>用哪個 Robot 跑的</li>
+                      </ul>
+                      <p className="text-gray-700">Jobs 就像 Cloud Run 或 Jenkins 的執行紀錄。</p>
+                    </div>
+
+                    {/* ④ Assets */}
+                    <div className="border-l-4 border-purple-500 pl-6">
+                      <h4 className="text-gray-900 mb-3">④ Assets（資產）——帳密、API、路徑都放這裡</h4>
+                      <p className="text-gray-700 mb-3">
+                        Assets 讓你把敏感資訊集中管理，而不是寫死在流程裡：
+                      </p>
+                      <p className="text-gray-700 mb-2">常用的：</p>
+                      <ul className="list-disc list-inside space-y-1 text-gray-700 ml-4 mb-3">
+                        <li>帳號密碼（Credential Asset）</li>
+                        <li>Token（Text Asset）</li>
+                        <li>API URL（Text Asset）</li>
+                        <li>DB Connection String</li>
+                        <li>檔案路徑設定（用來控制 DEV / UAT / PROD 各不同）</li>
+                      </ul>
+                      <p className="text-gray-700 mb-3">Studio 裡面可以用「Get Asset」取得資料。</p>
+                      <p className="text-gray-700 mb-2">這就像：</p>
+                      <ul className="list-disc list-inside space-y-1 text-gray-700 ml-4">
+                        <li>.NET 的 secrets.json</li>
+                        <li>AWS Systems Manager Parameter Store</li>
+                        <li>Azure Key Vault</li>
+                      </ul>
+                    </div>
+
+                    {/* ⑤ Queues */}
+                    <div className="border-l-4 border-pink-500 pl-6">
+                      <h4 className="text-gray-900 mb-3">⑤ Queues（佇列）——大量資料處理的核心</h4>
+                      <p className="text-gray-700 mb-3">
+                        如果你要處理大量資料（例如 500張發票、50筆固定資產），
+                        機器人不能一次吃完，會爆掉。
+                      </p>
+                      <p className="text-gray-700 mb-2">Queues 可以把資料拆成一筆一筆，讓機器人逐筆處理，優點：</p>
+                      <ul className="list-disc list-inside space-y-1 text-gray-700 ml-4">
+                        <li>流程不會被大資料量拖死</li>
+                        <li>某筆失敗可以 Retry</li>
+                        <li>可同時使用多台機器跑（平行處理）</li>
+                        <li>企業級流程標準做法（銀行、會計、財務最常用）</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 其他重要功能 */}
+                <div className="bg-purple-50 rounded-2xl p-6">
+                  <h3 className="text-purple-900 mb-4">🟪 Orchestrator 其他重要功能（一次看懂）</h3>
+                  <div className="overflow-x-auto">
+                    <table className="w-full border-collapse">
+                      <thead>
+                        <tr className="border-b-2 border-purple-200">
+                          <th className="text-left py-3 px-4 text-gray-900">功能</th>
+                          <th className="text-left py-3 px-4 text-gray-900">在做什麼</th>
+                          <th className="text-left py-3 px-4 text-gray-900">為何重要？</th>
+                        </tr>
+                      </thead>
+                      <tbody className="text-gray-700">
+                        <tr className="border-b border-purple-100">
+                          <td className="py-3 px-4">Users & Roles</td>
+                          <td className="py-3 px-4">設定哪些人能看哪些資料</td>
+                          <td className="py-3 px-4">權限控管</td>
+                        </tr>
+                        <tr className="border-b border-purple-100">
+                          <td className="py-3 px-4">Triggers</td>
+                          <td className="py-3 px-4">時間排程、自動觸發流程</td>
+                          <td className="py-3 px-4">自動化核心</td>
+                        </tr>
+                        <tr className="border-b border-purple-100">
+                          <td className="py-3 px-4">Logs</td>
+                          <td className="py-3 px-4">收集 robot log</td>
+                          <td className="py-3 px-4">Debug 用</td>
+                        </tr>
+                        <tr className="border-b border-purple-100">
+                          <td className="py-3 px-4">Monitoring</td>
+                          <td className="py-3 px-4">CPU / Robot 狀態</td>
+                          <td className="py-3 px-4">監控</td>
+                        </tr>
+                        <tr>
+                          <td className="py-3 px-4">Packages</td>
+                          <td className="py-3 px-4">所有流程版本</td>
+                          <td className="py-3 px-4">版本控管</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                {/* 工作流程 */}
+                <div className="bg-orange-50 rounded-2xl p-6">
+                  <h3 className="text-orange-900 mb-4">🟧 整個 RPA 工作流程是這樣運作的</h3>
+                  <p className="text-gray-700 mb-4">我用最白話講給你聽：</p>
+                  <div className="space-y-3 text-gray-700">
+                    <div className="flex items-start gap-3">
+                      <span className="bg-orange-200 text-orange-900 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0">1</span>
+                      <p>你在 Studio 做好流程</p>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <span className="bg-orange-200 text-orange-900 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0">2</span>
+                      <p>Publish 上去 Orchestrator</p>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <span className="bg-orange-200 text-orange-900 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0">3</span>
+                      <p>在 Orchestrator 建 Process</p>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <span className="bg-orange-200 text-orange-900 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0">4</span>
+                      <p>配好哪台 Machine / Robot 來跑</p>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <span className="bg-orange-200 text-orange-900 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0">5</span>
+                      <p>設定 Assets、Queues</p>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <span className="bg-orange-200 text-orange-900 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0">6</span>
+                      <p>設定排程（Triggers）</p>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <span className="bg-orange-200 text-orange-900 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0">7</span>
+                      <p>Robot 在背景自動執行</p>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <span className="bg-orange-200 text-orange-900 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0">8</span>
+                      <p>最後你在 Jobs 和 Logs 看結果</p>
+                    </div>
+                  </div>
+                  <p className="text-gray-700 mt-4">
+                    就是這麼清楚！Orchestrator 控制「怎麼跑、在哪跑、跑什麼」。
+                  </p>
+                </div>
+
+                {/* 核心價值 */}
+                <div className="bg-yellow-50 rounded-2xl p-6">
+                  <h3 className="text-yellow-900 mb-4">🟨 Orchestrator 的用途（最核心三價值）</h3>
+                  <div className="space-y-4">
+                    <div>
+                      <h4 className="text-gray-900 mb-2">1️⃣ 讓機器人能自動跑流程</h4>
+                      <ul className="list-disc list-inside space-y-1 text-gray-700 ml-4">
+                        <li>不需要人工按按鈕</li>
+                        <li>不需要開 Studio</li>
+                      </ul>
+                    </div>
+                    <div>
+                      <h4 className="text-gray-900 mb-2">2️⃣ 確保流程統一、可控、可監控</h4>
+                      <ul className="list-disc list-inside space-y-1 text-gray-700 ml-4">
+                        <li>版本、紀錄、排程都集中管理</li>
+                      </ul>
+                    </div>
+                    <div>
+                      <h4 className="text-gray-900 mb-2">3️⃣ 讓企業級 RPA 可擴展</h4>
+                      <p className="text-gray-700 mb-2 ml-4">你可以：</p>
+                      <ul className="list-disc list-inside space-y-1 text-gray-700 ml-8">
+                        <li>多機器</li>
+                        <li>多流程</li>
+                        <li>多部門</li>
+                        <li>多 Queue</li>
+                        <li>多系統 API</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 總結 */}
+                <div className="bg-gradient-to-r from-orange-100 to-yellow-100 rounded-2xl p-8 text-center">
+                  <h3 className="text-gray-900 mb-4">🎉 最後：一句話讓你完全記住 Orchestrator</h3>
+                  <div className="space-y-3 text-gray-700 text-xl">
+                    <p><strong>Studio</strong> = 做流程</p>
+                    <p><strong>Orchestrator</strong> = 管流程（跑、排程、控管）</p>
+                    <p><strong>Robot</strong> = 執行流程</p>
+                  </div>
+                  <p className="text-gray-700 mt-6">
+                    只要這句記得，你對 UiPath 的理解就已經是「工程師等級」。
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </motion.div>
       ) : selectedTech ? (
         /* Coming Soon View for other tech stacks */
         <motion.div
@@ -1796,6 +3582,7 @@ const show = ref(false)
                 transition={{ delay: index * 0.05 }}
                 whileHover={{ y: -5, scale: 1.02 }}
                 className="bg-white rounded-3xl p-6 shadow-lg hover:shadow-2xl transition-all cursor-pointer group"
+                onClick={() => setSelectedDay(day.day)}
               >
                 <div className="flex items-start gap-4 mb-4">
                   <div className="bg-gradient-to-br from-emerald-400 to-green-500 text-white rounded-2xl w-16 h-16 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
@@ -1826,9 +3613,8 @@ const show = ref(false)
                   <motion.span
                     className="text-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity"
                     whileHover={{ x: 5 }}
-                    onClick={() => setSelectedDay(day.day)}
                   >
-                    閰讀 →
+                    閱讀 →
                   </motion.span>
                 </div>
               </motion.div>
@@ -1838,27 +3624,123 @@ const show = ref(false)
       ) : (
         /* Original View */
         <>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1 }}
-            className="mb-12 bg-gray-900 rounded-3xl p-8 overflow-hidden relative"
-          >
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-3 h-3 rounded-full bg-red-500" />
-              <div className="w-3 h-3 rounded-full bg-yellow-500" />
-              <div className="w-3 h-3 rounded-full bg-green-500" />
-            </div>
-            <pre className="text-green-400 font-mono overflow-x-auto">
-              <code>
-                <Typewriter text={codeText} delay={30} />
-              </code>
-            </pre>
-          </motion.div>
-
-          {/* Tech Stack and Featured Article */}
+          {/* Engineer Daily 543 and Tech Stack Row */}
           <div className="grid lg:grid-cols-3 gap-8 mb-12">
-            {/* Tech Stack - Left Side (1/3) */}
+            {/* Engineer Daily 543 Live Chat - Left Side (2/3) */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+              className="lg:col-span-2 bg-gradient-to-br from-pink-50 via-purple-50 to-blue-50 rounded-3xl overflow-hidden shadow-xl border-2 border-pink-200"
+            >
+              {/* Chat Header */}
+              <div className="bg-gradient-to-r from-pink-500 to-purple-600 p-4 text-white">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="text-2xl">{engineerChats[currentChatIndex].avatar}</div>
+                    <div>
+                      <h3 className="text-white mb-0.5">工程師's 543</h3>
+                      <p className="text-white/80 text-xs">{engineerChats[currentChatIndex].title}</p>
+                    </div>
+                  </div>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => setShowEngineerDaily(true)}
+                    className="bg-white/20 hover:bg-white/30 backdrop-blur-sm px-3 py-1.5 rounded-lg text-xs transition-colors"
+                  >
+                    查看更多對話 →
+                  </motion.button>
+                </div>
+              </div>
+
+              {/* Live Messages */}
+              <div 
+                ref={chatContainerRef}
+                className="p-4 space-y-2 bg-white overflow-y-auto" 
+                style={{ height: '280px' }}
+              >
+                {engineerChats[currentChatIndex].messages.slice(0, visibleMessages).map((message, idx) => (
+                  <div
+                    key={idx}
+                    className={`flex gap-2 ${message.isMe ? 'flex-row-reverse' : 'flex-row'}`}
+                  >
+                    {/* Avatar */}
+                    <div className="flex-shrink-0">
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center text-sm shadow-lg">
+                        {message.avatar}
+                      </div>
+                    </div>
+
+                    {/* Message Content */}
+                    <div className={`flex-1 max-w-md ${message.isMe ? 'items-end' : 'items-start'} flex flex-col`}>
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <span className={`text-xs ${message.isMe ? 'text-gray-500 order-2' : 'text-gray-700'}`}>
+                          {message.sender}
+                        </span>
+                        <span className={`text-xs text-gray-400 ${message.isMe ? 'order-1' : 'order-2'}`}>
+                          {message.time}
+                        </span>
+                      </div>
+                      <div
+                        className={`rounded-2xl px-3 py-2 shadow-md ${
+                          message.isMe
+                            ? 'bg-gradient-to-r from-pink-500 to-purple-600 text-white'
+                            : 'bg-gray-100 text-gray-800'
+                        }`}
+                      >
+                        <p className="text-xs leading-relaxed whitespace-pre-wrap">{message.content}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                
+                {/* Typing Indicator */}
+                {visibleMessages < engineerChats[currentChatIndex].messages.length && (
+                  <div className="flex gap-2">
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-gray-300 to-gray-400 flex items-center justify-center text-sm">
+                      💭
+                    </div>
+                    <div className="bg-gray-100 rounded-2xl px-3 py-2 flex items-center gap-1">
+                      <motion.div
+                        animate={{ scale: [1, 1.2, 1] }}
+                        transition={{ duration: 0.6, repeat: Infinity, delay: 0 }}
+                        className="w-1.5 h-1.5 bg-gray-400 rounded-full"
+                      />
+                      <motion.div
+                        animate={{ scale: [1, 1.2, 1] }}
+                        transition={{ duration: 0.6, repeat: Infinity, delay: 0.2 }}
+                        className="w-1.5 h-1.5 bg-gray-400 rounded-full"
+                      />
+                      <motion.div
+                        animate={{ scale: [1, 1.2, 1] }}
+                        transition={{ duration: 0.6, repeat: Infinity, delay: 0.4 }}
+                        className="w-1.5 h-1.5 bg-gray-400 rounded-full"
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Progress Indicator */}
+              <div className="bg-gray-50 px-6 py-3 border-t border-gray-200">
+                <div className="flex items-center justify-between text-sm text-gray-600">
+                  <span>對話 {currentChatIndex + 1} / {engineerChats.length}</span>
+                  <div className="flex gap-1">
+                    {engineerChats.map((_, idx) => (
+                      <div
+                        key={idx}
+                        className={`w-2 h-2 rounded-full transition-all ${
+                          idx === currentChatIndex ? 'bg-pink-500 w-6' : 'bg-gray-300'
+                        }`}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Tech Stack - Right Side (1/3) */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -1888,13 +3770,19 @@ const show = ref(false)
                           transition={{ delay: 0.3 + index * 0.1, type: "spring" }}
                           whileHover={{ scale: 1.1, y: -10 }}
                           whileTap={{ scale: 0.95 }}
-                          onClick={() => setSelectedTech(tech.label)}
+                          onClick={() => {
+                            if (tech.label === 'Vue3') {
+                              setShowVue30Days(true);
+                            } else {
+                              setSelectedTech(tech.label);
+                            }
+                          }}
                           className="text-center group cursor-pointer"
                         >
                           <div className={`${tech.color} w-16 h-16 mx-auto rounded-2xl flex items-center justify-center mb-2 group-hover:shadow-2xl transition-shadow`}>
                             <Icon className="w-8 h-8 text-white" />
                           </div>
-                          <div className="text-white/80 group-hover:text-white transition-colors">
+                          <div className="text-white/80 group-hover:text-white transition-colors text-sm">
                             {tech.label}
                           </div>
                         </motion.div>
@@ -1902,9 +3790,9 @@ const show = ref(false)
                     })}
                   </div>
                   
-                  {/* Second Row - 2 items */}
-                  <div className="grid grid-cols-2 gap-4 max-w-xs mx-auto w-full">
-                    {techStack.slice(3, 5).map((tech, index) => {
+                  {/* Second Row - 3 items */}
+                  <div className="grid grid-cols-3 gap-4">
+                    {techStack.slice(3, 6).map((tech, index) => {
                       const Icon = tech.icon;
                       return (
                         <motion.div
@@ -1914,13 +3802,19 @@ const show = ref(false)
                           transition={{ delay: 0.3 + (index + 3) * 0.1, type: "spring" }}
                           whileHover={{ scale: 1.1, y: -10 }}
                           whileTap={{ scale: 0.95 }}
-                          onClick={() => setSelectedTech(tech.label)}
+                          onClick={() => {
+                            if (tech.label === 'UiPath') {
+                              setShowUiPathOrchestrator(true);
+                            } else {
+                              setSelectedTech(tech.label);
+                            }
+                          }}
                           className="text-center group cursor-pointer"
                         >
                           <div className={`${tech.color} w-16 h-16 mx-auto rounded-2xl flex items-center justify-center mb-2 group-hover:shadow-2xl transition-shadow`}>
                             <Icon className="w-8 h-8 text-white" />
                           </div>
-                          <div className="text-white/80 group-hover:text-white transition-colors">
+                          <div className="text-white/80 group-hover:text-white transition-colors text-sm">
                             {tech.label}
                           </div>
                         </motion.div>
@@ -1930,12 +3824,86 @@ const show = ref(false)
                 </div>
               </div>
             </motion.div>
+          </div>
 
-            {/* Featured Article - Right Side (2/3) */}
+          {/* Vue3 30 Days and UiPath Orchestrator Row */}
+          <div className="grid lg:grid-cols-3 gap-8 mb-12">
+            {/* UiPath Orchestrator - Left Side (1/3) */}
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.4 }}
+              whileHover={{ y: -10 }}
+              onClick={() => {
+                setSelectedTech(null);
+                setShowUiPathOrchestrator(true);
+              }}
+              className="lg:col-span-1 group cursor-pointer"
+            >
+              <div className="bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all h-full">
+                <div className="bg-gradient-to-br from-orange-500 to-orange-600 p-8 relative overflow-hidden">
+                  <motion.div
+                    className="text-6xl text-center"
+                    whileHover={{ scale: 1.2, rotate: 10 }}
+                    transition={{ type: "spring" }}
+                  >
+                    🤖
+                  </motion.div>
+                  <motion.div
+                    animate={{ opacity: [0.3, 0.7, 0.3] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                    className="absolute top-4 right-4 text-white/30 text-4xl"
+                  >
+                    ✦
+                  </motion.div>
+                </div>
+
+                <div className="p-6">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-orange-500">UiPath</span>
+                    <span className="flex items-center gap-1 text-gray-500">
+                      <Eye className="w-4 h-4" />
+                      2,450
+                    </span>
+                  </div>
+
+                  <h3 className="text-gray-900 mb-3 group-hover:text-orange-500 transition-colors">
+                    UiPath Orchestrator 完整指南
+                  </h3>
+
+                  <p className="text-gray-600 mb-4 line-clamp-2">
+                    深入學習 UiPath Orchestrator 中央控制平台，掌握機器人管理、排程部署、監控追蹤等企業級 RPA 自動化核心技術！
+                  </p>
+
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {['UiPath', 'RPA', 'Automation', 'Orchestrator'].map((tag, i) => (
+                      <span key={i} className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full">
+                        #{tag}
+                      </span>
+                    ))}
+                  </div>
+
+                  <div className="flex items-center justify-between text-gray-500">
+                    <span className="flex items-center gap-1">
+                      <Calendar className="w-4 h-4" />
+                      2025-12-03
+                    </span>
+                    <motion.span
+                      className="text-orange-500 group-hover:gap-2 flex items-center gap-1 transition-all"
+                      whileHover={{ x: 5 }}
+                    >
+                      閱讀 →
+                    </motion.span>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Vue3 30 Days - Right Side (2/3) */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.8 }}
               className="lg:col-span-2 relative overflow-hidden rounded-3xl"
             >
               <div className={`bg-gradient-to-r ${articles[0].color} p-8 md:p-12 h-full flex items-center`}>
@@ -1943,7 +3911,7 @@ const show = ref(false)
                   <motion.div
                     initial={{ x: -50, opacity: 0 }}
                     animate={{ x: 0, opacity: 1 }}
-                    transition={{ delay: 0.6 }}
+                    transition={{ delay: 1 }}
                   >
                     <div className="flex items-center gap-2 text-white/90 mb-4">
                       <span className="bg-white/20 backdrop-blur-sm px-4 py-1 rounded-full">
@@ -1976,7 +3944,7 @@ const show = ref(false)
                         className="bg-white text-gray-900 px-8 py-3 rounded-full shadow-lg hover:shadow-xl transition-shadow inline-flex items-center gap-2"
                       >
                         <Code className="w-5 h-5" />
-                        閰讀章節
+                        閱讀章節
                       </motion.button>
                       <span className="flex items-center gap-1 text-white">
                         <Eye className="w-4 h-4" />
@@ -1988,7 +3956,7 @@ const show = ref(false)
                   <motion.div
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
-                    transition={{ delay: 0.8, type: "spring" }}
+                    transition={{ delay: 1.2, type: "spring" }}
                     className="relative"
                   >
                     <div className="text-9xl text-center">
@@ -2016,7 +3984,7 @@ const show = ref(false)
 
           {/* Articles Grid */}
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {articles.slice(1).map((article, index) => (
+            {articles.slice(2).map((article, index) => (
               <motion.div
                 key={article.id}
                 initial={{ opacity: 0, y: 50 }}
@@ -2024,6 +3992,11 @@ const show = ref(false)
                 transition={{ delay: 0.5 + index * 0.1 }}
                 whileHover={{ y: -10 }}
                 className="group cursor-pointer"
+                onClick={() => {
+                  if (article.category === 'UiPath') {
+                    setShowUiPathOrchestrator(true);
+                  }
+                }}
               >
                 <div className="bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all h-full">
                   <div className={`bg-gradient-to-br ${article.color} p-8 relative overflow-hidden`}>
@@ -2088,6 +4061,7 @@ const show = ref(false)
           </div>
         </>
       )}
+      <ScrollToTop />
     </section>
   );
 }

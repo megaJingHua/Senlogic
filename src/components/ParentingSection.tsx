@@ -8,6 +8,7 @@ import {
   Clock,
 } from "lucide-react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
+import { ScrollToTop } from "./ScrollToTop";
 
 interface ParentingSectionProps {
   onArticleClick: (articleId: number) => void;
@@ -314,6 +315,7 @@ export function ParentingSection({
           </motion.div>
         ))}
       </div>
+      <ScrollToTop />
     </section>
   );
 }
