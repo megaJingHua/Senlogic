@@ -117,46 +117,40 @@ export function Hero({ setActiveSection }: HeroProps) {
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ delay: 0.5, type: "spring" }}
-            className="relative bg-gradient-to-br from-green-100 to-green-200 rounded-[3rem] p-8 shadow-2xl"
+            className="relative"
           >
-            <div className="flex flex-col items-center gap-6">
+            <div className="grid grid-cols-2 gap-6">
               <motion.div
-                animate={{ y: [0, -15, 0] }}
-                transition={{ duration: 2.5, repeat: Infinity }}
-                className="text-9xl"
+                animate={{ y: [0, -10, 0], rotate: [0, 5, 0] }}
+                transition={{ duration: 3, repeat: Infinity }}
+                className="bg-gradient-to-br from-orange-200 to-orange-300 rounded-3xl p-8 shadow-xl flex items-center justify-center"
               >
-                🐰
+                <div className="text-8xl">🎯</div>
               </motion.div>
               
-              <div className="grid grid-cols-3 gap-3 w-full">
-                <motion.div
-                  whileHover={{ scale: 1.1, rotate: 10 }}
-                  animate={{ y: [0, -5, 0] }}
-                  transition={{ duration: 2, repeat: Infinity, delay: 0 }}
-                  className="bg-white rounded-2xl p-4 text-center shadow-lg cursor-pointer"
-                >
-                  <div className="text-4xl mb-2">🏆</div>
-                  <div className="text-gray-700">成就</div>
-                </motion.div>
-                <motion.div
-                  whileHover={{ scale: 1.1, rotate: -10 }}
-                  animate={{ y: [0, -5, 0] }}
-                  transition={{ duration: 2, repeat: Infinity, delay: 0.3 }}
-                  className="bg-white rounded-2xl p-4 text-center shadow-lg cursor-pointer"
-                >
-                  <div className="text-4xl mb-2">🎯</div>
-                  <div className="text-gray-700">目標</div>
-                </motion.div>
-                <motion.div
-                  whileHover={{ scale: 1.1, rotate: 10 }}
-                  animate={{ y: [0, -5, 0] }}
-                  transition={{ duration: 2, repeat: Infinity, delay: 0.6 }}
-                  className="bg-white rounded-2xl p-4 text-center shadow-lg cursor-pointer"
-                >
-                  <div className="text-4xl mb-2">🌟</div>
-                  <div className="text-gray-700">獎勵</div>
-                </motion.div>
-              </div>
+              <motion.div
+                animate={{ y: [0, -15, 0], rotate: [0, -5, 0] }}
+                transition={{ duration: 3.5, repeat: Infinity, delay: 0.5 }}
+                className="bg-gradient-to-br from-green-200 to-green-300 rounded-3xl p-8 shadow-xl flex items-center justify-center"
+              >
+                <div className="text-8xl">🌈</div>
+              </motion.div>
+              
+              <motion.div
+                animate={{ y: [0, -12, 0], rotate: [0, -5, 0] }}
+                transition={{ duration: 3.2, repeat: Infinity, delay: 1 }}
+                className="bg-gradient-to-br from-pink-200 to-pink-300 rounded-3xl p-8 shadow-xl flex items-center justify-center"
+              >
+                <div className="text-8xl">🎨</div>
+              </motion.div>
+              
+              <motion.div
+                animate={{ y: [0, -8, 0], rotate: [0, 5, 0] }}
+                transition={{ duration: 2.8, repeat: Infinity, delay: 1.5 }}
+                className="bg-gradient-to-br from-blue-200 to-blue-300 rounded-3xl p-8 shadow-xl flex items-center justify-center"
+              >
+                <div className="text-8xl">🚀</div>
+              </motion.div>
             </div>
           </motion.div>
         </div>
@@ -174,13 +168,9 @@ export function Hero({ setActiveSection }: HeroProps) {
           className="bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all cursor-pointer"
           onClick={() => setActiveSection('games')}
         >
-          <motion.div
-            animate={{ rotate: [0, 10, -10, 0] }}
-            transition={{ duration: 3, repeat: Infinity }}
-            className="text-6xl mb-4"
-          >
+          <div className="text-6xl mb-4">
             🎮
-          </motion.div>
+          </div>
           <h3 className="text-gray-900 mb-3">趣味遊戲</h3>
           <p className="text-gray-600 mb-4">
             透過精心設計的互動遊戲，讓學習變得更有趣！包含數學、語文、記憶力訓練等多種類型。
@@ -196,13 +186,9 @@ export function Hero({ setActiveSection }: HeroProps) {
           className="bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all cursor-pointer"
           onClick={() => setActiveSection('parenting')}
         >
-          <motion.div
-            animate={{ scale: [1, 1.2, 1] }}
-            transition={{ duration: 2, repeat: Infinity }}
-            className="text-6xl mb-4"
-          >
+          <div className="text-6xl mb-4">
             💝
-          </motion.div>
+          </div>
           <h3 className="text-gray-900 mb-3">教養指南</h3>
           <p className="text-gray-600 mb-4">
             專業的育兒建議與實用技巧，幫助您培養孩子的品格、溝通能力與情緒管理。
@@ -218,13 +204,9 @@ export function Hero({ setActiveSection }: HeroProps) {
           className="bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all cursor-pointer"
           onClick={() => setActiveSection('tech')}
         >
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-            className="text-6xl mb-4"
-          >
+          <div className="text-6xl mb-4">
             💻
-          </motion.div>
+          </div>
           <h3 className="text-gray-900 mb-3">技術分享</h3>
           <p className="text-gray-600 mb-4">
             前端開發技術心得、最佳實踐與實戰經驗，涵蓋 Vue3、.NET、SQL 等主流技術。

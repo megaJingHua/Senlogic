@@ -2,7 +2,11 @@ import { motion } from 'motion/react';
 import { Heart, BookOpen, Users, MessageCircle, TrendingUp, Clock } from 'lucide-react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 
-export function ParentingSection() {
+interface ParentingSectionProps {
+  onArticleClick: (articleId: number) => void;
+}
+
+export function ParentingSection({ onArticleClick }: ParentingSectionProps) {
   const articles = [
     {
       id: 1,
@@ -123,6 +127,46 @@ export function ParentingSection() {
         })}
       </motion.div>
 
+      {/* About Author */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+        className="mb-12"
+      >
+        <div className="max-w-4xl mx-auto bg-gradient-to-br from-pink-100 to-rose-100 rounded-3xl shadow-xl p-8 md:p-12">
+          <div className="flex flex-col md:flex-row gap-8 items-center">
+            <div className="flex flex-col items-center text-center md:w-1/3">
+              <motion.div
+                animate={{ y: [0, -10, 0] }}
+                transition={{ duration: 3, repeat: Infinity }}
+                className="w-32 h-32 bg-gradient-to-br from-orange-400 to-pink-500 rounded-full flex items-center justify-center text-6xl mb-4 shadow-xl"
+              >
+                👩‍💻
+              </motion.div>
+              <h3 className="text-gray-900">寶哥媽咪（Mega）</h3>
+              <div className="flex flex-wrap gap-2 mt-2 justify-center">
+                <span className="bg-white/60 px-3 py-1 rounded-full text-gray-700">工程師</span>
+                <span className="bg-white/60 px-3 py-1 rounded-full text-gray-700">媽媽</span>
+                <span className="bg-white/60 px-3 py-1 rounded-full text-gray-700">學習者</span>
+              </div>
+            </div>
+
+            <div className="md:w-2/3">
+              <h3 className="text-amber-900 mb-4">關於作者</h3>
+              <p className="text-gray-700 mb-4 leading-relaxed">
+                每天在工程師、媽媽、學習者三種身份間切換。平常熱愛紀錄寶哥的成長與情緒教養細節，思考怎麼讓孩子更有安全感、界線感、也更會用邏輯理解世界。
+              </p>
+              <div className="bg-white/60 rounded-2xl p-4 border-l-4 border-orange-500">
+                <p className="text-gray-600 italic">
+                  所有文章皆由作者與 AI 共同討論、編寫，再由作者依照親子實戰經驗調整，以���現最貼近育兒現場的內容。
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+
       {/* Featured Article */}
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
@@ -159,6 +203,7 @@ export function ParentingSection() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className="bg-gradient-to-r from-orange-400 to-amber-500 text-white px-8 py-3 rounded-full shadow-lg hover:shadow-xl transition-shadow inline-flex items-center gap-2"
+                onClick={() => onArticleClick(1)}
               >
                 <BookOpen className="w-5 h-5" />
                 閱讀全文

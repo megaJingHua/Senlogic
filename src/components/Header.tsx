@@ -32,7 +32,7 @@ export function Header({
             onClick={() => setActiveSection("home")}
           >
             <div className="w-10 h-10 bg-gradient-to-br from-orange-400 to-amber-500 rounded-full flex items-center justify-center">
-              <span className="text-white">₍ᐢ. ̫ .ᐢ₎</span>
+              <span className="text-white">🐰</span>
             </div>
             <span className="text-amber-900">森森邏輯</span>
           </motion.div>
