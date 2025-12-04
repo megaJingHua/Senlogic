@@ -12,16 +12,22 @@ export function TechSection() {
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
   const [selectedTech, setSelectedTech] = useState<string | null>(null);
   const [showUiPathOrchestrator, setShowUiPathOrchestrator] = useState(false);
+  const [showUiPathHost, setShowUiPathHost] = useState(false);
+  const [showUiPathManagement, setShowUiPathManagement] = useState(false);
   const [showEngineerDaily, setShowEngineerDaily] = useState(false);
   const [selectedChat, setSelectedChat] = useState<number>(0);
   const chatContainerRef = useRef<HTMLDivElement>(null);
+  
+  // 追蹤文章進入來源：'main' 表示從主頁進入，'techStack' 表示從技術棧進入
+  const [articleEntrySource, setArticleEntrySource] = useState<'main' | 'techStack'>('main');
+  const [showUiPathTenant, setShowUiPathTenant] = useState(false);
 
   // Scroll to top when entering article detail pages
   useEffect(() => {
-    if (selectedDay !== null || showUiPathOrchestrator || showEngineerDaily) {
+    if (selectedDay !== null || showUiPathOrchestrator || showUiPathHost || showEngineerDaily || showUiPathTenant) {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-  }, [selectedDay, showUiPathOrchestrator, showEngineerDaily]);
+  }, [selectedDay, showUiPathOrchestrator, showUiPathHost, showEngineerDaily, showUiPathTenant]);
 
   const vue30Days = [
     { 
@@ -450,7 +456,7 @@ function getTodoIndex(todo) {
         sections: [
           {
             type: 'intro',
-            text: '你可以把「網站」想成一間房子，房子的大門就是你的首頁 (Home)，房間就像每個不同的功能頁面，而走廊就是 Router（路由），它負責帶你從大門走到不同的房間。'
+            text: '你可以把「網站」想成一間房子，房子的大門就是你的首頁 (Home)，房間就像每個不同的功能頁面，而走廊就是 Router（路由�����，它負責帶你從大門走到不同的房間。'
           },
           {
             type: 'concept',
@@ -656,7 +662,7 @@ const counter = useCounterStore()
           {
             type: 'perspective',
             title: '👩‍🍼 寶媽角度',
-            content: '寫購物清單時：如果漏寫「牛奶」，去超市就會買不到。如果數字寫錯，可能買太多或不夠。',
+            content: '寫���物清單時：如果漏寫「牛奶」，去超市就會買不到。如果數字寫錯，可能買太多或不夠。',
             highlight: '所以需要一個小幫手，在出門前提醒你「清單沒寫完整」。',
             conclusion: 'Vue 的表單驗證就是這個小幫手，確保資料正確無誤。'
           },
@@ -859,7 +865,7 @@ onUnmounted(() => console.log('🌙 元件卸載 → 餐館打烊'))
         sections: [
           {
             type: 'intro',
-            text: '在 Vue 專案裡，元件之間最常見的傳值方式是 **props**（父傳子）。但如果資料要從「爺爺 → 孫子」跨過好幾層，props 就會變得冗長。👉 Vue 提供 **provide / inject**，讓「祖先元件」直接把資料提供給「後代元件」，中間的父母不用再幫忙轉交。'
+            text: '在 Vue 專案裡，元件之間最常見的傳值方式是 **props**（父傳子）。但如果資料要從「爺爺 → 孫子」跨過好幾層，props 就會變得��長。👉 Vue 提供 **provide / inject**，讓「祖先元件」直接把資料提供給「後代元件」，中間的父母不用再幫忙轉交。'
           },
           {
             type: 'perspective',
@@ -1022,7 +1028,7 @@ const theme = inject('theme')
             title: '📦 今天的實作',
             description: '需求：',
             tasks: [
-              '建立一個 Card 元件，裡面有「標題 slot」和「內容 slot」。',
+              '建立一個 Card 元件，裡面有「標�� slot」和「內容 slot」。',
               '父元件 App.vue 可以決定標題與內容顯示什麼。'
             ],
             steps: [
@@ -1364,7 +1370,7 @@ const { count, increment } = useCounter()
           {
             type: 'demo',
             title: '📦 今天的實作',
-            description: '製作一個「現在時間 Hook」。',
+            description: '製作一個���現在時間 Hook」。',
             tasks: [],
             codeSections: [
               {
@@ -1685,7 +1691,7 @@ const show = ref(true)
             type: 'perspective',
             title: '👩‍🍼 寶媽角度',
             content: '烤餅乾：只要準備一份麵糰，就能一次烤出 12 塊餅乾。',
-            highlight: '不用一個一個慢慢做，用模板批量生產。',
+            highlight: '不用一個一個慢慢做，用模��批量生產。',
             conclusion: '效率提升，省時省力。'
           },
           {
@@ -2139,112 +2145,57 @@ export default router`,
     },
     {
       id: 2,
-      title: 'UiPath Orchestrator 完整指南',
+      title: 'UiPath 技術分享',
       excerpt: '深入學習 UiPath Orchestrator 中央控制平台，掌握機器人管理、排程部署、監控追蹤等企業級 RPA 自動化核心技術！',
       category: 'UiPath',
       date: '2025-12-03',
       views: 2450,
       tags: ['UiPath', 'RPA', 'Automation', 'Orchestrator'],
-      icon: '🤖',
+      icon: '🚀',
       color: 'from-orange-500 to-orange-600'
+    },
+    {
+      id: 3,
+      title: 'UiPath OC Host 設定',
+      excerpt: '深入了解 Host 平台管理：Tenant 建立、授權分配、License 更新全流程，掌握企業級 RPA 平台管理核心技術！',
+      category: 'UiPath',
+      date: '2025-12-04',
+      views: 1850,
+      tags: ['UiPath', 'Host', 'Tenant', 'License'],
+      icon: '⚙️',
+      color: 'from-purple-500 to-indigo-600'
+    },
+    {
+      id: 4,
+      title: 'UiPath Orchestrator（OC）Management 平台全解析',
+      excerpt: 'Host 與 Tenant 兩種 Management 有何不同？一次搞懂身份管理與平台控管架構，完整解析 Identity Hub 的功能與使用情境！',
+      category: 'UiPath',
+      date: '2025-12-04',
+      views: 1650,
+      tags: ['UiPath', 'Orchestrator', 'Management', 'Identity Hub'],
+      icon: '🏛',
+      color: 'from-blue-500 to-cyan-600'
+    },
+    {
+      id: 5,
+      title: 'UiPath OC Tenant 功能解析',
+      excerpt: '從 Robots、Folders、Packages、Machines 到安全性與監控，一篇搞懂 Tenant 可以做什麼！',
+      category: 'UiPath',
+      date: '2025-12-04',
+      views: 1920,
+      tags: ['UiPath', 'Tenant', 'Robots', 'Folders'],
+      icon: '🎯',
+      color: 'from-teal-500 to-emerald-600'
     }
   ];
 
   const engineerChats = [
+
+
+
+
     {
       id: 0,
-      title: '與同事的日常',
-      participants: ['我', '小明 (前端)', '阿華 (後端)'],
-      avatar: '👨‍💻',
-      messages: [
-        { sender: '小明 (前端)', avatar: '👨', time: '09:15', content: '早安！昨天那個 API 串接好了嗎？', isMe: false },
-        { sender: '我', avatar: '👤', time: '09:17', content: '早！搞定了，但發現一個問題...response 的日期格式跟文件不一樣 😅', isMe: true },
-        { sender: '阿華 (後端)', avatar: '👨‍💼', time: '09:18', content: '什麼！讓我看看', isMe: false },
-        { sender: '我', avatar: '👤', time: '09:19', content: '文件寫 "YYYY-MM-DD"，但實際回傳是 timestamp', isMe: true },
-        { sender: '阿華 (後端)', avatar: '👨‍💼', time: '09:21', content: '啊...那個是我上週改的，忘記更新文件了 🤦‍♂️', isMe: false },
-        { sender: '小明 (前端)', avatar: '👨', time: '09:22', content: '經典劇情 XD 文件永遠是最後更新的', isMe: false },
-        { sender: '我', avatar: '👤', time: '09:23', content: '沒關係啦，我加個轉換函數就好。阿華記得補文件喔～', isMe: true },
-        { sender: '阿華 (後端)', avatar: '👨‍💼', time: '09:25', content: '收到！我現在就去改 📝', isMe: false },
-      ]
-    },
-    {
-      id: 1,
-      title: '主管的需求變更',
-      participants: ['我', 'Tony 主管'],
-      avatar: '👔',
-      messages: [
-        { sender: 'Tony 主管', avatar: '👔', time: '14:30', content: '嗨，那個新功能做得怎麼樣了？', isMe: false },
-        { sender: '我', avatar: '👤', time: '14:32', content: '主管好！進度順利，預計明天可以上測試環境', isMe: true },
-        { sender: 'Tony 主管', avatar: '👔', time: '14:33', content: '太好了！對了，老闆剛剛看了 demo，希望能加個匯出 Excel 的功能', isMe: false },
-        { sender: '我', avatar: '👤', time: '14:35', content: '(內心：又來了...) 了解，這個需求...大概需要多少時間？', isMe: true },
-        { sender: 'Tony 主管', avatar: '👔', time: '14:36', content: '應該不難吧？就加個按鈕下載 Excel 而已', isMe: false },
-        { sender: '我', avatar: '👤', time: '14:38', content: '嗯...要處理資料格式、欄位對應、樣式設定，還要考慮大量資料的效能，預估需要 2-3 天', isMe: true },
-        { sender: 'Tony 主管', avatar: '👔', time: '14:40', content: '這麼久？😮', isMe: false },
-        { sender: '我', avatar: '👤', time: '14:42', content: '如果只要基本的匯出，1天可以搞定。但如果要美觀的格式和自訂欄位，就需要 2-3 天', isMe: true },
-        { sender: 'Tony 主管', avatar: '👔', time: '14:45', content: '好吧，先做基本版，之後有需要再優化。辛苦了！', isMe: false },
-        { sender: '我', avatar: '👤', time: '14:46', content: '收到！我會盡快完成 💪', isMe: true },
-      ]
-    },
-    {
-      id: 2,
-      title: '使用者回饋',
-      participants: ['我', '王小姐 (使用者)', 'Sarah (客服)'],
-      avatar: '👥',
-      messages: [
-        { sender: 'Sarah (客服)', avatar: '👩‍💼', time: '10:05', content: '@工程師 有使用者反應系統有問題', isMe: false },
-        { sender: '我', avatar: '👤', time: '10:07', content: '什麼問題？我看一下', isMe: true },
-        { sender: 'Sarah (客服)', avatar: '👩‍💼', time: '10:08', content: '王小姐說她按了送出鈕後，畫面就一直轉圈圈', isMe: false },
-        { sender: '王小姐 (使用者)', avatar: '👩', time: '10:10', content: '對啊！我等了 5 分鐘都沒反應，是不是壞掉了？', isMe: false },
-        { sender: '我', avatar: '👤', time: '10:12', content: '王小姐您好，請問您是在哪個頁面遇到這個問題？可以截圖給我看嗎？', isMe: true },
-        { sender: '王小姐 (使用者)', avatar: '👩', time: '10:15', content: '[圖片] 就是這個「批次上傳」的頁面', isMe: false },
-        { sender: '我', avatar: '👤', time: '10:18', content: '了解！請問您上傳的檔案大概多大？', isMe: true },
-        { sender: '王小姐 (使用者)', avatar: '👩', time: '10:20', content: '大概 50MB 左右，有 5000 筆資料', isMe: false },
-        { sender: '我', avatar: '👤', time: '10:22', content: '找到原因了！目前系統對大檔案的處理時間較長，建議您分批上傳，每次 1000 筆左右會比較穩定', isMe: true },
-        { sender: '王小姐 (使用者)', avatar: '👩', time: '10:25', content: '原來如此！那我重新分批試試看，謝謝！', isMe: false },
-        { sender: '我', avatar: '👤', time: '10:27', content: '不客氣！我也會優化大檔案的處理流程，預計下週更新後就不會有這個問題了 👍', isMe: true },
-        { sender: 'Sarah (客服)', avatar: '👩‍💼', time: '10:30', content: '感謝工程師！', isMe: false },
-      ]
-    },
-    {
-      id: 3,
-      title: 'Code Review 時間',
-      participants: ['我', 'David (資深工程師)'],
-      avatar: '🔍',
-      messages: [
-        { sender: 'David (資深工程師)', avatar: '🧑‍🏫', time: '16:00', content: '看了你的 PR，整體寫得不錯！', isMe: false },
-        { sender: '我', avatar: '👤', time: '16:02', content: '謝謝 David！有什麼需要改進的地方嗎？', isMe: true },
-        { sender: 'David (資深工程師)', avatar: '🧑‍🏫', time: '16:03', content: '有幾個小建議：第 45 行的 forEach 可以改用 map 會更簡潔', isMe: false },
-        { sender: '我', avatar: '👤', time: '16:05', content: '喔對！我怎麼沒想到，馬上改', isMe: true },
-        { sender: 'David (資深工程師)', avatar: '🧑‍🏫', time: '16:07', content: '還有這個 API 呼叫建議加上 try-catch，避免錯誤沒被捕捉到', isMe: false },
-        { sender: '我', avatar: '👤', time: '16:10', content: '好的！我補上錯誤處理', isMe: true },
-        { sender: 'David (資深工程師)', avatar: '🧑‍🏫', time: '16:15', content: '另外，變數命名可以更語意化一點，"data" 改成 "userList" 會更清楚', isMe: false },
-        { sender: '我', avatar: '👤', time: '16:18', content: '了解！我全部改完再請您 review', isMe: true },
-        { sender: 'David (資深工程師)', avatar: '🧑‍🏫', time: '16:20', content: '👍 加油！寫程式要時刻想著「3個月後的自己看得懂嗎」', isMe: false },
-        { sender: '我', avatar: '👤', time: '16:22', content: '受教了！這個觀念很重要 🙏', isMe: true },
-      ]
-    },
-    {
-      id: 4,
-      title: '週五下午的緊急 Bug',
-      participants: ['我', '小美 (QA)', '阿傑 (前端)'],
-      avatar: '🐛',
-      messages: [
-        { sender: '小美 (QA)', avatar: '👩‍💻', time: '16:30', content: '糟糕！production 環境發現嚴重 bug！', isMe: false },
-        { sender: '我', avatar: '👤', time: '16:31', content: '什麼！週五下午發現 bug 是最可怕的... 😱', isMe: true },
-        { sender: '阿傑 (前端)', avatar: '👨‍💻', time: '16:32', content: '是哪裡出問題？', isMe: false },
-        { sender: '小美 (QA)', avatar: '👩‍💻', time: '16:33', content: '結帳頁面點擊「確認付款」後沒反應，而且沒有錯誤訊息', isMe: false },
-        { sender: '我', avatar: '👤', time: '16:35', content: '讓我看看 console... 喔不，是今天早上的部署改壞的', isMe: true },
-        { sender: '阿傑 (前端)', avatar: '👨‍💻', time: '16:36', content: '能先 rollback 嗎？', isMe: false },
-        { sender: '我', avatar: '👤', time: '16:37', content: '我先檢查一下影響範圍... 找到了！是 API 路徑打錯了', isMe: true },
-        { sender: '小美 (QA)', avatar: '👩‍💻', time: '16:40', content: '可以快速修復嗎？還是要 rollback？', isMe: false },
-        { sender: '我', avatar: '👤', time: '16:42', content: '改一個字而已，我立刻部署修正版', isMe: true },
-        { sender: '阿傑 (前端)', avatar: '👨‍💻', time: '16:50', content: '測試過了，已經正常！', isMe: false },
-        { sender: '小美 (QA)', avatar: '👩‍💻', time: '16:52', content: '確認修復！大家辛苦了 🎉', isMe: false },
-        { sender: '我', avatar: '👤', time: '16:55', content: '好險趕在下班前搞定... 差點要加班了 😅', isMe: true },
-      ]
-    },
-    {
-      id: 5,
       title: '上班按摩記',
       participants: ['Mega', '主管', '小組長'],
       avatar: '💆',
@@ -2276,7 +2227,7 @@ export default router`,
   
   // Auto-play chat messages on homepage
   useEffect(() => {
-    if (!showEngineerDaily && !selectedDay && !showUiPathOrchestrator) {
+    if (!showEngineerDaily && !selectedDay && !showUiPathOrchestrator && !showUiPathHost && !showUiPathManagement) {
       const chat = engineerChats[currentChatIndex];
       if (visibleMessages < chat.messages.length) {
         const timer = setTimeout(() => {
@@ -2292,7 +2243,7 @@ export default router`,
         return () => clearTimeout(switchTimer);
       }
     }
-  }, [visibleMessages, currentChatIndex, showEngineerDaily, selectedDay, showUiPathOrchestrator]);
+  }, [visibleMessages, currentChatIndex, showEngineerDaily, selectedDay, showUiPathOrchestrator, showUiPathHost, showUiPathManagement]);
 
   // Auto-scroll to bottom when new message appears
   useEffect(() => {
@@ -2985,7 +2936,7 @@ export default router`,
             )}
           </div>
         </motion.div>
-      ) : selectedTech === 'Vue3' ? (
+      ) : selectedTech === 'Vue3' && !showVue30Days ? (
         /* Vue3 Single Card View */
         <motion.div
           initial={{ opacity: 0 }}
@@ -3010,7 +2961,6 @@ export default router`,
               transition={{ delay: 0.2 }}
               whileHover={{ scale: 1.02, y: -5 }}
               onClick={() => {
-                setSelectedTech(null);
                 setShowVue30Days(true);
               }}
               className="relative overflow-hidden rounded-3xl cursor-pointer"
@@ -3089,7 +3039,7 @@ export default router`,
             </motion.div>
           </div>
         </motion.div>
-      ) : selectedTech === 'UiPath' ? (
+      ) : selectedTech === 'UiPath' && !showUiPathOrchestrator && !showUiPathHost && !showUiPathManagement && !showUiPathTenant ? (
         /* UiPath Article List View */
         <motion.div
           initial={{ opacity: 0 }}
@@ -3107,90 +3057,236 @@ export default router`,
               <span>返回技術文章</span>
             </motion.button>
             
-            {/* UiPath Orchestrator Article Card */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.2 }}
-              whileHover={{ scale: 1.02, y: -5 }}
-              onClick={() => {
-                setSelectedTech(null);
-                setShowUiPathOrchestrator(true);
-              }}
-              className="relative overflow-hidden rounded-3xl cursor-pointer"
-            >
-              <div className="bg-gradient-to-r from-orange-500 to-orange-600 p-8 md:p-12 flex items-center">
-                <div className="grid md:grid-cols-2 gap-8 items-center w-full">
+            <h2 className="text-gray-900 mb-8">UiPath 相關文章</h2>
+            
+            {/* UiPath Articles Grid - 一列三張 */}
+            <div className="grid md:grid-cols-3 gap-8">
+              {/* UiPath Orchestrator Article Card */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+                whileHover={{ scale: 1.05, y: -10 }}
+                onClick={() => {
+                  setShowUiPathOrchestrator(true);
+                }}
+                className="bg-white rounded-3xl shadow-lg overflow-hidden cursor-pointer group"
+              >
+                {/* Header with icon */}
+                <div className="bg-gradient-to-r from-orange-500 to-orange-600 p-8 text-center relative overflow-hidden">
                   <motion.div
-                    initial={{ x: -50, opacity: 0 }}
-                    animate={{ x: 0, opacity: 1 }}
-                    transition={{ delay: 0.4 }}
+                    animate={{ rotate: [0, 10, -10, 0] }}
+                    transition={{ duration: 4, repeat: Infinity }}
+                    className="text-7xl mb-4"
                   >
-                    <div className="flex items-center gap-2 text-white/90 mb-4">
-                      <span className="bg-white/20 backdrop-blur-sm px-4 py-1 rounded-full">
-                        RPA 技術
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Calendar className="w-4 h-4" />
-                        2025-12-03
-                      </span>
-                    </div>
-
-                    <h2 className="text-white mb-4">UiPath Orchestrator 完整指南</h2>
-                    <p className="text-white/90 mb-6">
-                      深入理解 UiPath 機器人的中央控制平台，掌握 RPA 部署、排程、監控的核心概念與實務應用。
-                    </p>
-
-                    <div className="flex flex-wrap gap-2 mb-6">
-                      {['Orchestrator', 'RPA', '自動化', '企業級'].map((tag, i) => (
-                        <span key={i} className="bg-white/20 backdrop-blur-sm text-white px-3 py-1 rounded-full">
-                          #{tag}
-                        </span>
-                      ))}
-                    </div>
-
-                    <div className="flex items-center gap-4">
-                      <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        className="bg-white text-orange-600 px-6 py-3 rounded-full hover:shadow-xl transition-shadow"
-                      >
-                        閱讀文章 →
-                      </motion.button>
-                      <div className="flex items-center gap-2 text-white/80">
-                        <Eye className="w-5 h-5" />
-                        <span>2,450</span>
-                      </div>
-                    </div>
+                    🚀
                   </motion.div>
-
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ delay: 0.6, type: "spring" }}
-                    className="relative"
-                  >
-                    <div className="text-9xl text-center">
-                      🚀
-                    </div>
-                    <motion.div
-                      animate={{ y: [0, -20, 0] }}
-                      transition={{ duration: 3, repeat: Infinity }}
-                      className="absolute -top-8 -right-8 text-6xl opacity-50"
-                    >
-                      🤖
-                    </motion.div>
-                    <motion.div
-                      animate={{ y: [0, 20, 0] }}
-                      transition={{ duration: 3, delay: 1, repeat: Infinity }}
-                      className="absolute -bottom-8 -left-8 text-6xl opacity-50"
-                    >
-                      ⚙️
-                    </motion.div>
-                  </motion.div>
+                  <div className="absolute top-4 right-4 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-white text-sm">
+                    RPA 技術
+                  </div>
                 </div>
-              </div>
-            </motion.div>
+
+                {/* Content */}
+                <div className="p-6">
+                  <h3 className="text-gray-900 mb-3 group-hover:text-orange-500 transition-colors">
+                    UiPath 技術分享
+                  </h3>
+                  
+                  <p className="text-gray-600 mb-4 line-clamp-3">
+                    深入學習 UiPath Orchestrator 中央控制平台，掌握機器人管理、排程部署、監控追蹤等企業級 RPA 自動化核心技術！
+                  </p>
+
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {['Orchestrator', 'RPA', '自動化'].map((tag, i) => (
+                      <span key={i} className="bg-orange-100 text-orange-600 px-3 py-1 rounded-full text-sm">
+                        #{tag}
+                      </span>
+                    ))}
+                  </div>
+
+                  <div className="flex items-center justify-between text-sm text-gray-500">
+                    <div className="flex items-center gap-1">
+                      <Calendar className="w-4 h-4" />
+                      <span>2025-12-03</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Eye className="w-4 h-4" />
+                      <span>2,450</span>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* UiPath Host 設定 Article Card */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                whileHover={{ scale: 1.05, y: -10 }}
+                onClick={() => {
+                  setShowUiPathHost(true);
+                }}
+                className="bg-white rounded-3xl shadow-lg overflow-hidden cursor-pointer group"
+              >
+                {/* Header with icon */}
+                <div className="bg-gradient-to-r from-purple-500 to-indigo-600 p-8 text-center relative overflow-hidden">
+                  <motion.div
+                    animate={{ rotate: [0, 15, -15, 0] }}
+                    transition={{ duration: 5, repeat: Infinity }}
+                    className="text-7xl mb-4"
+                  >
+                    ⚙️
+                  </motion.div>
+                  <div className="absolute top-4 right-4 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-white text-sm">
+                    Host 管理
+                  </div>
+                </div>
+
+                {/* Content */}
+                <div className="p-6">
+                  <h3 className="text-gray-900 mb-3 group-hover:text-purple-500 transition-colors">
+                    UiPath OC Host 設定
+                  </h3>
+                  
+                  <p className="text-gray-600 mb-4 line-clamp-3">
+                    深入了解 Host 平台管理：Tenant 建立、授權分配、License 更新全流程，掌握企業級 RPA 平台管理核心技術！
+                  </p>
+
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {['Host', 'Tenant', 'License'].map((tag, i) => (
+                      <span key={i} className="bg-purple-100 text-purple-600 px-3 py-1 rounded-full text-sm">
+                        #{tag}
+                      </span>
+                    ))}
+                  </div>
+
+                  <div className="flex items-center justify-between text-sm text-gray-500">
+                    <div className="flex items-center gap-1">
+                      <Calendar className="w-4 h-4" />
+                      <span>2025-12-04</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Eye className="w-4 h-4" />
+                      <span>1,850</span>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* UiPath Management 文章 Card */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                whileHover={{ scale: 1.05, y: -10 }}
+                onClick={() => {
+                  setArticleEntrySource('techStack');
+                  setShowUiPathManagement(true);
+                }}
+                className="bg-white rounded-3xl shadow-lg overflow-hidden cursor-pointer group"
+              >
+                {/* Header with icon */}
+                <div className="bg-gradient-to-r from-blue-500 to-cyan-600 p-8 text-center relative overflow-hidden">
+                  <motion.div
+                    animate={{ rotate: [0, 15, -15, 0] }}
+                    transition={{ duration: 5, repeat: Infinity }}
+                    className="text-7xl mb-4"
+                  >
+                    🏛
+                  </motion.div>
+                  <div className="absolute top-4 right-4 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-white text-sm">
+                    Identity Hub
+                  </div>
+                </div>
+
+                {/* Content */}
+                <div className="p-6">
+                  <h3 className="text-gray-900 mb-3 group-hover:text-blue-500 transition-colors">
+                    UiPath Orchestrator（OC）Management 平台全解析
+                  </h3>
+                  
+                  <p className="text-gray-600 mb-4 line-clamp-3">
+                    Host 與 Tenant 兩種 Management 有何不同？一次搞懂身份管理與平台控管架構，完整解析 Identity Hub 的功能與使用情境！
+                  </p>
+
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {['Orchestrator', 'Management', 'Identity Hub'].map((tag, i) => (
+                      <span key={i} className="bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-sm">
+                        #{tag}
+                      </span>
+                    ))}
+                  </div>
+
+                  <div className="flex items-center justify-between text-sm text-gray-500">
+                    <div className="flex items-center gap-1">
+                      <Calendar className="w-4 h-4" />
+                      <span>2025-12-04</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Eye className="w-4 h-4" />
+                      <span>1,650</span>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* UiPath Tenant Article Card */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+                whileHover={{ scale: 1.05, y: -10 }}
+                onClick={() => {
+                  setArticleEntrySource('techStack');
+                  setShowUiPathTenant(true);
+                }}
+                className="bg-white rounded-3xl shadow-lg overflow-hidden cursor-pointer group"
+              >
+                {/* Header with icon */}
+                <div className="bg-gradient-to-r from-teal-500 to-emerald-600 p-8 text-center relative overflow-hidden">
+                  <motion.div
+                    animate={{ rotate: [0, 360] }}
+                    transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
+                    className="text-7xl mb-4"
+                  >
+                    🎯
+                  </motion.div>
+                  <div className="absolute top-4 right-4 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-white text-sm">
+                    Tenant 管理
+                  </div>
+                </div>
+
+                {/* Content */}
+                <div className="p-6">
+                  <h3 className="text-gray-900 mb-3 group-hover:text-teal-500 transition-colors">
+                    UiPath OC Tenant 功能解析
+                  </h3>
+                  
+                  <p className="text-gray-600 mb-4 line-clamp-3">
+                    從 Robots、Folders、Packages、Machines 到安全性與監控，一篇搞懂 Tenant 可以做什麼！
+                  </p>
+
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {['Tenant', 'Robots', 'Folders'].map((tag, i) => (
+                      <span key={i} className="bg-teal-100 text-teal-600 px-3 py-1 rounded-full text-sm">
+                        #{tag}
+                      </span>
+                    ))}
+                  </div>
+
+                  <div className="flex items-center justify-between text-sm text-gray-500">
+                    <div className="flex items-center gap-1">
+                      <Calendar className="w-4 h-4" />
+                      <span>2025-12-04</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Eye className="w-4 h-4" />
+                      <span>1,920</span>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
           </div>
         </motion.div>
       ) : showUiPathOrchestrator ? (
@@ -3204,11 +3300,18 @@ export default router`,
             <motion.button
               whileHover={{ scale: 1.05, x: -5 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => setShowUiPathOrchestrator(false)}
+              onClick={() => {
+                setShowUiPathOrchestrator(false);
+                if (articleEntrySource === 'main') {
+                  setSelectedTech(null);
+                } else {
+                  setSelectedTech('UiPath');
+                }
+              }}
               className="inline-flex items-center gap-2 text-orange-600 hover:text-orange-700 mb-4"
             >
               <span className="text-2xl">←</span>
-              <span>返回技術文章</span>
+              <span>{articleEntrySource === 'main' ? '返回技術文章' : '返回 UiPath 文章'}</span>
             </motion.button>
             
             <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
@@ -3219,288 +3322,1316 @@ export default router`,
                     <span className="text-3xl">🚀</span>
                   </div>
                 </div>
-                <h1 className="text-white mb-2">UiPath Orchestrator 完整指南</h1>
-                <p className="text-white/90">RPA 機器人的中央控制平台</p>
+                <h1 className="text-white mb-2">🧩 UiPath Orchestrator（OC）技術分享</h1>
+                <p className="text-white/90">從開發流程、平台架構到 Host / Tenant / Folder 管理全解析</p>
               </div>
 
               {/* Content */}
               <div className="p-8 md:p-12 space-y-8">
-                {/* 什麼是 Orchestrator */}
+                {/* 一、UiPath 開發流程全貌 */}
                 <div className="bg-blue-50 rounded-2xl p-6">
-                  <h3 className="text-blue-900 mb-4">🟦 什麼是 UiPath Orchestrator？（一句話版本）</h3>
+                  <h3 className="text-blue-900 mb-4">🚀 一、UiPath 開發流程全貌</h3>
                   <p className="text-gray-700 mb-4">
-                    Orchestrator 是 UiPath 機器人的「中央控制平台」。
-                    它負責部署流程、排程、監控、管理資源，讓 RPA 在企業中可以穩定運作。
+                    UiPath 的自動化不是只有單純在本機跑流程，而是一套完整的 開發 → 管理 → 派送 → 執行 → 監控的生命週期。
                   </p>
-                  <p className="text-gray-700 mb-2">它就像：</p>
-                  <ul className="list-disc list-inside space-y-2 text-gray-700 ml-4">
-                    <li>GitLab / Jenkins 是程式的部署中心</li>
-                    <li>Argo CD 是服務的部署中心</li>
-                    <li><strong>Orchestrator 就是 RPA 的部署與控制中心</strong></li>
-                  </ul>
+                  <p className="text-gray-700 mb-4">以下是標準流程：</p>
+                  <div className="bg-white rounded-xl p-4 mb-4">
+                    <pre className="text-gray-700 text-sm overflow-x-auto">
+{`Studio（開發）
+   │ Publish 套件
+   ▼
+Orchestrator（管理平台）
+   │ 派送流程 & 控管資源
+   ▼
+Robots（執行端）`}
+                    </pre>
+                  </div>
+
+                  <div className="space-y-4 mt-6">
+                    <div className="border-l-4 border-blue-500 pl-4">
+                      <h4 className="text-gray-900 mb-2">✔ 1. Studio（流程設計）</h4>
+                      <ul className="list-disc list-inside space-y-1 text-gray-700 ml-4">
+                        <li>開發者在這裡設計自動化流程（Workflows）</li>
+                        <li>支援調試、版本管理、Activity 套件擴充</li>
+                        <li>最後會 Publish 成為一個流程包（Package）</li>
+                      </ul>
+                    </div>
+
+                    <div className="border-l-4 border-orange-500 pl-4">
+                      <h4 className="text-gray-900 mb-2">✔ 2. Orchestrator（管控平台）</h4>
+                      <ul className="list-disc list-inside space-y-1 text-gray-700 ml-4">
+                        <li>這是整個 UiPath 生態系的「大腦」</li>
+                        <li>功能涵蓋：流程派送、排程、資源管理、監控、機器人授權、Exception log</li>
+                        <li>支援多機器人、高併發、大規模企業級佈署</li>
+                      </ul>
+                    </div>
+
+                    <div className="border-l-4 border-green-500 pl-4">
+                      <h4 className="text-gray-900 mb-2">✔ 3. Robots（機器人執行端）</h4>
+                      <ul className="list-disc list-inside space-y-1 text-gray-700 ml-4">
+                        <li>真正執行流程的端點</li>
+                        <li>分為 Attended / Unattended</li>
+                        <li>透過 Orchestrator 控制流程派送與執行紀錄</li>
+                      </ul>
+                    </div>
+                  </div>
+
+                  <div className="bg-gradient-to-r from-blue-100 to-purple-100 rounded-xl p-4 mt-6">
+                    <p className="text-gray-900">
+                      <strong>一句話總結：</strong><br/>
+                      Studio 做流程 → Orchestrator 管理流程 → Robot 執行流程。
+                    </p>
+                  </div>
                 </div>
 
-                {/* Orchestrator 的定位 */}
+                {/* 二、UiPath AI 功能簡介 */}
+                <div className="bg-purple-50 rounded-2xl p-6">
+                  <h3 className="text-purple-900 mb-4">🤖 二、UiPath AI 功能簡介（雲端方案才有）</h3>
+                  <p className="text-gray-700 mb-4">
+                    如果企業使用 UiPath Automation Cloud，就能啟用官方提供的一系列 AI 能力：
+                  </p>
+                  
+                  <h4 className="text-gray-900 mb-3">✦ AI 的協助方式：</h4>
+                  <ul className="space-y-2 text-gray-700 ml-4">
+                    <li><strong>RPA 執行過程遇到異常：</strong>可呼叫 AI 進行錯誤診斷</li>
+                    <li><strong>文件處理：</strong>使用 Document Understanding + AI 模型做 OCR、分類、抽取</li>
+                    <li><strong>聊天式 AI Helper：</strong>可協助判斷流程分支邏輯</li>
+                    <li><strong>AI Center：</strong>訓練自有 ML 模型並整合到流程中</li>
+                  </ul>
+
+                  <p className="text-gray-700 mt-4">
+                    這些能力主要是補足「傳統 RPA 的限制」，讓自動化不再侷限於規則性邏輯而能處理更高彈性的狀況。
+                  </p>
+                </div>
+
+                {/* 三、Orchestrator 平台核心組成 */}
                 <div className="bg-green-50 rounded-2xl p-6">
-                  <h3 className="text-green-900 mb-4">🟩 Orchestrator 的定位（最重要概念）</h3>
+                  <h3 className="text-green-900 mb-4">🏢 三、Orchestrator 平台（OC）的核心組成</h3>
                   <p className="text-gray-700 mb-4">
-                    Orchestrator 不負責「撰寫 RPA 流程」，那是在 Studio 做的。
-                    它的角色是：
+                    UiPath Orchestrator 的資源架構是階層式的。理解這個階層很重要，因為所有管理邏輯都建立在這個概念上。
                   </p>
-                  <ul className="space-y-2 text-gray-700">
-                    <li>✔ 1. 管理流程的版本</li>
-                    <li>✔ 2. 把流程部署到機器人</li>
-                    <li>✔ 3. 設定排程（讓流程自動執行）</li>
-                    <li>✔ 4. 控制機器資源（哪台電腦跑）</li>
-                    <li>✔ 5. 管理敏感資料（API Key、帳密）</li>
-                    <li>✔ 6. 管理大量資料處理（Queues）</li>
-                    <li>✔ 7. 收集機器人執行紀錄（Logs）</li>
-                    <li>✔ 8. 提供 API 讓外部系統觸發流程（CI/CD、後端系統都能叫 Runnable）</li>
-                  </ul>
-                </div>
+                  <p className="text-gray-700 mb-4">
+                    下圖可視為 OC 的「土地 → 建物 → 部門 → 流程」概念：
+                  </p>
 
-                {/* 五大核心區塊 */}
-                <div className="bg-red-50 rounded-2xl p-6">
-                  <h3 className="text-red-900 mb-4">🟥 Orchestrator 的五大核心區塊（最重要的教學）</h3>
-                  <p className="text-gray-700 mb-6">
-                    下面這五個你學會 → 你就真的懂 Orchestrator 的 90% 功能。
-                  </p>
+                  <div className="bg-white rounded-xl p-4 mb-6">
+                    <pre className="text-gray-700 text-sm overflow-x-auto">
+{`Host（地主：控管授權、建 Tenant）
+   └── Tenant（大樓：環境、使用者、資源）
+        └── Folder（部門：流程分組）
+             └── Process（流程套件）`}
+                    </pre>
+                  </div>
 
                   <div className="space-y-6">
-                    {/* ① Machines */}
-                    <div className="border-l-4 border-orange-500 pl-6">
-                      <h4 className="text-gray-900 mb-3">① Machines（機器）——哪台電腦可以跑 RPA？</h4>
+                    {/* Host */}
+                    <div className="border-l-4 border-red-500 pl-4">
+                      <h4 className="text-gray-900 mb-3">✔ 1️⃣ Host（最高權限層級）</h4>
                       <p className="text-gray-700 mb-3">
-                        機器人不是在雲端跑，而是在某台：
+                        只存在於 on-prem 版（自架）的 OC
                       </p>
+                      <p className="text-gray-700 mb-3">
+                        管理整個 Orchestrator 伺服器
+                      </p>
+                      <p className="text-gray-700 mb-2">用來：</p>
                       <ul className="list-disc list-inside space-y-1 text-gray-700 ml-4 mb-3">
-                        <li>你的電腦</li>
-                        <li>公司 VM</li>
-                        <li>伺服器</li>
-                        <li>VDI</li>
+                        <li>建立 / 管理 Tenants</li>
+                        <li>控管授權（Licenses）</li>
+                        <li>監看系統狀態</li>
+                        <li>設定全局系統參數</li>
                       </ul>
-                      <p className="text-gray-700 mb-2">Orchestrator 需先知道「哪台電腦要跑流程」。</p>
-                      <p className="text-gray-700 mb-2">Machines 就是用來：</p>
-                      <ul className="list-disc list-inside space-y-1 text-gray-700 ml-4">
-                        <li>註冊一台���腦</li>
-                        <li>指定它是 Attended 或 Unattended robot</li>
-                        <li>綁定 License</li>
-                        <li>控制它能不能執行流程</li>
-                      </ul>
+                      <p className="text-gray-700">
+                        Host 是 <strong>平台級管理員（Platform Admin）</strong>
+                      </p>
                     </div>
 
-                    {/* ② Processes */}
-                    <div className="border-l-4 border-blue-500 pl-6">
-                      <h4 className="text-gray-900 mb-3">② Processes（流程）——從 Studio 上傳的流程放在哪？</h4>
+                    {/* Tenant */}
+                    <div className="border-l-4 border-blue-500 pl-4">
+                      <h4 className="text-gray-900 mb-3">✔ 2️⃣ Tenant（租戶層級）</h4>
                       <p className="text-gray-700 mb-3">
-                        流程是在 Studio 做好的。但它不會自動跑，必須：
+                        每個 Tenant 就像一個獨立的 OC 世界。
                       </p>
+                      <p className="text-gray-700 mb-2">Tenant 裡面管理：</p>
                       <ul className="list-disc list-inside space-y-1 text-gray-700 ml-4 mb-3">
-                        <li>Publish（從 Studio 上傳到 Orchestrator）</li>
-                        <li>建立 Process（定義這隻流程怎麼跑）</li>
+                        <li>使用者 / 機器人帳號</li>
+                        <li>設備（Machines）</li>
+                        <li>流程（Processes）</li>
+                        <li>套件（Packages）</li>
+                        <li>資產（Assets）</li>
+                        <li>排程（Triggers）</li>
+                        <li>日誌（Logs）</li>
                       </ul>
-                      <p className="text-gray-700 mb-2">Process 決定：</p>
-                      <ul className="list-disc list-inside space-y-1 text-gray-700 ml-4 mb-3">
-                        <li>用哪個 Robot 來跑？</li>
-                        <li>用哪個版本？</li>
-                        <li>用哪些參數？</li>
-                      </ul>
-                      <p className="text-gray-700">這就像：</p>
-                      <ul className="list-disc list-inside space-y-1 text-gray-700 ml-4">
-                        <li>後端程式上傳到 GitLab</li>
-                        <li>再透過 Argo 部署成可以執行的版本</li>
-                      </ul>
+                      <p className="text-gray-700">
+                        簡單說：Tenant 是一個完整功能的 OC「分區」。
+                      </p>
                     </div>
 
-                    {/* ③ Jobs */}
-                    <div className="border-l-4 border-green-500 pl-6">
-                      <h4 className="text-gray-900 mb-3">③ Jobs（執行紀錄）——每次執行的結果</h4>
-                      <p className="text-gray-700 mb-2">Jobs 是用來：</p>
+                    {/* Management */}
+                    <div className="border-l-4 border-green-500 pl-4">
+                      <h4 className="text-gray-900 mb-3">✔ 3️⃣ Management（Tenant 下的人員/機器配置）</h4>
+                      <p className="text-gray-700 mb-3">
+                        Management 是 Tenant 之下的管理區，用來管理：
+                      </p>
                       <ul className="list-disc list-inside space-y-1 text-gray-700 ml-4 mb-3">
-                        <li>手動啟動流程</li>
-                        <li>查看流程是否執行成功</li>
-                        <li>查看失敗原因</li>
-                        <li>重新執行流程</li>
+                        <li>使用者帳號 & 權限</li>
+                        <li>機器人帳號（Robot Accounts）</li>
+                        <li>設備與機器 Key</li>
+                        <li>使用者角色（Roles）</li>
                       </ul>
-                      <p className="text-gray-700 mb-2">這裡會看到：</p>
-                      <ul className="list-disc list-inside space-y-1 text-gray-700 ml-4 mb-3">
-                        <li>成功 / 失敗 / In Progress</li>
-                        <li>Log（這對 Debug 最關鍵）</li>
-                        <li>執行時間</li>
-                        <li>用哪個 Robot 跑的</li>
-                      </ul>
-                      <p className="text-gray-700">Jobs 就像 Cloud Run 或 Jenkins 的執行紀錄。</p>
+                      <p className="text-gray-700">
+                        你可以把它想像為 Tenant 裡的「後台管理」。
+                      </p>
                     </div>
 
-                    {/* ④ Assets */}
-                    <div className="border-l-4 border-purple-500 pl-6">
-                      <h4 className="text-gray-900 mb-3">④ Assets（資產）——帳密、API、路徑都放這裡</h4>
+                    {/* Folder */}
+                    <div className="border-l-4 border-purple-500 pl-4">
+                      <h4 className="text-gray-900 mb-3">✔ 4️⃣ Folder（資料夾/部門）</h4>
                       <p className="text-gray-700 mb-3">
-                        Assets 讓你把敏感資訊集中管理，而不是寫死在流程裡：
+                        Folder 用於將流程、使用者、資源組織化。
                       </p>
-                      <p className="text-gray-700 mb-2">常用的：</p>
+                      <p className="text-gray-700 mb-2">常見做法：</p>
                       <ul className="list-disc list-inside space-y-1 text-gray-700 ml-4 mb-3">
-                        <li>帳號密碼（Credential Asset）</li>
-                        <li>Token（Text Asset）</li>
-                        <li>API URL（Text Asset）</li>
-                        <li>DB Connection String</li>
-                        <li>檔案路徑設定（用來控制 DEV / UAT / PROD 各不同）</li>
+                        <li>以部門建立（如：財務、HR、倉管）</li>
+                        <li>以專案建立（如：發票自動化、報表自動化）</li>
                       </ul>
-                      <p className="text-gray-700 mb-3">Studio 裡面可以用「Get Asset」取得資料。</p>
-                      <p className="text-gray-700 mb-2">這就像：</p>
-                      <ul className="list-disc list-inside space-y-1 text-gray-700 ml-4">
-                        <li>.NET 的 secrets.json</li>
-                        <li>AWS Systems Manager Parameter Store</li>
-                        <li>Azure Key Vault</li>
+                      <p className="text-gray-700 mb-2">Folder 可設定獨立資源，例如：</p>
+                      <ul className="list-disc list-inside space-y-1 text-gray-700 ml-4 mb-3">
+                        <li>Asset</li>
+                        <li>Queue</li>
+                        <li>Process</li>
+                        <li>User</li>
+                        <li>Robot</li>
                       </ul>
+                      <p className="text-gray-700">
+                        Folder 是運行流程的最小單位（執行、排程、資源都綁在 Folder）。
+                      </p>
                     </div>
 
-                    {/* ⑤ Queues */}
-                    <div className="border-l-4 border-pink-500 pl-6">
-                      <h4 className="text-gray-900 mb-3">⑤ Queues（佇列）——大量資料處理的核心</h4>
-                      <p className="text-gray-700 mb-3">
-                        如果你要處理大量資料（例如 500張發票、50筆固定資產），
-                        機器人不能一次吃完，會爆掉。
-                      </p>
-                      <p className="text-gray-700 mb-2">Queues 可以把資料拆成一筆一筆，讓機器人逐筆處理，優點：</p>
-                      <ul className="list-disc list-inside space-y-1 text-gray-700 ml-4">
-                        <li>流程不會被大資料量拖死</li>
-                        <li>某筆失敗可以 Retry</li>
-                        <li>可同時使用多台機器跑（平行處理）</li>
-                        <li>企業級流程標準做法（銀行、會計、財務最常用）</li>
-                      </ul>
-                    </div>
                   </div>
                 </div>
 
-                {/* 其他重要功能 */}
-                <div className="bg-purple-50 rounded-2xl p-6">
-                  <h3 className="text-purple-900 mb-4">🟪 Orchestrator 其他重要功能（一次看懂）</h3>
-                  <div className="overflow-x-auto">
-                    <table className="w-full border-collapse">
-                      <thead>
-                        <tr className="border-b-2 border-purple-200">
-                          <th className="text-left py-3 px-4 text-gray-900">功能</th>
-                          <th className="text-left py-3 px-4 text-gray-900">在做什麼</th>
-                          <th className="text-left py-3 px-4 text-gray-900">為何重要？</th>
-                        </tr>
-                      </thead>
-                      <tbody className="text-gray-700">
-                        <tr className="border-b border-purple-100">
-                          <td className="py-3 px-4">Users & Roles</td>
-                          <td className="py-3 px-4">設定哪些人能看哪些資料</td>
-                          <td className="py-3 px-4">權限控管</td>
-                        </tr>
-                        <tr className="border-b border-purple-100">
-                          <td className="py-3 px-4">Triggers</td>
-                          <td className="py-3 px-4">時間排程、自動觸發流程</td>
-                          <td className="py-3 px-4">自動化核心</td>
-                        </tr>
-                        <tr className="border-b border-purple-100">
-                          <td className="py-3 px-4">Logs</td>
-                          <td className="py-3 px-4">收集 robot log</td>
-                          <td className="py-3 px-4">Debug 用</td>
-                        </tr>
-                        <tr className="border-b border-purple-100">
-                          <td className="py-3 px-4">Monitoring</td>
-                          <td className="py-3 px-4">CPU / Robot 狀態</td>
-                          <td className="py-3 px-4">監控</td>
-                        </tr>
-                        <tr>
-                          <td className="py-3 px-4">Packages</td>
-                          <td className="py-3 px-4">所有流程版本</td>
-                          <td className="py-3 px-4">版本控管</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-
-                {/* 工作流程 */}
-                <div className="bg-orange-50 rounded-2xl p-6">
-                  <h3 className="text-orange-900 mb-4">🟧 整個 RPA 工作流程是這樣運作的</h3>
-                  <p className="text-gray-700 mb-4">我用最白話講給你聽：</p>
-                  <div className="space-y-3 text-gray-700">
-                    <div className="flex items-start gap-3">
-                      <span className="bg-orange-200 text-orange-900 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0">1</span>
-                      <p>你在 Studio 做好流程</p>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <span className="bg-orange-200 text-orange-900 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0">2</span>
-                      <p>Publish 上去 Orchestrator</p>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <span className="bg-orange-200 text-orange-900 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0">3</span>
-                      <p>在 Orchestrator 建 Process</p>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <span className="bg-orange-200 text-orange-900 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0">4</span>
-                      <p>配好哪台 Machine / Robot 來跑</p>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <span className="bg-orange-200 text-orange-900 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0">5</span>
-                      <p>設定 Assets、Queues</p>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <span className="bg-orange-200 text-orange-900 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0">6</span>
-                      <p>設定排程（Triggers）</p>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <span className="bg-orange-200 text-orange-900 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0">7</span>
-                      <p>Robot 在背景自動執行</p>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <span className="bg-orange-200 text-orange-900 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0">8</span>
-                      <p>最後你在 Jobs 和 Logs 看結果</p>
-                    </div>
-                  </div>
-                  <p className="text-gray-700 mt-4">
-                    就是這麼清楚！Orchestrator 控制「怎麼跑、在哪跑、跑什麼」。
-                  </p>
-                </div>
-
-                {/* 核心價值 */}
+                {/* 四、Orchestrator 建議階層架構 */}
                 <div className="bg-yellow-50 rounded-2xl p-6">
-                  <h3 className="text-yellow-900 mb-4">🟨 Orchestrator 的用途（最核心三價值）</h3>
+                  <h3 className="text-yellow-900 mb-4">🧱 四、Orchestrator 建議階層架構</h3>
+                  <p className="text-gray-700 mb-4">建議的層級設計如下：</p>
+
+                  <div className="bg-white rounded-xl p-4 mb-6">
+                    <pre className="text-gray-700 text-sm overflow-x-auto">
+{`Host（Admin）
+  └── Tenant（default / 企業主要租戶）
+        └── Folder（依部門）
+               └── Process（各部門自動化流程）`}
+                    </pre>
+                  </div>
+
+                  <h4 className="text-gray-900 mb-3">📌 為什麼這樣分？</h4>
+                  <ul className="list-disc list-inside space-y-2 text-gray-700 ml-4 mb-6">
+                    <li>Host 不給一般使用者，只給 infra team</li>
+                    <li>Tenant 代表企業整體資源池</li>
+                    <li>Folder 讓每個部門的流程隔離、獨立</li>
+                    <li>Process 落在 Folder 裡，方便控管排程與權限</li>
+                  </ul>
+
+                  <h4 className="text-gray-900 mb-3">舉例：</h4>
+                  <div className="bg-white rounded-xl p-4">
+                    <pre className="text-gray-700 text-sm overflow-x-auto">
+{`Host
+ └── Tenant: Enterprise
+      ├── Folder: Finance
+      │      ├── Process: InvoiceOCR
+      │      ├── Process: PaymentFormChecker
+      │      └── Queue: VendorList
+      ├── Folder: HR
+      │      ├── Process: EmployeeSync
+      │      └── Asset: API_Key
+      └── Folder: Logistics
+             └── Process: WarehouseUpdate`}
+                    </pre>
+                  </div>
+                </div>
+
+                {/* 五、核心觀念總結 */}
+                <div className="bg-red-50 rounded-2xl p-6">
+                  <h3 className="text-red-900 mb-4">🎯 五、核心觀念總結（最重要的三句話）</h3>
                   <div className="space-y-4">
-                    <div>
-                      <h4 className="text-gray-900 mb-2">1️⃣ 讓機器人能自動跑流程</h4>
-                      <ul className="list-disc list-inside space-y-1 text-gray-700 ml-4">
-                        <li>不需要人工按按鈕</li>
-                        <li>不需要開 Studio</li>
-                      </ul>
+                    <div className="bg-white rounded-xl p-4">
+                      <p className="text-gray-900"><strong>1.</strong> Studio 是設計流程的地方，OC 是管理流程的地方。</p>
                     </div>
-                    <div>
-                      <h4 className="text-gray-900 mb-2">2️⃣ 確保流程統一、可控、可監控</h4>
-                      <ul className="list-disc list-inside space-y-1 text-gray-700 ml-4">
-                        <li>版本、紀錄、排程都集中管理</li>
-                      </ul>
+                    <div className="bg-white rounded-xl p-4">
+                      <p className="text-gray-900"><strong>2.</strong> Host 管 Tenant，Tenant 管 Folder，Folder 管 Process。</p>
                     </div>
-                    <div>
-                      <h4 className="text-gray-900 mb-2">3️⃣ 讓企業級 RPA 可擴展</h4>
-                      <p className="text-gray-700 mb-2 ml-4">你可以：</p>
-                      <ul className="list-disc list-inside space-y-1 text-gray-700 ml-8">
-                        <li>多機器</li>
-                        <li>多流程</li>
-                        <li>多部門</li>
-                        <li>多 Queue</li>
-                        <li>多系統 API</li>
-                      </ul>
+                    <div className="bg-white rounded-xl p-4">
+                      <p className="text-gray-900"><strong>3.</strong> OC = 派送流程 + 授權控管 + 資源管理 + 執行監控。</p>
                     </div>
                   </div>
                 </div>
 
                 {/* 總結 */}
                 <div className="bg-gradient-to-r from-orange-100 to-yellow-100 rounded-2xl p-8 text-center">
-                  <h3 className="text-gray-900 mb-4">🎉 最後：一句話讓你完全記住 Orchestrator</h3>
-                  <div className="space-y-3 text-gray-700 text-xl">
-                    <p><strong>Studio</strong> = 做流程</p>
-                    <p><strong>Orchestrator</strong> = 管流程（跑、排程、控管）</p>
-                    <p><strong>Robot</strong> = 執行流程</p>
-                  </div>
-                  <p className="text-gray-700 mt-6">
-                    只要這句記得，你對 UiPath 的理解就已經是「工程師等級」。
+                  <h3 className="text-gray-900 mb-4">🎉 完整掌握 UiPath Orchestrator</h3>
+                  <p className="text-gray-700 text-lg mb-4">
+                    從開發流程、平台架構到 Host / Tenant / Folder 管理全解析
                   </p>
+                  <p className="text-gray-700">
+                    在企業導入 RPA 後，團隊通常會從「能不能自動化」跨越到「如何大規模、安全、有效地管理自動化」。<br/>
+                    UiPath 官方提供的核心平台 Orchestrator 就是為了解決「管理」這件事而存在。
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      ) : showUiPathHost ? (
+        /* UiPath Host 設定 Detail View */
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
+        >
+          <div className="mb-8">
+            <motion.button
+              whileHover={{ scale: 1.05, x: -5 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => {
+                setShowUiPathHost(false);
+                if (articleEntrySource === 'main') {
+                  setSelectedTech(null);
+                } else {
+                  setSelectedTech('UiPath');
+                }
+              }}
+              className="inline-flex items-center gap-2 text-purple-600 hover:text-purple-700 mb-4"
+            >
+              <span className="text-2xl">←</span>
+              <span>{articleEntrySource === 'main' ? '返回技術文章' : '返回 UiPath 文章'}</span>
+            </motion.button>
+            
+            <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
+              {/* Header */}
+              <div className="bg-gradient-to-r from-purple-500 to-indigo-600 p-8 text-white">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="bg-white/20 backdrop-blur-sm rounded-2xl px-6 py-3">
+                    <span className="text-3xl">⚙️</span>
+                  </div>
+                </div>
+                <h1 className="text-white mb-2">UiPath OC Host 設定</h1>
+                <p className="text-white/90">Tenant 建立、授權分配、License 更新全流程</p>
+              </div>
+
+              {/* Content */}
+              <div className="p-8 md:p-12 space-y-8">
+                {/* 前言 */}
+                <div className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-2xl p-6">
+                  <p className="text-gray-700 mb-4">
+                    在企業自架（On-Prem）或雲端企業方案的 UiPath Orchestrator 中，「Host」是整個平台的最高層級管理區域。
+                  </p>
+                  <p className="text-gray-700 mb-4">
+                    Host 管理員所能操作的範圍，遠高於一般 Tenant Admin，包含：
+                  </p>
+                  <ul className="list-none space-y-2 text-gray-700 ml-4">
+                    <li>✔ 建立與管理 Tenant</li>
+                    <li>✔ 分配整體授權池（Licenses）</li>
+                    <li>✔ 管理最高層級的套件 Libraries</li>
+                    <li>✔ 查看 Host 層級操作紀錄（Audit）</li>
+                    <li>✔ 設定全平台預設參數（Settings）</li>
+                  </ul>
+                  <p className="text-gray-700 mt-4">
+                    本文將依序介紹 <strong>Host 的功能</strong>、<strong>進入方式</strong>，並分別解說以下兩大主題：
+                  </p>
+                  <ul className="list-disc list-inside space-y-1 text-gray-700 ml-4 mt-2">
+                    <li>CH1：如何新增 Tenant 並分配 License</li>
+                    <li>CH2：如何更新 License（Online / Offline）</li>
+                  </ul>
+                </div>
+
+                {/* 一、Host 平台的角色與功能介紹 */}
+                <div className="bg-blue-50 rounded-2xl p-6">
+                  <h2 className="text-blue-900 mb-4 text-2xl font-bold">一、Host 平台的角色與功能介紹</h2>
+                  <p className="text-gray-700 mb-6">
+                    Host 是整個 Orchestrator 的「最上層控管區」，可以視為平台系統管理者（Platform Admin）的專屬後台。
+                  </p>
+
+                  <h3 className="text-gray-900 mb-4 text-xl font-semibold">🔧 Host 功能總覽</h3>
+
+                  <div className="space-y-6">
+                    <div className="border-l-4 border-blue-500 pl-4">
+                      <h4 className="text-gray-900 mb-2 text-lg font-semibold">1. Tenants（建立與管理 Tenant）</h4>
+                      <ul className="list-disc list-inside space-y-1 text-gray-700 ml-4">
+                        <li>Host 可用來建立多個 Tenant（租戶）</li>
+                        <li>常用於企業分單位、分專案、或生產/測試環境隔離</li>
+                        <li>可於此功能頁分配各 Tenant 的授權數量</li>
+                      </ul>
+                    </div>
+
+                    <div className="border-l-4 border-purple-500 pl-4">
+                      <h4 className="text-gray-900 mb-2 text-lg font-semibold">2. License（授權池管理）</h4>
+                      <ul className="list-disc list-inside space-y-1 text-gray-700 ml-4">
+                        <li>查看整個 Host 的所有授權使用狀態</li>
+                        <li>進行授權的分配、變更與更新</li>
+                        <li>若授權數量異動，需先將 Tenant 使用中的額度調整回來，避免數字不符造成授權錯誤</li>
+                      </ul>
+                    </div>
+
+                    <div className="border-l-4 border-green-500 pl-4">
+                      <h4 className="text-gray-900 mb-2 text-lg font-semibold">3. Libraries（全局流程套件庫）</h4>
+                      <ul className="list-disc list-inside space-y-1 text-gray-700 ml-4">
+                        <li>Host 層最高的 Library 存放位置</li>
+                        <li>供 Tenant 使用者下載通用 Activity 套件或自家開發的 Library</li>
+                        <li>適合企業統一管理流程元件（Reusable Components）</li>
+                      </ul>
+                    </div>
+
+                    <div className="border-l-4 border-orange-500 pl-4">
+                      <h4 className="text-gray-900 mb-2 text-lg font-semibold">4. Audit（操作紀錄）</h4>
+                      <ul className="list-disc list-inside space-y-1 text-gray-700 ml-4">
+                        <li>記錄 Host 層管理行為（例如 Tenant 建立、License 調整等）</li>
+                        <li>方便之後進行稽核或問題追查</li>
+                      </ul>
+                    </div>
+
+                    <div className="border-l-4 border-red-500 pl-4">
+                      <h4 className="text-gray-900 mb-2 text-lg font-semibold">5. Settings（全平台預設設定）</h4>
+                      <ul className="list-disc list-inside space-y-1 text-gray-700 ml-4">
+                        <li>調整所有 Tenant 的預設值</li>
+                        <li>包含通知、密碼政策、安全性等平台級參數</li>
+                        <li>用於企業級統一控管</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 二、如何進入 Host 介面？ */}
+                <div className="bg-yellow-50 rounded-2xl p-6">
+                  <h2 className="text-yellow-900 mb-4 text-2xl font-bold">二、如何進入 Host 介面？</h2>
+                  <p className="text-gray-700 mb-4">
+                    登入 UiPath Orchestrator 後在此切換為 Host：
+                  </p>
+                  <div className="bg-white rounded-xl p-4">
+                    <pre className="text-gray-700 text-sm overflow-x-auto">
+{`You are logging in on organization host. Change ←`}
+                    </pre>
+                  </div>
+                </div>
+
+                {/* CH1｜新增 Tenant 並分配 License 授權 */}
+                <div className="bg-green-50 rounded-2xl p-6">
+                  <h2 className="text-green-900 mb-4 text-2xl font-bold">CH1｜新增 Tenant 並分配 License 授權</h2>
+                  <p className="text-gray-700 mb-6">
+                    本章節將示範完整操作流程，從建立 Tenant 到授權分配。
+                  </p>
+
+                  <div className="space-y-6">
+                    <div className="border-l-4 border-green-500 pl-4">
+                      <h3 className="text-gray-900 mb-3 text-xl font-semibold">✦ Step 1. 在 Tenants 功能頁新增 Tenant</h3>
+                      <ol className="list-decimal list-inside space-y-1 text-gray-700 ml-4">
+                        <li>進入 Host → Tenants</li>
+                        <li>點選 <strong>Add Tenant</strong></li>
+                        <li>填寫 Tenant 名稱（例如：Finance、HR、Production、Test）</li>
+                      </ol>
+                      <p className="text-gray-600 italic mt-3 ml-4">
+                        每個 Tenant 就是一個獨立的 Orchestrator 世界，功能與資源隔離。
+                      </p>
+                    </div>
+
+                    <div className="border-l-4 border-blue-500 pl-4">
+                      <h3 className="text-gray-900 mb-3 text-xl font-semibold">✦ Step 2. 進行授權分配（Allocate Licenses）</h3>
+                      <ol className="list-decimal list-inside space-y-1 text-gray-700 ml-4 mb-3">
+                        <li>在 Tenant 列表右側點擊 <strong>「…」</strong></li>
+                        <li>選擇 <strong>Allocate Licenses</strong></li>
+                        <li>分配所需的授權種類與數量，如：
+                          <ul className="list-disc list-inside ml-6 mt-2 space-y-1">
+                            <li>Unattended Robot</li>
+                            <li>Attended Robot</li>
+                            <li>User License（Automation Developer / Business Analyst）</li>
+                            <li>Action Center License</li>
+                            <li>Document Understanding License</li>
+                          </ul>
+                        </li>
+                      </ol>
+                      <div className="bg-yellow-100 rounded-lg p-3 mt-3 ml-4">
+                        <p className="text-gray-800">
+                          <strong>注意：</strong><br/>
+                          👉 Host 分配出去的量不能超過 Host 自己擁有的授權池。
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="border-l-4 border-purple-500 pl-4">
+                      <h3 className="text-gray-900 mb-3 text-xl font-semibold">✦ Step 3. 查看 Host 授權狀況</h3>
+                      <ol className="list-decimal list-inside space-y-1 text-gray-700 ml-4 mb-3">
+                        <li>進入 <strong>License</strong> 頁面</li>
+                        <li>可查看：
+                          <ul className="list-disc list-inside ml-6 mt-2 space-y-1">
+                            <li>Host 目前擁有的授權總數</li>
+                            <li>已被分配出去的授權數量</li>
+                            <li>剩餘可分配額度</li>
+                            <li>License 有效期限</li>
+                          </ul>
+                        </li>
+                      </ol>
+                      <p className="text-gray-700 ml-4">
+                        此畫面也能作為日後排查授權不足問題的主要場所。
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* CH2｜更新 License */}
+                <div className="bg-orange-50 rounded-2xl p-6">
+                  <h2 className="text-orange-900 mb-4 text-2xl font-bold">CH2｜更新 License（包含 Online / Offline 授權流程）</h2>
+                  <p className="text-gray-700 mb-6">
+                    當企業調整授權數量（例如由 10 改為 8），Host 需先將 Tenant 多使用的 2 個授權調整回來，否則更新時會因數字不一致而報錯。
+                  </p>
+                  <p className="text-gray-700 mb-6">以下為正確流程。</p>
+
+                  <div className="space-y-6">
+                    <div className="bg-red-100 rounded-xl p-4">
+                      <h3 className="text-red-900 mb-3 text-xl font-semibold">🔥 授權變更時的注意事項</h3>
+                      <p className="text-gray-800 mb-2"><strong>例：授權 10 → 8</strong></p>
+                      <ul className="list-disc list-inside space-y-1 text-gray-700 ml-4">
+                        <li>若 Tenant 正在使用 10 個授權</li>
+                        <li>需先把 2 個授權「收回」到 Host</li>
+                        <li>才能進行授權更新</li>
+                      </ul>
+                      <p className="text-gray-800 mt-3">若未調整，系統會報「授權超額」錯誤。</p>
+                    </div>
+
+                    <div className="border-l-4 border-indigo-500 pl-4">
+                      <h3 className="text-gray-900 mb-3 text-xl font-semibold">🛠 Step 1. 進入 License 頁面 → 點擊 Update</h3>
+                      <p className="text-gray-700 mb-3">
+                        進入 Host → <strong>License</strong>
+                      </p>
+                      <p className="text-gray-700 mb-2">
+                        右上角會看到 <strong>Update</strong> 按鈕，可以選擇：
+                      </p>
+                      <ul className="list-disc list-inside space-y-1 text-gray-700 ml-4">
+                        <li><strong>Online License（線上更新）</strong></li>
+                        <li><strong>Offline License（離線更新）</strong></li>
+                      </ul>
+                      <p className="text-gray-700 mt-3">以下介紹兩種模式。</p>
+                    </div>
+
+                    <div className="border-l-4 border-green-500 pl-4">
+                      <h3 className="text-gray-900 mb-3 text-xl font-semibold">📡 Step 2-1. Online（線上授權更新）</h3>
+                      <p className="text-gray-700 mb-3">若伺服器可以連外：</p>
+                      <ol className="list-decimal list-inside space-y-1 text-gray-700 ml-4">
+                        <li>點 Update → 選 Online</li>
+                        <li>直接輸入授權資訊（License Key）</li>
+                        <li>系統會自動向 UiPath License Server 驗證</li>
+                        <li>更新完成後即可重新分配授權</li>
+                      </ol>
+                    </div>
+
+                    <div className="border-l-4 border-blue-500 pl-4">
+                      <h3 className="text-gray-900 mb-3 text-xl font-semibold">🗝 Step 2-2. Offline（離線授權更新）</h3>
+                      <p className="text-gray-700 mb-3">
+                        用於無法連外的企業環境（例如金融機構）。
+                      </p>
+                      <p className="text-gray-700 mb-2">離線流程如下：</p>
+                      <ol className="list-decimal list-inside space-y-2 text-gray-700 ml-4 mb-4">
+                        <li>在 Host 中產生 Offline License Request（系統會提供一組 Key）</li>
+                        <li>將這組 key 帶到能上網的電腦</li>
+                        <li>登入 UiPath 官方授權網站</li>
+                        <li>上傳 key 進行授權驗證</li>
+                        <li>官方會產生一組 Offline Response（回應檔）</li>
+                        <li>回到 Host → 將 Response 上傳即可完成啟用</li>
+                      </ol>
+                      <div className="bg-blue-100 rounded-lg p-3">
+                        <p className="text-gray-800">
+                          離線流程的重點是：<br/>
+                          <strong>Request → 到外網驗證 → 回來 Import Response</strong>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 文章總結 */}
+                <div className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-2xl p-6">
+                  <h2 className="text-gray-900 mb-4 text-2xl font-bold">📌 文章總結</h2>
+                  <p className="text-gray-700 mb-4">本文整理了 Host 層級的主要管理職責，包含：</p>
+
+                  <div className="space-y-4">
+                    <div>
+                      <h3 className="text-gray-900 mb-2 text-xl font-semibold">🎯 Host 的五大功能</h3>
+                      <ul className="list-disc list-inside space-y-1 text-gray-700 ml-4">
+                        <li>建立/管理 Tenants</li>
+                        <li>授權池（License）管理與分配</li>
+                        <li>Libraries 套件最高層管理</li>
+                        <li>Audit 操作軌跡</li>
+                        <li>Host-Level Settings 平台全局設定</li>
+                      </ul>
+                    </div>
+
+                    <div>
+                      <h3 className="text-gray-900 mb-2 text-xl font-semibold">🎯 Host 入口識別方式</h3>
+                      <div className="bg-white rounded-lg p-3 ml-4">
+                        <code className="text-gray-700">You are logging in on organization host. Change ←</code>
+                      </div>
+                    </div>
+
+                    <div>
+                      <h3 className="text-gray-900 mb-2 text-xl font-semibold">🎯 兩大實務操作技巧</h3>
+                      <ul className="list-disc list-inside space-y-1 text-gray-700 ml-4">
+                        <li><strong>CH1：</strong>新增 Tenant & 分配授權</li>
+                        <li><strong>CH2：</strong>正確更新 License（含 Online / Offline 流程）</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 總結 */}
+                <div className="bg-gradient-to-r from-purple-100 to-indigo-100 rounded-2xl p-8 text-center">
+                  <h3 className="text-gray-900 mb-4 text-2xl font-bold">🎉 完整掌握 UiPath Host 設定</h3>
+                  <p className="text-gray-700 text-lg">
+                    從 Tenant 建立、授權分配到 License 更新全流程，掌握企業級 RPA 平台管理的核心技術！
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      ) : showUiPathManagement ? (
+        /* UiPath Management Detail View */
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
+        >
+          <div className="mb-8">
+            <motion.button
+              whileHover={{ scale: 1.05, x: -5 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => {
+                setShowUiPathManagement(false);
+                if (articleEntrySource === 'main') {
+                  setSelectedTech(null);
+                } else {
+                  setSelectedTech('UiPath');
+                }
+              }}
+              className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 mb-4"
+            >
+              <span className="text-2xl">←</span>
+              <span>{articleEntrySource === 'main' ? '返回技術文章' : '返回 UiPath 文章'}</span>
+            </motion.button>
+            
+            <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
+              {/* Header */}
+              <div className="bg-gradient-to-r from-blue-500 to-cyan-600 p-8 text-white">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="bg-white/20 backdrop-blur-sm rounded-2xl px-6 py-3">
+                    <span className="text-3xl">🏛</span>
+                  </div>
+                </div>
+                <h1 className="text-white mb-2 text-3xl font-bold">UiPath Orchestrator（OC）Management 平台全解析</h1>
+                <p className="text-white/90 text-lg">Host 與 Tenant 兩種 Management 有何不同？一次搞懂身份管理與平台控管架構</p>
+              </div>
+
+              {/* Content */}
+              <div className="p-8 md:p-12 space-y-8">
+                {/* 前言 */}
+                <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-2xl p-6">
+                  <p className="text-gray-700 mb-4">
+                    UiPath Orchestrator（OC）除了流程管理、排程、資產與機器人控管外，還包含一個非常關鍵的元件：
+                  </p>
+                  <p className="text-gray-700 mb-4">
+                    <strong>Management（Identity Hub）</strong> —— 用於管理使用者、登入策略、安全設定與外部應用整合。
+                  </p>
+                  <p className="text-gray-700 mb-4">
+                    許多人在第一次接觸 OC 時會困惑：
+                  </p>
+                  <ul className="list-none space-y-2 text-gray-700 ml-4">
+                    <li>❓ 為什麼 OC 裡有兩個 Management？</li>
+                    <li>❓ 一個在 Host，一個在 Tenant 裡？</li>
+                  </ul>
+                  <p className="text-gray-700 mt-4">
+                    本文將透過結構化的方式，帶你完整了解 <strong>Host Management</strong> 與 <strong>Tenant Management</strong> 的差異、功能與使用情境。
+                  </p>
+                </div>
+
+                {/* 一、OC 的兩層 Management 是什麼？ */}
+                <div className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-2xl p-6">
+                  <h2 className="text-purple-900 mb-4 text-2xl font-bold">📘 一、OC 的兩層 Management 是什麼？</h2>
+                  <p className="text-gray-700 mb-6">
+                    在 UiPath 中，會看到兩個 Management（Identity Hub）：
+                  </p>
+
+                  <div className="space-y-4 mb-6">
+                    <div className="bg-white rounded-xl p-4 border-l-4 border-purple-500">
+                      <p className="text-gray-900 font-semibold">1. Host Management（最高層平台控管）</p>
+                    </div>
+                    <div className="bg-white rounded-xl p-4 border-l-4 border-indigo-500">
+                      <p className="text-gray-900 font-semibold">2. Tenant Management（租戶層使用者控管）</p>
+                    </div>
+                  </div>
+
+                  <div className="bg-blue-100 rounded-xl p-4 mb-4">
+                    <p className="text-gray-800 mb-3">
+                      其邏輯類似「母公司」與「子公司」：
+                    </p>
+                    <ul className="list-disc list-inside space-y-1 text-gray-700 ml-4">
+                      <li><strong>Host</strong> 管平台級的使用者政策與登入設定</li>
+                      <li><strong>Tenant</strong> 管該租戶內可用的帳號、群組、機器人帳號等</li>
+                    </ul>
+                  </div>
+
+                  <div className="bg-gray-900 rounded-xl p-4">
+                    <pre className="text-green-400 text-sm overflow-x-auto">
+{`Host（平台級）
+ └── Tenant A
+ └── Tenant B
+ └── Tenant C`}
+                    </pre>
+                  </div>
+
+                  <p className="text-gray-700 mt-4">
+                    每層都有自己的 Management。
+                  </p>
+                </div>
+
+                {/* CH1｜Host 的 Management */}
+                <div className="bg-green-50 rounded-2xl p-6">
+                  <h2 className="text-green-900 mb-4 text-2xl font-bold">CH1｜Host 的 Management（平台級控管）</h2>
+                  <p className="text-gray-700 mb-6">
+                    Host 是整個 Orchestrator 的最上層，負責平台級（全域）管理，而非個別 Tenant。
+                  </p>
+
+                  <div className="space-y-6">
+                    <div className="border-l-4 border-green-500 pl-4">
+                      <h3 className="text-gray-900 mb-3 text-xl font-semibold">🔑 如何進入 Host Management？</h3>
+                      <ol className="list-decimal list-inside space-y-1 text-gray-700 ml-4">
+                        <li>以 Host 身份登入 OC</li>
+                        <li>右上角點擊 「Go to Identity Hub」</li>
+                        <li>進入後，在左側點擊 Management</li>
+                      </ol>
+                      <p className="text-gray-600 italic mt-3 ml-4">
+                        進入後會看到 Host 層級的管理功能。
+                      </p>
+                    </div>
+
+                    <div className="border-l-4 border-blue-500 pl-4">
+                      <h3 className="text-gray-900 mb-3 text-xl font-semibold">🧩 Host Management 的主要功能</h3>
+                      
+                      <div className="space-y-4">
+                        <div className="bg-white rounded-xl p-4">
+                          <h4 className="text-gray-900 mb-2 text-lg font-semibold">1. Users（管理平台級使用者）</h4>
+                          <ul className="list-disc list-inside space-y-1 text-gray-700 ml-4">
+                            <li>建立 Host-level 使用者</li>
+                            <li>通常是系統管理員（Platform Admin）</li>
+                            <li>不屬於任何 Tenant，而是管理 Tenants 的角色</li>
+                          </ul>
+                        </div>
+
+                        <div className="bg-white rounded-xl p-4">
+                          <h4 className="text-gray-900 mb-2 text-lg font-semibold">2. Security（安全與登入政策）</h4>
+                          <p className="text-gray-700 mb-2">設定全平台的安全政策：</p>
+                          <ul className="list-disc list-inside space-y-1 text-gray-700 ml-4">
+                            <li>密碼複雜度</li>
+                            <li>密碼有效期限</li>
+                            <li>登入鎖定</li>
+                            <li>多因子驗證（若啟用）</li>
+                          </ul>
+                          <p className="text-gray-600 italic mt-2 ml-4">
+                            所有 Tenant 的預設安全規範可由此統一設定
+                          </p>
+                        </div>
+
+                        <div className="bg-white rounded-xl p-4">
+                          <h4 className="text-gray-900 mb-2 text-lg font-semibold">3. Audit Logs（操作紀錄）</h4>
+                          <p className="text-gray-700 mb-2">查看 Host 層登入與操作行為，例如：</p>
+                          <ul className="list-disc list-inside space-y-1 text-gray-700 ml-4">
+                            <li>新增 Tenant</li>
+                            <li>調整 License</li>
+                            <li>新增 Host-level 使用者</li>
+                          </ul>
+                          <p className="text-gray-600 italic mt-2 ml-4">
+                            這是稽核或平台故障追查的重要資料。
+                          </p>
+                        </div>
+
+                        <div className="bg-white rounded-xl p-4">
+                          <h4 className="text-gray-900 mb-2 text-lg font-semibold">4. Mail Settings（SMTP 設定）</h4>
+                          <ul className="list-disc list-inside space-y-1 text-gray-700 ml-4">
+                            <li>設定平台的郵件伺服器（SMTP）</li>
+                            <li>用於接收 Host 層級的錯誤通知或告警</li>
+                          </ul>
+                        </div>
+
+                        <div className="bg-white rounded-xl p-4">
+                          <h4 className="text-gray-900 mb-2 text-lg font-semibold">5. Settings（登入頁面自訂）</h4>
+                          <p className="text-gray-700 mb-2">可自訂 Orchestrator 的登入畫面，例如：</p>
+                          <ul className="list-disc list-inside space-y-1 text-gray-700 ml-4">
+                            <li>Logo</li>
+                            <li>顯示文字</li>
+                            <li>主題顏色</li>
+                          </ul>
+                          <p className="text-gray-600 italic mt-2 ml-4">
+                            通常企業會在這裡做 Branding 或身分識別統一。
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* CH2｜Tenant 的 Management */}
+                <div className="bg-orange-50 rounded-2xl p-6">
+                  <h2 className="text-orange-900 mb-4 text-2xl font-bold">CH2｜Tenant 的 Management（租戶級控管）</h2>
+                  <p className="text-gray-700 mb-6">
+                    每個 Tenant 都有自己的 Management。<br/>
+                    Tenant 管理的範圍與 Host 不同，是 <strong>該租戶內部使用者與資源的管理中心</strong>。
+                  </p>
+
+                  <div className="space-y-6">
+                    <div className="border-l-4 border-orange-500 pl-4">
+                      <h3 className="text-gray-900 mb-3 text-xl font-semibold">🔑 如何進入 Tenant Management？</h3>
+                      <ol className="list-decimal list-inside space-y-1 text-gray-700 ml-4">
+                        <li>以某個 Tenant 身分登入 OC</li>
+                        <li>右上角點擊 「Go to Identity Hub」</li>
+                        <li>在該 Identity Hub 中點擊 Management</li>
+                      </ol>
+                      <p className="text-gray-600 italic mt-3 ml-4">
+                        你會發現介面與 Host 很像，但功能有差異。
+                      </p>
+                    </div>
+
+                    <div className="border-l-4 border-purple-500 pl-4">
+                      <h3 className="text-gray-900 mb-3 text-xl font-semibold">🧩 Tenant Management 的主要功能</h3>
+                      
+                      <div className="space-y-4">
+                        <div className="bg-white rounded-xl p-4">
+                          <h4 className="text-gray-900 mb-2 text-lg font-semibold">1. Accounts & Groups（管理租戶內的帳號與群組）</h4>
+                          <ul className="list-disc list-inside space-y-1 text-gray-700 ml-4">
+                            <li>建立使用者帳號（User Accounts）</li>
+                            <li>建立機器人帳號（Robot Accounts）</li>
+                            <li>設定群組（Groups）供權限分層使用</li>
+                            <li>分配使用者到不同的 Folder</li>
+                          </ul>
+                          <div className="bg-green-100 rounded-lg p-3 mt-3">
+                            <p className="text-gray-800">
+                              ✔ 這是企業最常用、最重要的管理頁面之一。
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="bg-white rounded-xl p-4">
+                          <h4 className="text-gray-900 mb-2 text-lg font-semibold">2. Security（租戶層安全設定）</h4>
+                          <p className="text-gray-700 mb-2">可調整：</p>
+                          <ul className="list-disc list-inside space-y-1 text-gray-700 ml-4">
+                            <li>登入安全</li>
+                            <li>密碼政策</li>
+                            <li>MFA</li>
+                            <li>鎖定策略</li>
+                          </ul>
+                          <p className="text-gray-600 italic mt-2 ml-4">
+                            （若與 Host 設定衝突，以 Host 優先）
+                          </p>
+                        </div>
+
+                        <div className="bg-white rounded-xl p-4">
+                          <h4 className="text-gray-900 mb-2 text-lg font-semibold">3. Audit Logs（操作紀錄）</h4>
+                          <p className="text-gray-700 mb-2">可查看：</p>
+                          <ul className="list-disc list-inside space-y-1 text-gray-700 ml-4">
+                            <li>使用者登入紀錄</li>
+                            <li>修改帳號狀態</li>
+                            <li>群組異動</li>
+                            <li>機器人帳號新增或修改</li>
+                            <li>使用者加入 Folder 或角色的歷史</li>
+                          </ul>
+                          <p className="text-gray-600 italic mt-2 ml-4">
+                            這部分用於 Tenant 層級的稽核。
+                          </p>
+                        </div>
+
+                        <div className="bg-white rounded-xl p-4">
+                          <h4 className="text-gray-900 mb-2 text-lg font-semibold">4. External Applications（外部應用整合）</h4>
+                          <p className="text-gray-700 mb-2">可在這裡註冊外部應用，例如：</p>
+                          <ul className="list-disc list-inside space-y-1 text-gray-700 ml-4">
+                            <li>企業自家系統</li>
+                            <li>第三方 API</li>
+                            <li>自行開發的 Web App</li>
+                          </ul>
+                          <p className="text-gray-600 italic mt-2 ml-4">
+                            介面類似 OAuth / OpenID Connect 的整合作業。
+                          </p>
+                        </div>
+
+                        <div className="bg-white rounded-xl p-4">
+                          <h4 className="text-gray-900 mb-2 text-lg font-semibold">5. Tags（標籤）</h4>
+                          <p className="text-gray-700">
+                            通常用於其他 UiPath 模組的標記系統，讓資源可被分類。<br/>
+                            這部分會依版本與企業導入狀態而不同，可視為 Metadata 類型功能。
+                          </p>
+                        </div>
+
+                        <div className="bg-white rounded-xl p-4">
+                          <h4 className="text-gray-900 mb-2 text-lg font-semibold">6. Mail Settings（SMTP 設定）</h4>
+                          <p className="text-gray-700 mb-2">與 Host 類似，但作用範圍只有該「Tenant」。</p>
+                          <p className="text-gray-700 mb-2">適用狀況：</p>
+                          <ul className="list-disc list-inside space-y-1 text-gray-700 ml-4">
+                            <li>特定部門（Folder）希望收到自訂錯誤信件通知</li>
+                            <li>測試環境與正式環境使用不同 SMTP 配置</li>
+                          </ul>
+                        </div>
+
+                        <div className="bg-white rounded-xl p-4">
+                          <h4 className="text-gray-900 mb-2 text-lg font-semibold">7. Settings（登入頁面自訂）</h4>
+                          <p className="text-gray-700">
+                            可自訂此 Tenant 的登入畫面風格（若 Host 未強制統一）。
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Host vs Tenant Management — 差異總表 */}
+                <div className="bg-yellow-50 rounded-2xl p-6">
+                  <h2 className="text-yellow-900 mb-4 text-2xl font-bold">🧩 Host vs Tenant Management — 差異總表</h2>
+                  
+                  <div className="overflow-x-auto">
+                    <table className="min-w-full bg-white rounded-xl overflow-hidden shadow-lg">
+                      <thead className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white">
+                        <tr>
+                          <th className="px-6 py-3 text-left font-semibold">項目</th>
+                          <th className="px-6 py-3 text-left font-semibold">Host Management</th>
+                          <th className="px-6 py-3 text-left font-semibold">Tenant Management</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-200">
+                        <tr className="hover:bg-blue-50 transition-colors">
+                          <td className="px-6 py-4 font-semibold text-gray-900">管理範圍</td>
+                          <td className="px-6 py-4 text-gray-700">全平台</td>
+                          <td className="px-6 py-4 text-gray-700">單一租戶</td>
+                        </tr>
+                        <tr className="hover:bg-blue-50 transition-colors">
+                          <td className="px-6 py-4 font-semibold text-gray-900">使用者</td>
+                          <td className="px-6 py-4 text-gray-700">Host-level admin</td>
+                          <td className="px-6 py-4 text-gray-700">租戶使用者、機器人帳號</td>
+                        </tr>
+                        <tr className="hover:bg-blue-50 transition-colors">
+                          <td className="px-6 py-4 font-semibold text-gray-900">群組管理</td>
+                          <td className="px-6 py-4 text-gray-700">❌</td>
+                          <td className="px-6 py-4 text-gray-700">✔</td>
+                        </tr>
+                        <tr className="hover:bg-blue-50 transition-colors">
+                          <td className="px-6 py-4 font-semibold text-gray-900">機器人帳號管理</td>
+                          <td className="px-6 py-4 text-gray-700">❌</td>
+                          <td className="px-6 py-4 text-gray-700">✔</td>
+                        </tr>
+                        <tr className="hover:bg-blue-50 transition-colors">
+                          <td className="px-6 py-4 font-semibold text-gray-900">外部應用整合</td>
+                          <td className="px-6 py-4 text-gray-700">❌</td>
+                          <td className="px-6 py-4 text-gray-700">✔ External Applications</td>
+                        </tr>
+                        <tr className="hover:bg-blue-50 transition-colors">
+                          <td className="px-6 py-4 font-semibold text-gray-900">安全設定</td>
+                          <td className="px-6 py-4 text-gray-700">平台預設值</td>
+                          <td className="px-6 py-4 text-gray-700">可覆蓋，但以 Host 優先</td>
+                        </tr>
+                        <tr className="hover:bg-blue-50 transition-colors">
+                          <td className="px-6 py-4 font-semibold text-gray-900">審計（Audit）</td>
+                          <td className="px-6 py-4 text-gray-700">Host 操作</td>
+                          <td className="px-6 py-4 text-gray-700">該租戶操作</td>
+                        </tr>
+                        <tr className="hover:bg-blue-50 transition-colors">
+                          <td className="px-6 py-4 font-semibold text-gray-900">SMTP 郵件</td>
+                          <td className="px-6 py-4 text-gray-700">Host 級設定</td>
+                          <td className="px-6 py-4 text-gray-700">Tenant 自訂設定</td>
+                        </tr>
+                        <tr className="hover:bg-blue-50 transition-colors">
+                          <td className="px-6 py-4 font-semibold text-gray-900">登入頁面</td>
+                          <td className="px-6 py-4 text-gray-700">平台統一</td>
+                          <td className="px-6 py-4 text-gray-700">可覆蓋（若 Host 未鎖定）</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                {/* 文章總結 */}
+                <div className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-2xl p-6">
+                  <h2 className="text-gray-900 mb-4 text-2xl font-bold">🎯 總結：兩層 Management 是為了清楚分工</h2>
+                  
+                  <div className="space-y-6">
+                    <div>
+                      <h3 className="text-gray-900 mb-3 text-xl font-semibold">📌 Host Management（全平台級）</h3>
+                      <ul className="list-disc list-inside space-y-1 text-gray-700 ml-4">
+                        <li>控管全域安全、登入策略與平台預設值</li>
+                        <li>建立全域管理使用者</li>
+                        <li>不管理 Robot、群組、外部應用</li>
+                      </ul>
+                    </div>
+
+                    <div>
+                      <h3 className="text-gray-900 mb-3 text-xl font-semibold">📌 Tenant Management（租戶級）</h3>
+                      <ul className="list-disc list-inside space-y-1 text-gray-700 ml-4">
+                        <li>管理帳號、群組、Robot Account、Folder 權限等</li>
+                        <li>設定該 Tenant 的 SMTP、External Applications</li>
+                        <li>控管租戶層的稽核與使用者政策</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 總結 */}
+                <div className="bg-gradient-to-r from-blue-100 to-cyan-100 rounded-2xl p-8 text-center">
+                  <h3 className="text-gray-900 mb-4 text-2xl font-bold">🎉 完整掌握 UiPath Management 架構</h3>
+                  <p className="text-gray-700 text-lg">
+                    從 Host 到 Tenant，理解兩層 Management 的分工與功能，掌握企業級 RPA 身份管理的核心架構！
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      ) : showUiPathTenant ? (
+        /* UiPath Tenant Detail View */
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
+        >
+          <div className="mb-8">
+            <motion.button
+              whileHover={{ scale: 1.05, x: -5 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => {
+                setShowUiPathTenant(false);
+                if (articleEntrySource === 'main') {
+                  setSelectedTech(null);
+                } else {
+                  setSelectedTech('UiPath');
+                }
+              }}
+              className="inline-flex items-center gap-2 text-teal-600 hover:text-teal-700 mb-4"
+            >
+              <span className="text-2xl">←</span>
+              <span>{articleEntrySource === 'main' ? '返回技術文章' : '返回 UiPath 文章'}</span>
+            </motion.button>
+            
+            <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
+              {/* Header */}
+              <div className="bg-gradient-to-r from-teal-500 to-emerald-600 p-8 text-white">
+                <div className="flex items-center gap-4 mb-4">
+                  <motion.div
+                    animate={{ rotate: [0, 360] }}
+                    transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+                    className="text-6xl"
+                  >
+                    🎯
+                  </motion.div>
+                  <div>
+                    <h1 className="text-white mb-2">UiPath OC Tenant 功能解析</h1>
+                    <p className="text-white/90">從 Robots、Folders、Packages、Machines 到安全性與監控，一篇搞懂 Tenant 可以做什麼</p>
+                  </div>
+                </div>
+                <div className="flex gap-2 flex-wrap">
+                  {['Tenant', 'Robots', 'Folders', 'Packages'].map((tag, i) => (
+                    <span key={i} className="bg-white/20 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm">
+                      #{tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Content */}
+              <div className="p-8 md:p-12 space-y-10">
+                {/* 介紹 */}
+                <div className="bg-gradient-to-br from-teal-50 to-emerald-50 rounded-2xl p-8">
+                  <p className="text-gray-800 text-xl leading-relaxed font-medium">
+                    在 UiPath Orchestrator 的整體架構中，<strong className="text-teal-600 text-2xl">Tenant</strong> 是「企業級自動化中心」的重要管理單位。
+                    所有有效的自動化資源（流程、機器人、帳號、群組、權限、排程等）都在 Tenant 內運作。
+                    本文將系統性介紹 OC 中 Tenant 的所有主要功能，並補充使用情境、注意事項與企業導入時的最佳實務。
+                  </p>
+                </div>
+
+                {/* 一、Tenant 在 OC 中的角色 */}
+                <div>
+                  <h2 className="text-gray-900 mb-6 flex items-center gap-3 text-3xl font-bold">
+                    <span className="text-5xl">📘</span>
+                    一、Tenant 在 OC 中的角色是什麼？
+                  </h2>
+                  <div className="bg-white border-2 border-teal-200 rounded-2xl p-8">
+                    <p className="text-gray-800 mb-6 text-lg leading-relaxed">
+                      在 UiPath 架構中，Tenant 是一個「<strong className="text-teal-600 text-xl font-bold">隔離的自動化空間</strong>」。
+                      不同 Tenant 之間的資源、使用者、流程、設定皆互不影響。
+                    </p>
+                    <div className="bg-teal-50 rounded-xl p-6 mt-4">
+                      <h4 className="text-gray-900 mb-4 text-xl font-bold">💡 用途包含：</h4>
+                      <ul className="space-y-3 text-gray-800">
+                        <li className="flex items-start gap-3 text-lg">
+                          <span className="text-teal-500 mt-1 text-xl font-bold">✓</span>
+                          <span>區分正式／測試環境</span>
+                        </li>
+                        <li className="flex items-start gap-3 text-lg">
+                          <span className="text-teal-500 mt-1 text-xl font-bold">✓</span>
+                          <span>區分不同事業部</span>
+                        </li>
+                        <li className="flex items-start gap-3 text-lg">
+                          <span className="text-teal-500 mt-1 text-xl font-bold">✓</span>
+                          <span>提供權限隔離</span>
+                        </li>
+                        <li className="flex items-start gap-3 text-lg">
+                          <span className="text-teal-500 mt-1 text-xl font-bold">✓</span>
+                          <span>資源控管（Flows, Queues, Robots, Assets）</span>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 二、Tenant 主要功能介紹 */}
+                <div>
+                  <h2 className="text-gray-900 mb-6 flex items-center gap-3 text-3xl font-bold">
+                    <span className="text-5xl">🧩</span>
+                    二、Tenant 主要功能介紹（詳細版）
+                  </h2>
+                  <p className="text-gray-700 mb-8 text-lg">以下依照 Orchestrator 介面順序與概念架構整理。</p>
+
+                  <div className="space-y-6">
+                    {/* 1. Robots */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      className="bg-gradient-to-r from-orange-50 to-amber-50 rounded-2xl p-6 border-l-4 border-orange-500"
+                    >
+                      <h3 className="text-gray-900 mb-4 flex items-center gap-2 text-2xl font-bold">
+                        <span className="text-3xl">1️⃣</span>
+                        Robots（機器人列表）
+                      </h3>
+                      <p className="text-gray-800 mb-5 text-lg">
+                        顯示並管理所有在 Tenant 中的機器人（Robot Accounts）。
+                      </p>
+                      <div className="bg-white rounded-xl p-5 mb-4">
+                        <h4 className="text-gray-900 mb-3 text-lg font-bold">📋 可查看：</h4>
+                        <ul className="grid md:grid-cols-2 gap-3 text-gray-800">
+                          <li className="flex items-center gap-2"><span className="text-orange-500">•</span> 機器人類型（Attended / Unattended）</li>
+                          <li className="flex items-center gap-2"><span className="text-orange-500">•</span> 帳號類型（User / Machine account）</li>
+                          <li className="flex items-center gap-2"><span className="text-orange-500">•</span> License 類型</li>
+                          <li className="flex items-center gap-2"><span className="text-orange-500">•</span> 網域（Domain）</li>
+                          <li className="flex items-center gap-2"><span className="text-orange-500">•</span> 主機名稱（Machine）</li>
+                          <li className="flex items-center gap-2"><span className="text-orange-500">•</span> Robot 連線狀態</li>
+                          <li className="flex items-center gap-2"><span className="text-orange-500">•</span> 最後執行時間、版本等</li>
+                        </ul>
+                      </div>
+                      <div className="bg-orange-100 rounded-xl p-5">
+                        <h4 className="text-gray-900 mb-3 text-lg font-bold">⚠️ 實務提醒：</h4>
+                        <p className="text-gray-800">
+                          機器人若大量 offline，需要檢查：連線模式（Key / User Mode）、License 是否足夠、
+                          Orchestrator URL、Key 是否過期、Windows 服務是否正在運作
+                        </p>
+                      </div>
+                    </motion.div>
+
+                    {/* 2. Folders */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-2xl p-6 border-l-4 border-blue-500"
+                    >
+                      <h3 className="text-gray-900 mb-4 flex items-center gap-2 text-2xl font-bold">
+                        <span className="text-3xl">2️⃣</span>
+                        Folders（資料夾：流程與資源的邏輯空間）
+                      </h3>
+                      <p className="text-gray-800 mb-5 text-lg">
+                        Folder 是 OC 中最重要的邏輯隔離工具，可用來管理：流程（Processes）、資產（Assets）、
+                        佇列（Queues）、使用者／機器人的 Folder-Level 權限
+                      </p>
+                      <div className="bg-blue-100 rounded-xl p-5 mb-4">
+                        <h4 className="text-gray-900 mb-3 text-lg font-bold">📌 注意：Classic Folders 已淘汰</h4>
+                        <p className="text-gray-800">
+                          新建立的 Folder 一律為 <strong className="text-blue-700">Modern Folder</strong><br/>
+                          → 支援 AD / Robot Account / Role-Based Access<br/>
+                          → 支援 per-folder packages feed
+                        </p>
+                      </div>
+                      <div className="bg-white rounded-xl p-5">
+                        <h4 className="text-gray-900 mb-3 text-lg font-bold">📌 Folder 的主要功能：</h4>
+                        <ul className="space-y-3 text-gray-800">
+                          <li className="flex items-start gap-2"><span className="text-blue-500">•</span> Assign Account / Group / External App → 設定帳號能否看到此 Folder</li>
+                          <li className="flex items-start gap-2"><span className="text-blue-500">•</span> 設定 Process Packages Source → 建立專屬的 "Folder Packages"</li>
+                          <li className="text-teal-600 font-bold text-lg flex items-start gap-2">
+                            <span>💡</span> 優勢：可完全隔離專案，避免跨部門觀察到彼此流程
+                          </li>
+                        </ul>
+                      </div>
+                    </motion.div>
+
+                    {/* 3. Monitoring */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl p-6 border-l-4 border-purple-500"
+                    >
+                      <h3 className="text-gray-900 mb-4 flex items-center gap-2 text-2xl font-bold">
+                        <span className="text-3xl">3️⃣</span>
+                        Monitoring（監控儀表板）
+                      </h3>
+                      <p className="text-gray-800 mb-5 text-lg">
+                        Tenant 層級的自動化監控中心。
+                      </p>
+                      <div className="bg-white rounded-xl p-5 mb-4">
+                        <h4 className="text-gray-900 mb-3 text-lg font-bold">📊 儀表板顯示：</h4>
+                        <ul className="grid md:grid-cols-2 gap-3 text-gray-800">
+                          <li className="flex items-center gap-2"><span className="text-purple-500">•</span> Robot 狀態（Running/Available/Offline）</li>
+                          <li className="flex items-center gap-2"><span className="text-purple-500">•</span> 記錄 Logs 數量（Info/Warning/Error）</li>
+                          <li className="flex items-center gap-2"><span className="text-purple-500">•</span> Queue item 成功/失敗統計</li>
+                          <li className="flex items-center gap-2"><span className="text-purple-500">•</span> 觸發器（Triggers）成功/失敗次數</li>
+                          <li className="flex items-center gap-2"><span className="text-purple-500">•</span> 流程執行分析（Processes Analytics）</li>
+                        </ul>
+                      </div>
+                      <div className="bg-purple-100 rounded-xl p-5">
+                        <h4 className="text-gray-900 mb-3 text-lg font-bold">常用於：</h4>
+                        <p className="text-gray-800">
+                          追蹤流程穩定度、查錯（Error / BusinessException）、管理機器人資源利用率
+                        </p>
+                      </div>
+                    </motion.div>
+
+                    {/* 4. Manage Access */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl p-6 border-l-4 border-green-500"
+                    >
+                      <h3 className="text-gray-900 mb-4 flex items-center gap-2 text-2xl font-bold">
+                        <span className="text-3xl">4️⃣</span>
+                        Manage Access（帳號、角色與權限控管中心）
+                      </h3>
+                      <p className="text-gray-800 mb-5 text-lg">
+                        此區域用於 <strong className="text-green-600 text-xl">分配角色（Role）</strong> 與 <strong className="text-green-600 text-xl">帳號權限配置</strong>。
+                        使用者（Accounts）+ 角色（Roles）＝使用者能看到與操作的內容。
+                      </p>
+                      <div className="space-y-4">
+                        <div className="bg-green-100 rounded-xl p-5">
+                          <h4 className="text-gray-900 mb-3 text-lg font-bold">📌 Assign Roles 時的重要提醒（Domain\UserName）</h4>
+                          <p className="text-gray-800">
+                            若需要將某個 AD 帳號加入，請在機器上打 cmd → 輸入 <code className="bg-white px-3 py-1.5 rounded font-mono font-bold">whoami</code><br/>
+                            確認正確 Domain\UserName，避免 AD Domain 輸錯導致授權失敗。
+                          </p>
+                        </div>
+                        <div className="bg-white rounded-xl p-5 border-2 border-green-300">
+                          <h4 className="text-gray-900 mb-3 text-lg font-bold">📌 Robot Setting（非常重要）</h4>
+                          <p className="text-gray-800 mb-3">
+                            Robot 執行流程的畫面解析度需與開發者電腦解析度、機器人環境解析度保持一致，
+                            否則會出現：UI 點不到、按鈕位置錯誤、OCR 偵測偏移、遮蔽、超出畫面等錯誤
+                          </p>
+                          <div className="bg-green-50 p-4 rounded-lg">
+                            <p className="text-green-700 font-bold text-lg">
+                              💡 企業建議統一設定：<strong className="text-xl">1920 × 1080（建議 32 bit color）</strong>
+                            </p>
+                          </div>
+                        </div>
+                        <div className="bg-white rounded-xl p-5">
+                          <h4 className="text-gray-900 mb-3 text-lg font-bold">📌 Add a new Role（角色類型）</h4>
+                          <p className="text-gray-800 mb-3">分兩種：</p>
+                          <ul className="space-y-2 text-gray-800 ml-4">
+                            <li className="flex items-start gap-2"><span className="text-green-500">•</span> <strong className="text-lg">Tenant Role</strong>（大層級權限，影響所有 Folder）</li>
+                            <li className="flex items-start gap-2"><span className="text-green-500">•</span> <strong className="text-lg">Folder Role</strong>（只影響某個 Folder）</li>
+                          </ul>
+                          <div className="bg-green-50 p-4 rounded-lg mt-3">
+                            <p className="text-gray-800">
+                              <strong className="text-lg">企業常見做法：</strong><br/>
+                              <span className="text-green-700 font-semibold">Admin → Tenant Role | 部門承辦 → Folder Role | 機器人 → Folder Role + Robot Permission</span>
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </motion.div>
+
+                    {/* 5-11 其他功能 */}
+                    <div className="grid md:grid-cols-2 gap-5">
+                      {[
+                        { num: '5️⃣', title: 'Machines', desc: '定義 OC 與 Robot 的連線橋樑，建立連線 Key、定義執行能力（Capacity）、授權 Unattended Robot' },
+                        { num: '6️⃣', title: 'Packages', desc: '流程包管理，顯示所有被發佈到此 Tenant 的流程包，企業可統一控管流程版本' },
+                        { num: '7️⃣', title: 'Audit', desc: '稽核紀錄，記錄 Tenant 內所有重要操作，對資訊安全、稽核、故障排查非常重要' },
+                        { num: '8️⃣', title: 'Credential Stores', desc: '密碼儲存區，安全儲存敏感資訊，可與 CyberArk、Azure Key Vault 等企業級金鑰系統整合' },
+                        { num: '9️⃣', title: 'Webhooks', desc: '事件推送功能，讓外部系統即時接收 Orchestrator 事件，可串接 Slack / Teams' },
+                        { num: '🔟', title: 'License', desc: '授權管理，顯示 Tenant 下的 License 使用狀態、到期時間、使用者授權等' },
+                        { num: '1️⃣1️⃣', title: 'Alerts', desc: '警報系統，顯示 Tenant 中發生的異常事件，用於快速定位問題' },
+                        { num: '1️⃣2️⃣', title: 'Non-Working Days', desc: '排程例外日，設定自動化流程不要執行的日期（國定假日、公司休假日等）' }
+                      ].map((item, idx) => (
+                        <motion.div
+                          key={idx}
+                          initial={{ opacity: 0, scale: 0.9 }}
+                          whileInView={{ opacity: 1, scale: 1 }}
+                          viewport={{ once: true }}
+                          transition={{ delay: idx * 0.05 }}
+                          className="bg-white border-2 border-teal-200 rounded-xl p-5 hover:border-teal-400 hover:shadow-lg transition-all"
+                        >
+                          <h4 className="text-gray-900 mb-3 flex items-center gap-2 text-xl font-bold">
+                            <span className="text-2xl">{item.num}</span>
+                            {item.title}
+                          </h4>
+                          <p className="text-gray-700 leading-relaxed">{item.desc}</p>
+                        </motion.div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* 三、總結 */}
+                <div className="bg-gradient-to-r from-teal-100 to-emerald-100 rounded-2xl p-8">
+                  <h2 className="text-gray-900 mb-6 flex items-center gap-3 text-3xl font-bold">
+                    <span className="text-5xl">🎯</span>
+                    三、總結：Tenant 是企業自動化的核心運作中心
+                  </h2>
+                  <p className="text-gray-800 mb-8 text-lg font-medium">
+                    Tenant 功能非常豐富，涵蓋自動化管理的每一個面向：
+                  </p>
+                  
+                  <div className="bg-white rounded-xl p-6 overflow-x-auto shadow-lg">
+                    <table className="w-full">
+                      <thead>
+                        <tr className="border-b-2 border-teal-300">
+                          <th className="text-left py-4 px-6 text-gray-900 text-xl font-bold">分類</th>
+                          <th className="text-left py-4 px-6 text-gray-900 text-xl font-bold">功能範圍</th>
+                        </tr>
+                      </thead>
+                      <tbody className="text-gray-800 text-lg">
+                        <tr className="border-b border-gray-200 hover:bg-teal-50 transition-colors">
+                          <td className="py-4 px-6 font-bold">機器人</td>
+                          <td className="py-4 px-6">Robots / Machines</td>
+                        </tr>
+                        <tr className="border-b border-gray-200 hover:bg-teal-50 transition-colors">
+                          <td className="py-4 px-6 font-bold">權限</td>
+                          <td className="py-4 px-6">Manage Access / Roles / Accounts</td>
+                        </tr>
+                        <tr className="border-b border-gray-200 hover:bg-teal-50 transition-colors">
+                          <td className="py-4 px-6 font-bold">資源管理</td>
+                          <td className="py-4 px-6">Folders / Packages / Queue / Assets</td>
+                        </tr>
+                        <tr className="border-b border-gray-200 hover:bg-teal-50 transition-colors">
+                          <td className="py-4 px-6 font-bold">安全</td>
+                          <td className="py-4 px-6">Audit / Credential Stores</td>
+                        </tr>
+                        <tr className="border-b border-gray-200 hover:bg-teal-50 transition-colors">
+                          <td className="py-4 px-6 font-bold">自動化控制</td>
+                          <td className="py-4 px-6">Monitoring / Alerts / Non-working days</td>
+                        </tr>
+                        <tr className="border-b border-gray-200 hover:bg-teal-50 transition-colors">
+                          <td className="py-4 px-6 font-bold">系統整合</td>
+                          <td className="py-4 px-6">Webhooks / External Apps</td>
+                        </tr>
+                        <tr className="hover:bg-teal-50 transition-colors">
+                          <td className="py-4 px-6 font-bold">授權</td>
+                          <td className="py-4 px-6">License</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <div className="mt-8 bg-teal-50 rounded-xl p-8 text-center border-2 border-teal-300">
+                    <p className="text-gray-800 text-xl font-bold">
+                      💡 掌握 Tenant 的每個功能，就能完整操作 UiPath 自動化平台，並制定企業級的 RPA 管理規範。
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -3556,11 +4687,18 @@ export default router`,
             <motion.button
               whileHover={{ scale: 1.05, x: -5 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => setShowVue30Days(false)}
+              onClick={() => {
+                setShowVue30Days(false);
+                if (articleEntrySource === 'main') {
+                  setSelectedTech(null);
+                } else {
+                  setSelectedTech('Vue3');
+                }
+              }}
               className="inline-flex items-center gap-2 text-emerald-600 hover:text-emerald-700 mb-4"
             >
               <span className="text-2xl">←</span>
-              <span>返回技術文章</span>
+              <span>{articleEntrySource === 'main' ? '返回技術文章' : '返回 Vue3 文章'}</span>
             </motion.button>
             
             <div className="bg-gradient-to-r from-emerald-400 to-green-500 rounded-3xl p-8 text-white mb-8">
@@ -3771,6 +4909,7 @@ export default router`,
                           whileHover={{ scale: 1.1, y: -10 }}
                           whileTap={{ scale: 0.95 }}
                           onClick={() => {
+                            setArticleEntrySource('techStack');
                             if (tech.label === 'Vue3') {
                               setShowVue30Days(true);
                             } else {
@@ -3803,11 +4942,8 @@ export default router`,
                           whileHover={{ scale: 1.1, y: -10 }}
                           whileTap={{ scale: 0.95 }}
                           onClick={() => {
-                            if (tech.label === 'UiPath') {
-                              setShowUiPathOrchestrator(true);
-                            } else {
-                              setSelectedTech(tech.label);
-                            }
+                            setArticleEntrySource('techStack');
+                            setSelectedTech(tech.label);
                           }}
                           className="text-center group cursor-pointer"
                         >
@@ -3835,6 +4971,7 @@ export default router`,
               transition={{ delay: 0.4 }}
               whileHover={{ y: -10 }}
               onClick={() => {
+                setArticleEntrySource('main');
                 setSelectedTech(null);
                 setShowUiPathOrchestrator(true);
               }}
@@ -3868,7 +5005,7 @@ export default router`,
                   </div>
 
                   <h3 className="text-gray-900 mb-3 group-hover:text-orange-500 transition-colors">
-                    UiPath Orchestrator 完整指南
+                    UiPath 技術分享
                   </h3>
 
                   <p className="text-gray-600 mb-4 line-clamp-2">
@@ -3940,7 +5077,10 @@ export default router`,
                       <motion.button
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        onClick={() => setShowVue30Days(true)}
+                        onClick={() => {
+                          setArticleEntrySource('main');
+                          setShowVue30Days(true);
+                        }}
                         className="bg-white text-gray-900 px-8 py-3 rounded-full shadow-lg hover:shadow-xl transition-shadow inline-flex items-center gap-2"
                       >
                         <Code className="w-5 h-5" />
@@ -3993,8 +5133,17 @@ export default router`,
                 whileHover={{ y: -10 }}
                 className="group cursor-pointer"
                 onClick={() => {
+                  setArticleEntrySource('main');
                   if (article.category === 'UiPath') {
-                    setShowUiPathOrchestrator(true);
+                    if (article.id === 2) {
+                      setShowUiPathOrchestrator(true);
+                    } else if (article.id === 3) {
+                      setShowUiPathHost(true);
+                    } else if (article.id === 4) {
+                      setShowUiPathManagement(true);
+                    } else if (article.id === 5) {
+                      setShowUiPathTenant(true);
+                    }
                   }
                 }}
               >

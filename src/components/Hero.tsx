@@ -1,11 +1,10 @@
 import { motion } from 'motion/react';
 import { Sparkles, ArrowRight, Star, Heart, Zap } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
-interface HeroProps {
-  setActiveSection: (section: string) => void;
-}
+export function Hero() {
+  const navigate = useNavigate();
 
-export function Hero({ setActiveSection }: HeroProps) {
   const floatingAnimation = {
     y: [0, -20, 0],
     transition: {
@@ -72,7 +71,7 @@ export function Hero({ setActiveSection }: HeroProps) {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => setActiveSection('games')}
+              onClick={() => navigate('/games')}
               className="flex items-center gap-2 bg-gradient-to-r from-orange-400 to-amber-500 text-white px-6 py-3 rounded-full shadow-lg hover:shadow-xl transition-shadow"
             >
               開始遊戲
@@ -82,7 +81,7 @@ export function Hero({ setActiveSection }: HeroProps) {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => setActiveSection('parenting')}
+              onClick={() => navigate('/parenting')}
               className="flex items-center gap-2 bg-white text-gray-700 px-6 py-3 rounded-full shadow-md hover:shadow-lg transition-shadow"
             >
               查看教養文章
@@ -166,7 +165,7 @@ export function Hero({ setActiveSection }: HeroProps) {
         <motion.div
           whileHover={{ y: -10, scale: 1.02 }}
           className="bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all cursor-pointer"
-          onClick={() => setActiveSection('games')}
+          onClick={() => navigate('/games')}
         >
           <div className="text-6xl mb-4">
             🎮
@@ -184,7 +183,7 @@ export function Hero({ setActiveSection }: HeroProps) {
         <motion.div
           whileHover={{ y: -10, scale: 1.02 }}
           className="bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all cursor-pointer"
-          onClick={() => setActiveSection('parenting')}
+          onClick={() => navigate('/parenting')}
         >
           <div className="text-6xl mb-4">
             💝
@@ -202,7 +201,7 @@ export function Hero({ setActiveSection }: HeroProps) {
         <motion.div
           whileHover={{ y: -10, scale: 1.02 }}
           className="bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all cursor-pointer"
-          onClick={() => setActiveSection('tech')}
+          onClick={() => navigate('/tech')}
         >
           <div className="text-6xl mb-4">
             💻

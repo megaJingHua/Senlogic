@@ -7,16 +7,12 @@ import {
   TrendingUp,
   Clock,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { ScrollToTop } from "./ScrollToTop";
 
-interface ParentingSectionProps {
-  onArticleClick: (articleId: number) => void;
-}
-
-export function ParentingSection({
-  onArticleClick,
-}: ParentingSectionProps) {
+export function ParentingSection() {
+  const navigate = useNavigate();
   const articles = [
     {
       id: 1,
@@ -235,7 +231,7 @@ export function ParentingSection({
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className="bg-gradient-to-r from-orange-400 to-amber-500 text-white px-8 py-3 rounded-full shadow-lg hover:shadow-xl transition-shadow inline-flex items-center gap-2"
-                onClick={() => onArticleClick(1)}
+                onClick={() => navigate(`/article/${1}`)}
               >
                 <BookOpen className="w-5 h-5" />
                 閱讀全文
@@ -276,6 +272,7 @@ export function ParentingSection({
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 + index * 0.1 }}
             whileHover={{ y: -10 }}
+            onClick={() => navigate(`/parenting/${article.id}`)}
             className="group cursor-pointer"
           >
             <div className="bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all">

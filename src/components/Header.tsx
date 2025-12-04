@@ -1,21 +1,24 @@
 import { motion } from "motion/react";
 import { Home, Gamepad2, Heart, Code } from "lucide-react";
+import { useNavigate, useLocation } from "react-router-dom";
 
-interface HeaderProps {
-  activeSection: string;
-  setActiveSection: (section: string) => void;
-}
+export function Header() {
+  const navigate = useNavigate();
+  const location = useLocation();
 
-export function Header({
-  activeSection,
-  setActiveSection,
-}: HeaderProps) {
   const navItems = [
-    { id: "home", label: "首頁", icon: Home },
-    { id: "games", label: "好玩遊戲區", icon: Gamepad2 },
-    { id: "parenting", label: "教養文章", icon: Heart },
-    { id: "tech", label: "技術文章", icon: Code },
+    { id: "home", label: "首頁", icon: Home, path: "/" },
+    { id: "games", label: "好玩遊戲區", icon: Gamepad2, path: "/games" },
+    { id: "parenting", label: "教養文章", icon: Heart, path: "/parenting" },
+    { id: "tech", label: "技術文章", icon: Code, path: "/tech" },
   ];
+
+  const isActive = (path: string) => {
+    if (path === "/") {
+      return location.pathname === "/";
+    }
+    return location.pathname.startsWith(path);
+  };
 
   return (
     <motion.header
@@ -29,7 +32,7 @@ export function Header({
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             className="flex items-center gap-2 cursor-pointer"
-            onClick={() => setActiveSection("home")}
+            onClick={() => navigate("/")}
           >
             <div className="w-10 h-10 bg-gradient-to-br from-orange-400 to-amber-500 rounded-full flex items-center justify-center">
               <span className="text-white">🐰</span>
@@ -40,16 +43,16 @@ export function Header({
           <div className="flex gap-2">
             {navItems.map((item) => {
               const Icon = item.icon;
-              const isActive = activeSection === item.id;
+              const active = isActive(item.path);
 
               return (
                 <motion.button
                   key={item.id}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  onClick={() => setActiveSection(item.id)}
+                  onClick={() => navigate(item.path)}
                   className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all ${
-                    isActive
+                    active
                       ? "bg-gradient-to-r from-orange-400 to-amber-500 text-white shadow-lg"
                       : "bg-white text-gray-700 hover:bg-gray-100"
                   }`}

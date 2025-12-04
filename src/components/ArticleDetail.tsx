@@ -1,13 +1,12 @@
 import { motion } from 'motion/react';
 import { ArrowLeft, Clock, Heart, Share2, Bookmark, User, Calendar, Tag } from 'lucide-react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 
-interface ArticleDetailProps {
-  articleId: number;
-  onBack: () => void;
-}
-
-export function ArticleDetail({ articleId, onBack }: ArticleDetailProps) {
+export function ArticleDetail() {
+  const navigate = useNavigate();
+  const { articleId } = useParams<{ articleId: string }>();
+  
   const articlesData: { [key: number]: any } = {
     1: {
       id: 1,
@@ -70,7 +69,7 @@ export function ArticleDetail({ articleId, onBack }: ArticleDetailProps) {
     }
   };
 
-  const article = articlesData[articleId] || articlesData[1];
+  const article = articlesData[Number(articleId)] || articlesData[1];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-green-50">
@@ -90,7 +89,7 @@ export function ArticleDetail({ articleId, onBack }: ArticleDetailProps) {
               animate={{ opacity: 1, x: 0 }}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={onBack}
+              onClick={() => navigate('/parenting')}
               className="mb-8 flex items-center gap-2 bg-white/20 backdrop-blur-md text-white px-6 py-3 rounded-full hover:bg-white/30 transition-all"
             >
               <ArrowLeft className="w-5 h-5" />
