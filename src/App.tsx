@@ -18,6 +18,7 @@ export default function App() {
           <Route path="/parenting" element={<ParentingSection />} />
           <Route path="/parenting/:articleId" element={<ArticleDetail />} />
           <Route path="/tech" element={<TechSection />} />
+          <Route path="/tech/:techId" element={<TechSection />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </div>

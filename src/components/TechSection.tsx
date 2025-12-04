@@ -6,8 +6,11 @@ import { Typewriter } from './Typewriter';
 import { ScrollToTop } from './ScrollToTop';
 import { RichText } from './RichText';
 import piniaImage from 'figma:asset/bb39f016a3dd8893163ade79d95a27bddfd0cbdf.png';
+import { useParams, useNavigate } from 'react-router-dom';
 
 export function TechSection() {
+  const { techId } = useParams();
+  const navigate = useNavigate();
   const [showVue30Days, setShowVue30Days] = useState(false);
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
   const [selectedTech, setSelectedTech] = useState<string | null>(null);
@@ -21,13 +24,30 @@ export function TechSection() {
   // 追蹤文章進入來源：'main' 表示從主頁進入，'techStack' 表示從技術棧進入
   const [articleEntrySource, setArticleEntrySource] = useState<'main' | 'techStack'>('main');
   const [showUiPathTenant, setShowUiPathTenant] = useState(false);
+  const [showUiPathFolder, setShowUiPathFolder] = useState(false);
+  const [showUiPathAssistant, setShowUiPathAssistant] = useState(false);
+
+  // Handle URL params and set appropriate state
+  useEffect(() => {
+    if (techId) {
+      const techLabel = pathToTechLabel(techId);
+      if (techLabel) {
+        setArticleEntrySource('techStack');
+        if (techLabel === 'Vue3') {
+          setShowVue30Days(true);
+        } else {
+          setSelectedTech(techLabel);
+        }
+      }
+    }
+  }, [techId]);
 
   // Scroll to top when entering article detail pages
   useEffect(() => {
-    if (selectedDay !== null || showUiPathOrchestrator || showUiPathHost || showEngineerDaily || showUiPathTenant) {
+    if (selectedDay !== null || showUiPathOrchestrator || showUiPathHost || showEngineerDaily || showUiPathTenant || showUiPathFolder || showUiPathManagement || showUiPathAssistant) {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-  }, [selectedDay, showUiPathOrchestrator, showUiPathHost, showEngineerDaily, showUiPathTenant]);
+  }, [selectedDay, showUiPathOrchestrator, showUiPathHost, showEngineerDaily, showUiPathTenant, showUiPathFolder, showUiPathManagement, showUiPathAssistant]);
 
   const vue30Days = [
     { 
@@ -2145,7 +2165,7 @@ export default router`,
     },
     {
       id: 2,
-      title: 'UiPath 技術分享',
+      title: 'UiPath 全貌',
       excerpt: '深入學習 UiPath Orchestrator 中央控制平台，掌握機器人管理、排程部署、監控追蹤等企業級 RPA 自動化核心技術！',
       category: 'UiPath',
       date: '2025-12-03',
@@ -2156,7 +2176,7 @@ export default router`,
     },
     {
       id: 3,
-      title: 'UiPath OC Host 設定',
+      title: 'UiPath Orchestrator（OC）Host 最高管理員',
       excerpt: '深入了解 Host 平台管理：Tenant 建立、授權分配、License 更新全流程，掌握企業級 RPA 平台管理核心技術！',
       category: 'UiPath',
       date: '2025-12-04',
@@ -2167,7 +2187,7 @@ export default router`,
     },
     {
       id: 4,
-      title: 'UiPath Orchestrator（OC）Management 平台全解析',
+      title: 'UiPath Orchestrator（OC）Management 帳號權限管理',
       excerpt: 'Host 與 Tenant 兩種 Management 有何不同？一次搞懂身份管理與平台控管架構，完整解析 Identity Hub 的功能與使用情境！',
       category: 'UiPath',
       date: '2025-12-04',
@@ -2186,6 +2206,28 @@ export default router`,
       tags: ['UiPath', 'Tenant', 'Robots', 'Folders'],
       icon: '🎯',
       color: 'from-teal-500 to-emerald-600'
+    },
+    {
+      id: 6,
+      title: 'UiPath OC Folder 資料夾管理',
+      excerpt: 'Folder 是部門級、專案級的自動化管理空間，包含流程、排程、佇列、資產與監控，完整掌握自動化生命周期！',
+      category: 'UiPath',
+      date: '2025-12-04',
+      views: 2100,
+      tags: ['UiPath', 'Folder', 'Process', 'Queue'],
+      icon: '📁',
+      color: 'from-amber-500 to-yellow-600'
+    },
+    {
+      id: 7,
+      title: 'UiPath Assistant 連線與授權設定（開發者）',
+      excerpt: 'Service URL 與 Machine Key 的差異、使用情境與設定方式總整理，讓開發者在公司環境中順利取得授權！',
+      category: 'UiPath',
+      date: '2025-12-04',
+      views: 1780,
+      tags: ['UiPath', 'Assistant', 'Machine Key', 'Service URL'],
+      icon: '🔗',
+      color: 'from-cyan-500 to-blue-600'
     }
   ];
 
@@ -2220,6 +2262,32 @@ export default router`,
     { icon: Cpu, label: 'SQL', color: 'bg-blue-600' },
     { icon: Rocket, label: 'UiPath', color: 'bg-orange-600' }
   ];
+
+  // Convert tech label to URL path
+  const techLabelToPath = (label: string): string => {
+    const pathMap: { [key: string]: string } = {
+      'Vue3': 'vue3',
+      'Git': 'git',
+      '.NET': 'dotnet',
+      'C#': 'csharp',
+      'SQL': 'sql',
+      'UiPath': 'uipath'
+    };
+    return pathMap[label] || label.toLowerCase();
+  };
+
+  // Convert URL path to tech label
+  const pathToTechLabel = (path: string): string | null => {
+    const labelMap: { [key: string]: string } = {
+      'vue3': 'Vue3',
+      'git': 'Git',
+      'dotnet': '.NET',
+      'csharp': 'C#',
+      'sql': 'SQL',
+      'uipath': 'UiPath'
+    };
+    return labelMap[path] || null;
+  };
 
   // Live chat messages state for homepage
   const [visibleMessages, setVisibleMessages] = useState(0);
@@ -2271,6 +2339,7 @@ export default router`,
               onClick={() => {
                 setShowEngineerDaily(false);
                 setSelectedChat(0);
+                navigate('/tech');
               }}
               className="inline-flex items-center gap-2 text-pink-600 hover:text-pink-700 mb-4"
             >
@@ -2947,7 +3016,10 @@ export default router`,
             <motion.button
               whileHover={{ scale: 1.05, x: -5 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => setSelectedTech(null)}
+              onClick={() => {
+                setSelectedTech(null);
+                navigate('/tech');
+              }}
               className="inline-flex items-center gap-2 text-emerald-600 hover:text-emerald-700 mb-4"
             >
               <span className="text-2xl">←</span>
@@ -3039,7 +3111,7 @@ export default router`,
             </motion.div>
           </div>
         </motion.div>
-      ) : selectedTech === 'UiPath' && !showUiPathOrchestrator && !showUiPathHost && !showUiPathManagement && !showUiPathTenant ? (
+      ) : selectedTech === 'UiPath' && !showUiPathOrchestrator && !showUiPathHost && !showUiPathManagement && !showUiPathTenant && !showUiPathFolder && !showUiPathAssistant ? (
         /* UiPath Article List View */
         <motion.div
           initial={{ opacity: 0 }}
@@ -3050,7 +3122,10 @@ export default router`,
             <motion.button
               whileHover={{ scale: 1.05, x: -5 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => setSelectedTech(null)}
+              onClick={() => {
+                setSelectedTech(null);
+                navigate('/tech');
+              }}
               className="inline-flex items-center gap-2 text-orange-600 hover:text-orange-700 mb-4"
             >
               <span className="text-2xl">←</span>
@@ -3068,6 +3143,7 @@ export default router`,
                 transition={{ delay: 0.1 }}
                 whileHover={{ scale: 1.05, y: -10 }}
                 onClick={() => {
+                  setArticleEntrySource('techStack');
                   setShowUiPathOrchestrator(true);
                 }}
                 className="bg-white rounded-3xl shadow-lg overflow-hidden cursor-pointer group"
@@ -3089,7 +3165,7 @@ export default router`,
                 {/* Content */}
                 <div className="p-6">
                   <h3 className="text-gray-900 mb-3 group-hover:text-orange-500 transition-colors">
-                    UiPath 技術分享
+                    UiPath 全貌
                   </h3>
                   
                   <p className="text-gray-600 mb-4 line-clamp-3">
@@ -3124,6 +3200,7 @@ export default router`,
                 transition={{ delay: 0.2 }}
                 whileHover={{ scale: 1.05, y: -10 }}
                 onClick={() => {
+                  setArticleEntrySource('techStack');
                   setShowUiPathHost(true);
                 }}
                 className="bg-white rounded-3xl shadow-lg overflow-hidden cursor-pointer group"
@@ -3145,7 +3222,7 @@ export default router`,
                 {/* Content */}
                 <div className="p-6">
                   <h3 className="text-gray-900 mb-3 group-hover:text-purple-500 transition-colors">
-                    UiPath OC Host 設定
+                    UiPath Orchestrator（OC）Host 最高管理員
                   </h3>
                   
                   <p className="text-gray-600 mb-4 line-clamp-3">
@@ -3202,7 +3279,7 @@ export default router`,
                 {/* Content */}
                 <div className="p-6">
                   <h3 className="text-gray-900 mb-3 group-hover:text-blue-500 transition-colors">
-                    UiPath Orchestrator（OC）Management 平台全解析
+                    UiPath Orchestrator（OC）Management 帳號權限管理
                   </h3>
                   
                   <p className="text-gray-600 mb-4 line-clamp-3">
@@ -3286,6 +3363,120 @@ export default router`,
                   </div>
                 </div>
               </motion.div>
+
+              {/* UiPath Folder Article Card */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5 }}
+                whileHover={{ scale: 1.05, y: -10 }}
+                onClick={() => {
+                  setArticleEntrySource('techStack');
+                  setShowUiPathFolder(true);
+                }}
+                className="bg-white rounded-3xl shadow-lg overflow-hidden cursor-pointer group"
+              >
+                {/* Header with icon */}
+                <div className="bg-gradient-to-r from-amber-500 to-yellow-600 p-8 text-center relative overflow-hidden">
+                  <motion.div
+                    animate={{ rotate: [0, 15, -15, 0] }}
+                    transition={{ duration: 4, repeat: Infinity }}
+                    className="text-7xl mb-4"
+                  >
+                    📁
+                  </motion.div>
+                  <div className="absolute top-4 right-4 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-white text-sm">
+                    Folder 管理
+                  </div>
+                </div>
+
+                {/* Content */}
+                <div className="p-6">
+                  <h3 className="text-gray-900 mb-3 group-hover:text-amber-500 transition-colors">
+                    UiPath OC Folder 資料夾管理
+                  </h3>
+                  
+                  <p className="text-gray-600 mb-4 line-clamp-3">
+                    Folder 是部門級、專案級的自動化管理空間，包含流程、排程、佇列、資產與監控，完整掌握自動化生命周期！
+                  </p>
+
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {['Folder', 'Process', 'Queue'].map((tag, i) => (
+                      <span key={i} className="bg-amber-100 text-amber-600 px-3 py-1 rounded-full text-sm">
+                        #{tag}
+                      </span>
+                    ))}
+                  </div>
+
+                  <div className="flex items-center justify-between text-sm text-gray-500">
+                    <div className="flex items-center gap-1">
+                      <Calendar className="w-4 h-4" />
+                      <span>2025-12-04</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Eye className="w-4 h-4" />
+                      <span>2,100</span>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* UiPath Assistant Article Card */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6 }}
+                whileHover={{ scale: 1.05, y: -10 }}
+                onClick={() => {
+                  setArticleEntrySource('techStack');
+                  setShowUiPathAssistant(true);
+                }}
+                className="bg-white rounded-3xl shadow-lg overflow-hidden cursor-pointer group"
+              >
+                {/* Header with icon */}
+                <div className="bg-gradient-to-r from-cyan-500 to-blue-600 p-8 text-center relative overflow-hidden">
+                  <motion.div
+                    animate={{ scale: [1, 1.1, 1] }}
+                    transition={{ duration: 3, repeat: Infinity }}
+                    className="text-7xl mb-4"
+                  >
+                    🔗
+                  </motion.div>
+                  <div className="absolute top-4 right-4 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-white text-sm">
+                    Assistant 設定
+                  </div>
+                </div>
+
+                {/* Content */}
+                <div className="p-6">
+                  <h3 className="text-gray-900 mb-3 group-hover:text-cyan-500 transition-colors">
+                    UiPath Assistant 連線與授權設定（開發者）
+                  </h3>
+                  
+                  <p className="text-gray-600 mb-4 line-clamp-3">
+                    Service URL 與 Machine Key 的差異、使用情境與設定方式總整理，讓開發者在公司環境中順利取得授權！
+                  </p>
+
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {['Assistant', 'Machine Key', 'Service URL'].map((tag, i) => (
+                      <span key={i} className="bg-cyan-100 text-cyan-600 px-3 py-1 rounded-full text-sm">
+                        #{tag}
+                      </span>
+                    ))}
+                  </div>
+
+                  <div className="flex items-center justify-between text-sm text-gray-500">
+                    <div className="flex items-center gap-1">
+                      <Calendar className="w-4 h-4" />
+                      <span>2025-12-04</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Eye className="w-4 h-4" />
+                      <span>1,780</span>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
             </div>
           </div>
         </motion.div>
@@ -3304,8 +3495,10 @@ export default router`,
                 setShowUiPathOrchestrator(false);
                 if (articleEntrySource === 'main') {
                   setSelectedTech(null);
+                  navigate('/tech');
                 } else {
                   setSelectedTech('UiPath');
+                  navigate('/tech/uipath');
                 }
               }}
               className="inline-flex items-center gap-2 text-orange-600 hover:text-orange-700 mb-4"
@@ -3322,7 +3515,7 @@ export default router`,
                     <span className="text-3xl">🚀</span>
                   </div>
                 </div>
-                <h1 className="text-white mb-2">🧩 UiPath Orchestrator（OC）技術分享</h1>
+                <h1 className="text-white mb-2">🧩 UiPath 全貌</h1>
                 <p className="text-white/90">從開發流程、平台架構到 Host / Tenant / Folder 管理全解析</p>
               </div>
 
@@ -3596,8 +3789,10 @@ Robots（執行端）`}
                 setShowUiPathHost(false);
                 if (articleEntrySource === 'main') {
                   setSelectedTech(null);
+                  navigate('/tech');
                 } else {
                   setSelectedTech('UiPath');
+                  navigate('/tech/uipath');
                 }
               }}
               className="inline-flex items-center gap-2 text-purple-600 hover:text-purple-700 mb-4"
@@ -3614,7 +3809,7 @@ Robots（執行端）`}
                     <span className="text-3xl">⚙️</span>
                   </div>
                 </div>
-                <h1 className="text-white mb-2">UiPath OC Host 設定</h1>
+                <h1 className="text-white mb-2">UiPath Orchestrator（OC）Host 最高管理員</h1>
                 <p className="text-white/90">Tenant 建立、授權分配、License 更新全流程</p>
               </div>
 
@@ -3782,7 +3977,7 @@ Robots（執行端）`}
                   <p className="text-gray-700 mb-6">
                     當企業調整授權數量（例如由 10 改為 8），Host 需先將 Tenant 多使用的 2 個授權調整回來，否則更新時會因數字不一致而報錯。
                   </p>
-                  <p className="text-gray-700 mb-6">以下為正確流程。</p>
+                  <p className="text-gray-700 mb-6">以下���正確流程。</p>
 
                   <div className="space-y-6">
                     <div className="bg-red-100 rounded-xl p-4">
@@ -3924,7 +4119,7 @@ Robots（執行端）`}
                     <span className="text-3xl">🏛</span>
                   </div>
                 </div>
-                <h1 className="text-white mb-2 text-3xl font-bold">UiPath Orchestrator（OC）Management 平台全解析</h1>
+                <h1 className="text-white mb-2 text-3xl font-bold">UiPath Orchestrator（OC）Management 帳號權限管理</h1>
                 <p className="text-white/90 text-lg">Host 與 Tenant 兩種 Management 有何不同？一次搞懂身份管理與平台控管架構</p>
               </div>
 
@@ -4053,7 +4248,7 @@ Robots（執行端）`}
                         <div className="bg-white rounded-xl p-4">
                           <h4 className="text-gray-900 mb-2 text-lg font-semibold">4. Mail Settings（SMTP 設定）</h4>
                           <ul className="list-disc list-inside space-y-1 text-gray-700 ml-4">
-                            <li>設定平台的郵件伺服器（SMTP）</li>
+                            <li>設定平台的郵��伺服器（SMTP）</li>
                             <li>用於接收 Host 層級的錯誤通知或告警</li>
                           </ul>
                         </div>
@@ -4548,7 +4743,7 @@ Robots（執行端）`}
                     {/* 5-11 其他功能 */}
                     <div className="grid md:grid-cols-2 gap-5">
                       {[
-                        { num: '5️⃣', title: 'Machines', desc: '定義 OC 與 Robot 的連線橋樑，建立連線 Key、定義執行能力（Capacity）、授權 Unattended Robot' },
+                        { num: '5️⃣', title: 'Machines', desc: '定義 OC 與 Robot 的連線橋樑，建���連線 Key、定義執行能力（Capacity）、授權 Unattended Robot' },
                         { num: '6️⃣', title: 'Packages', desc: '流程包管理，顯示所有被發佈到此 Tenant 的流程包，企業可統一控管流程版本' },
                         { num: '7️⃣', title: 'Audit', desc: '稽核紀錄，記錄 Tenant 內所有重要操作，對資訊安全、稽核、故障排查非常重要' },
                         { num: '8️⃣', title: 'Credential Stores', desc: '密碼儲存區，安全儲存敏感資訊，可與 CyberArk、Azure Key Vault 等企業級金鑰系統整合' },
@@ -4630,6 +4825,1122 @@ Robots（執行端）`}
                   <div className="mt-8 bg-teal-50 rounded-xl p-8 text-center border-2 border-teal-300">
                     <p className="text-gray-800 text-xl font-bold">
                       💡 掌握 Tenant 的每個功能，就能完整操作 UiPath 自動化平台，並制定企業級的 RPA 管理規範。
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      ) : showUiPathFolder ? (
+        /* UiPath Folder Detail View */
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
+        >
+          <div className="mb-8">
+            <motion.button
+              whileHover={{ scale: 1.05, x: -5 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => {
+                setShowUiPathFolder(false);
+                if (articleEntrySource === 'main') {
+                  setSelectedTech(null);
+                } else {
+                  setSelectedTech('UiPath');
+                }
+              }}
+              className="inline-flex items-center gap-2 text-amber-600 hover:text-amber-700 mb-4"
+            >
+              <span className="text-2xl">←</span>
+              <span>{articleEntrySource === 'main' ? '返回技術文章' : '返回 UiPath 文章'}</span>
+            </motion.button>
+            
+            <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
+              {/* Header */}
+              <div className="bg-gradient-to-r from-amber-500 to-yellow-600 p-8 text-white">
+                <div className="flex items-center gap-4 mb-4">
+                  <motion.div
+                    animate={{ rotate: [0, 15, -15, 0] }}
+                    transition={{ duration: 4, repeat: Infinity }}
+                    className="text-6xl"
+                  >
+                    📁
+                  </motion.div>
+                  <div>
+                    <h1 className="text-white mb-2">UiPath OC Folder 資料夾管理</h1>
+                    <p className="text-white/90">Folder 是一個部門級、專案級的自動化管理空間</p>
+                  </div>
+                </div>
+                <div className="flex gap-2 flex-wrap">
+                  {['Folder', 'Process', 'Queue', 'Assets'].map((tag, i) => (
+                    <span key={i} className="bg-white/20 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm">
+                      #{tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Content */}
+              <div className="p-8 md:p-12 space-y-10">
+                {/* 介紹 */}
+                <div className="bg-gradient-to-br from-amber-50 to-yellow-50 rounded-2xl p-8">
+                  <p className="text-gray-800 text-xl leading-relaxed font-medium">
+                    在 UiPath Orchestrator 中，<strong className="text-amber-600 text-2xl">Folder（資料夾）</strong> 是自動化治理的核心概念之一。
+                    每個 Folder 都是一個獨立的、自給自足的自動化空間，包含流程（Processes）、機器人執行（Jobs）、排程（Triggers）、佇列（Queues）、資產（Assets）、儲存空間（Buckets）與監控功能。
+                    如果說 <strong className="text-teal-600 text-xl">Tenant 是企業級空間</strong>，那 <strong className="text-amber-600 text-xl">Folder 就是部門級或專案級空間</strong>。
+                  </p>
+                </div>
+
+                {/* 一、Folder 主功能總覽 */}
+                <div>
+                  <h2 className="text-gray-900 mb-6 flex items-center gap-3 text-3xl font-bold">
+                    <span className="text-5xl">📌</span>
+                    一、Folder 主功能總覽
+                  </h2>
+                  
+                  <div className="space-y-6">
+                    {/* Home */}
+                    <div className="bg-white border-2 border-amber-200 rounded-2xl p-6">
+                      <h3 className="text-gray-900 mb-3 flex items-center gap-2">
+                        <span className="text-3xl">1️⃣</span>
+                        <span>Home</span>
+                      </h3>
+                      <p className="text-gray-800 leading-relaxed">
+                        顯示資料夾的整體概況，例如：已部署的 Process 數量、Queue 與 Asset 數量、機器人 Job 執行狀態、最近警示與 log 摘要。用於快速掌握此 Folder 的整體使用狀況。
+                      </p>
+                    </div>
+
+                    {/* Automations */}
+                    <div className="bg-white border-2 border-amber-200 rounded-2xl p-6">
+                      <h3 className="text-gray-900 mb-3 flex items-center gap-2">
+                        <span className="text-3xl">2️⃣</span>
+                        <span>Automations（自動化執行核心）</span>
+                      </h3>
+                      <p className="text-gray-800 leading-relaxed mb-4">包含：</p>
+                      <ul className="space-y-2 text-gray-800">
+                        <li className="flex items-start gap-2">
+                          <span className="text-amber-500 font-bold">•</span>
+                          <span><strong>Processes</strong>：自動化流程（Studio 發布的 Package）</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-amber-500 font-bold">•</span>
+                          <span><strong>Jobs</strong>：流程執行的實例</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-amber-500 font-bold">•</span>
+                          <span><strong>Triggers</strong>：排程器，定時啟動 Job</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-amber-500 font-bold">•</span>
+                          <span><strong>Logs</strong>：Job 執行時產生的紀錄（Info/Warning/Error）</span>
+                        </li>
+                      </ul>
+                      <div className="mt-4 bg-amber-50 rounded-xl p-4">
+                        <p className="text-gray-800 font-medium">Automations 是 Folder 中「機器人執行」的中心。</p>
+                      </div>
+                    </div>
+
+                    {/* Monitoring */}
+                    <div className="bg-white border-2 border-amber-200 rounded-2xl p-6">
+                      <h3 className="text-gray-900 mb-3 flex items-center gap-2">
+                        <span className="text-3xl">3️⃣</span>
+                        <span>Monitoring（監控中心）</span>
+                      </h3>
+                      <p className="text-gray-800 leading-relaxed mb-4">提供：</p>
+                      <ul className="space-y-2 text-gray-800">
+                        <li className="flex items-start gap-2">
+                          <span className="text-amber-500 font-bold">•</span>
+                          <span>Overview（整體運行狀況）</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-amber-500 font-bold">•</span>
+                          <span>Machines（機器狀態）</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-amber-500 font-bold">•</span>
+                          <span>Processes（各流程狀態）</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-amber-500 font-bold">•</span>
+                          <span>Queues（佇列處理能力）</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-amber-500 font-bold">•</span>
+                          <span>SLA（服務等級監控）</span>
+                        </li>
+                      </ul>
+                    </div>
+
+                    {/* Queues */}
+                    <div className="bg-white border-2 border-amber-200 rounded-2xl p-6">
+                      <h3 className="text-gray-900 mb-3 flex items-center gap-2">
+                        <span className="text-3xl">4️⃣</span>
+                        <span>Queues（佇列管理）</span>
+                      </h3>
+                      <p className="text-gray-800 leading-relaxed mb-4">包含：</p>
+                      <ul className="space-y-2 text-gray-800">
+                        <li className="flex items-start gap-2">
+                          <span className="text-amber-500 font-bold">•</span>
+                          <span><strong>Queues</strong>：佇列設定與項目（Queue Items）</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-amber-500 font-bold">•</span>
+                          <span><strong>Review Requests</strong>：需要人工覆核的工作</span>
+                        </li>
+                      </ul>
+                      <div className="mt-4 bg-amber-50 rounded-xl p-4">
+                        <p className="text-gray-800 font-medium">Queues 是大規模處理大量任務時最常用的機制。</p>
+                      </div>
+                    </div>
+
+                    {/* Assets */}
+                    <div className="bg-white border-2 border-amber-200 rounded-2xl p-6">
+                      <h3 className="text-gray-900 mb-3 flex items-center gap-2">
+                        <span className="text-3xl">5️⃣</span>
+                        <span>Assets（資產）</span>
+                      </h3>
+                      <p className="text-gray-800 leading-relaxed mb-4">集中管理流程中用到的設定值，例如：</p>
+                      <ul className="space-y-2 text-gray-800">
+                        <li className="flex items-start gap-2">
+                          <span className="text-amber-500 font-bold">•</span>
+                          <span>Text</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-amber-500 font-bold">•</span>
+                          <span>Integer</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-amber-500 font-bold">•</span>
+                          <span>Bool</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-amber-500 font-bold">•</span>
+                          <span>Credential（加密帳密）</span>
+                        </li>
+                      </ul>
+                      <div className="mt-4 bg-amber-50 rounded-xl p-4">
+                        <p className="text-gray-800 font-medium">流程可透過 Studio 的 Get Asset / Set Asset 存取。</p>
+                      </div>
+                    </div>
+
+                    {/* Storage Buckets */}
+                    <div className="bg-white border-2 border-amber-200 rounded-2xl p-6">
+                      <h3 className="text-gray-900 mb-3 flex items-center gap-2">
+                        <span className="text-3xl">6️⃣</span>
+                        <span>Storage Buckets（儲存桶）</span>
+                      </h3>
+                      <p className="text-gray-800 leading-relaxed mb-4">
+                        提供資料夾專屬的儲存空間，用來存：PDF、圖片、Excel、JSON 等檔案
+                      </p>
+                      <div className="bg-amber-50 rounded-xl p-4">
+                        <p className="text-gray-800 font-medium">適合文件處理或需要跨流程共享檔案的情境。</p>
+                      </div>
+                    </div>
+
+                    {/* Settings */}
+                    <div className="bg-white border-2 border-amber-200 rounded-2xl p-6">
+                      <h3 className="text-gray-900 mb-3 flex items-center gap-2">
+                        <span className="text-3xl">7️⃣</span>
+                        <span>Settings（設定）</span>
+                      </h3>
+                      <div className="space-y-3 text-gray-800">
+                        <div>
+                          <h4 className="font-bold text-lg mb-2">Manage Access</h4>
+                          <p className="leading-relaxed">顯示與配置：哪些帳號可以存取此 Folder、他們擁有什麼角色（Role）</p>
+                        </div>
+                        <div>
+                          <h4 className="font-bold text-lg mb-2">Machines</h4>
+                          <p className="leading-relaxed">顯示此 Folder 使用的機器（Robot 執行環境）並設定哪些機器可執行此 Folder 的流程。</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 二、Automations 詳細操作指南 */}
+                <div>
+                  <h2 className="text-gray-900 mb-6 flex items-center gap-3 text-3xl font-bold">
+                    <span className="text-5xl">📘</span>
+                    二、Automations 詳細操作指南
+                  </h2>
+
+                  <div className="space-y-8">
+                    {/* 1. 將 User 與 Machines 加入 Folder */}
+                    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-8">
+                      <h3 className="text-gray-900 mb-4 text-2xl font-bold flex items-center gap-2">
+                        <span>1️⃣</span>
+                        <span>將 User 與 Machines 加入 Folder</span>
+                      </h3>
+                      <p className="text-gray-800 leading-relaxed mb-4">
+                        為了讓機器人可以執行流程，你需要：
+                      </p>
+                      <ul className="space-y-2 text-gray-800 mb-4">
+                        <li className="flex items-start gap-2">
+                          <span className="text-blue-500 font-bold">✔</span>
+                          <span>把帳號加入 Folder</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-blue-500 font-bold">✔</span>
+                          <span>把機器加入 Folder</span>
+                        </li>
+                      </ul>
+                      <div className="bg-white rounded-xl p-4 mb-4">
+                        <p className="text-gray-800 font-medium mb-2">操作路徑：</p>
+                        <p className="text-gray-700 font-mono text-sm">Settings → Manage Access → Assign account/group/external app</p>
+                        <p className="text-gray-700 font-mono text-sm">Settings → Machines → Manage Machines in Folder</p>
+                      </div>
+                      <div className="bg-red-50 border-2 border-red-300 rounded-xl p-4">
+                        <p className="text-gray-900 font-bold mb-2">⚠️ 必要條件（重要）：</p>
+                        <p className="text-gray-800">若建立 Job，需要指定：執行者（User）、執行機器（Machine）</p>
+                      </div>
+                    </div>
+
+                    {/* 2. 加入 Process */}
+                    <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-8">
+                      <h3 className="text-gray-900 mb-4 text-2xl font-bold flex items-center gap-2">
+                        <span>2️⃣</span>
+                        <span>加入 Process（流程）</span>
+                      </h3>
+                      <p className="text-gray-800 leading-relaxed mb-4">
+                        Process 是從 Studio 發布（Publish）的 Package，再建立於 Folder 中，可供機器人執行。
+                      </p>
+                      <div className="bg-white rounded-xl p-4 mb-4">
+                        <p className="text-gray-800 font-medium mb-2">路徑：</p>
+                        <p className="text-gray-700 font-mono text-sm">Automations → Processes → Add Process</p>
+                      </div>
+                      <div className="bg-emerald-50 rounded-xl p-4">
+                        <p className="text-gray-900 font-bold mb-2">💡 補充：</p>
+                        <ul className="space-y-2 text-gray-800">
+                          <li className="flex items-start gap-2">
+                            <span className="text-emerald-500 font-bold">•</span>
+                            <span>因機器人執行時無畫面，Job Recording 功能可錄製流程畫面</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <span className="text-emerald-500 font-bold">•</span>
+                            <span>一個 Package 可以建立多個 Process（例如手動版與排程版）</span>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+
+                    {/* 3. Process 流程升版 */}
+                    <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-8">
+                      <h3 className="text-gray-900 mb-4 text-2xl font-bold flex items-center gap-2">
+                        <span>3️⃣</span>
+                        <span>Process 流程升版（Upgrade）</span>
+                      </h3>
+                      <p className="text-gray-800 leading-relaxed mb-4">
+                        當 Package 發布新版本時，OC 會自動偵測並提醒。
+                      </p>
+                      <div className="bg-white rounded-xl p-4 mb-4">
+                        <p className="text-gray-800 font-medium mb-2">升版方式：</p>
+                        <p className="text-gray-700 font-mono text-sm">Process → … → Upgrade to latest version / Edit</p>
+                      </div>
+                      <div className="bg-purple-50 border-2 border-purple-300 rounded-xl p-4">
+                        <p className="text-gray-800">
+                          💡 若此 Process 有設排程（Trigger），Trigger 會自動跑新版流程。
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* 4. Jobs */}
+                    <div className="bg-gradient-to-br from-orange-50 to-red-50 rounded-2xl p-8">
+                      <h3 className="text-gray-900 mb-4 text-2xl font-bold flex items-center gap-2">
+                        <span>4️⃣</span>
+                        <span>Jobs（流程執行記錄）</span>
+                      </h3>
+                      <p className="text-gray-800 leading-relaxed mb-4">
+                        每次執行 Process 就會產生一個 Job，用於：
+                      </p>
+                      <ul className="space-y-2 text-gray-800">
+                        <li className="flex items-start gap-2">
+                          <span className="text-orange-500 font-bold">•</span>
+                          <span>追蹤執行狀態（Running / Faulted / Successful）</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-orange-500 font-bold">•</span>
+                          <span>查看 Input / Output</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-orange-500 font-bold">•</span>
+                          <span>下載 Error Log</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-orange-500 font-bold">•</span>
+                          <span>分析執行時間</span>
+                        </li>
+                      </ul>
+                    </div>
+
+                    {/* 5. Logs */}
+                    <div className="bg-gradient-to-br from-yellow-50 to-amber-50 rounded-2xl p-8">
+                      <h3 className="text-gray-900 mb-4 text-2xl font-bold flex items-center gap-2">
+                        <span>5️⃣</span>
+                        <span>Logs（流程執行日誌）</span>
+                      </h3>
+                      <p className="text-gray-800 leading-relaxed mb-4">
+                        每次 Process 執行時都會產生 Log：
+                      </p>
+                      <ul className="space-y-2 text-gray-800 mb-4">
+                        <li className="flex items-start gap-2">
+                          <span className="text-yellow-500 font-bold">•</span>
+                          <span>Info（資訊）</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-yellow-500 font-bold">•</span>
+                          <span>Warning（警告）</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-yellow-500 font-bold">•</span>
+                          <span>Error（錯誤）</span>
+                        </li>
+                      </ul>
+                      <div className="bg-amber-50 rounded-xl p-4">
+                        <p className="text-gray-800 font-medium">Log 用於：查錯、分析流程時間、查看每一步的輸出</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 三、Assets（資產管理） */}
+                <div>
+                  <h2 className="text-gray-900 mb-6 flex items-center gap-3 text-3xl font-bold">
+                    <span className="text-5xl">📘</span>
+                    三、Assets（資產管理）
+                  </h2>
+
+                  <div className="bg-gradient-to-br from-teal-50 to-cyan-50 rounded-2xl p-8">
+                    <h3 className="text-gray-900 mb-4 text-2xl font-bold flex items-center gap-2">
+                      <span>6️⃣</span>
+                      <span>Add Asset（新增資產）</span>
+                    </h3>
+                    <p className="text-gray-800 leading-relaxed mb-4">
+                      Assets 用於集中管理：
+                    </p>
+                    <ul className="space-y-2 text-gray-800 mb-6">
+                      <li className="flex items-start gap-2">
+                        <span className="text-teal-500 font-bold">•</span>
+                        <span>Token</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-teal-500 font-bold">•</span>
+                        <span>連線字串</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-teal-500 font-bold">•</span>
+                        <span>API Key</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-teal-500 font-bold">•</span>
+                        <span>帳號密碼（Credential）</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-teal-500 font-bold">•</span>
+                        <span>Boolean / Text / Integer 設定值</span>
+                      </li>
+                    </ul>
+                    <div className="bg-white rounded-xl p-4">
+                      <p className="text-gray-900 font-bold mb-2">使用方式：</p>
+                      <p className="text-gray-800 mb-2">在 Studio 中：</p>
+                      <ul className="space-y-2 text-gray-800">
+                        <li className="flex items-start gap-2">
+                          <span className="text-teal-500 font-bold">•</span>
+                          <span><strong>Get Asset</strong>：讀取 Asset</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-teal-500 font-bold">•</span>
+                          <span><strong>Set Asset</strong>：更新 Asset（需權限）</span>
+                        </li>
+                      </ul>
+                      <p className="text-gray-800 mt-4">讓流程不需要硬編碼設定值，方便維護與安全控管。</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 四、Queues（佇列管理） */}
+                <div>
+                  <h2 className="text-gray-900 mb-6 flex items-center gap-3 text-3xl font-bold">
+                    <span className="text-5xl">📘</span>
+                    四、Queues（佇列管理）
+                  </h2>
+
+                  <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl p-8">
+                    <h3 className="text-gray-900 mb-4 text-2xl font-bold flex items-center gap-2">
+                      <span>7️⃣</span>
+                      <span>Add Queue（新增佇列）</span>
+                    </h3>
+                    <p className="text-gray-800 leading-relaxed mb-4">
+                      Queue 是用來：
+                    </p>
+                    <ul className="space-y-2 text-gray-800 mb-6">
+                      <li className="flex items-start gap-2">
+                        <span className="text-indigo-500 font-bold">✔</span>
+                        <span>儲存大量待處理的資料</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-indigo-500 font-bold">✔</span>
+                        <span>拆成一筆筆 Queue Item</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-indigo-500 font-bold">✔</span>
+                        <span>讓多台 Robot 同時處理（平行）</span>
+                      </li>
+                    </ul>
+                    <div className="bg-white rounded-xl p-4 mb-4">
+                      <p className="text-gray-900 font-bold mb-2">適合：</p>
+                      <ul className="space-y-2 text-gray-800">
+                        <li className="flex items-start gap-2">
+                          <span className="text-indigo-500 font-bold">•</span>
+                          <span>大量發票處理</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-indigo-500 font-bold">•</span>
+                          <span>大批匯款作業</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-indigo-500 font-bold">•</span>
+                          <span>大量查詢任務</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-indigo-500 font-bold">•</span>
+                          <span>大量表單處理</span>
+                        </li>
+                      </ul>
+                    </div>
+                    <div className="bg-indigo-50 rounded-xl p-4">
+                      <p className="text-gray-900 font-bold mb-2">在 Studio 中使用：</p>
+                      <ul className="space-y-2 text-gray-800">
+                        <li className="flex items-start gap-2">
+                          <span className="text-indigo-500 font-bold">•</span>
+                          <span>Get Queue Item</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-indigo-500 font-bold">•</span>
+                          <span>Add Queue Item</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-indigo-500 font-bold">•</span>
+                          <span>也能透過 API 將資料推進 Queue</span>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 五、Triggers（排程） */}
+                <div>
+                  <h2 className="text-gray-900 mb-6 flex items-center gap-3 text-3xl font-bold">
+                    <span className="text-5xl">📘</span>
+                    五、Automations：Triggers（排程）
+                  </h2>
+
+                  <div className="bg-gradient-to-br from-pink-50 to-rose-50 rounded-2xl p-8">
+                    <h3 className="text-gray-900 mb-4 text-2xl font-bold flex items-center gap-2">
+                      <span>8️⃣</span>
+                      <span>Add Trigger（新增排程）</span>
+                    </h3>
+                    <p className="text-gray-800 leading-relaxed mb-4">
+                      Triggers 用於自動啟動流程，例如：
+                    </p>
+                    <ul className="space-y-2 text-gray-800 mb-4">
+                      <li className="flex items-start gap-2">
+                        <span className="text-pink-500 font-bold">•</span>
+                        <span>每天 09:00 執行報表流程</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-pink-500 font-bold">•</span>
+                        <span>每小時檢查資料</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-pink-500 font-bold">•</span>
+                        <span>每週五整理文件</span>
+                      </li>
+                    </ul>
+                    <div className="bg-white rounded-xl p-4">
+                      <p className="text-gray-800 font-medium mb-2">操作方式：</p>
+                      <p className="text-gray-700 font-mono text-sm mb-3">Triggers → Add a new trigger</p>
+                      <p className="text-gray-900 font-bold mb-2">設定：</p>
+                      <ul className="space-y-2 text-gray-800">
+                        <li className="flex items-start gap-2">
+                          <span className="text-pink-500 font-bold">•</span>
+                          <span>執行時間</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-pink-500 font-bold">•</span>
+                          <span>使用的 Process</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-pink-500 font-bold">•</span>
+                          <span>使用哪台 Robot</span>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 六、總結 */}
+                <div>
+                  <h2 className="text-gray-900 mb-6 flex items-center gap-3 text-3xl font-bold">
+                    <span className="text-5xl">🎯</span>
+                    六、總結：Folder 是自動化的最小運作單位
+                  </h2>
+                  
+                  <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl p-8">
+                    <p className="text-gray-800 text-xl leading-relaxed mb-6">
+                      在 UiPath Orchestrator 中：<strong className="text-amber-600 text-2xl">Tenant 管規模，Folder 管工作。</strong>
+                    </p>
+
+                    <p className="text-gray-900 font-bold mb-4 text-lg">Folder 內提供：</p>
+                    
+                    <div className="overflow-x-auto">
+                      <table className="w-full bg-white rounded-xl overflow-hidden shadow-lg">
+                        <thead className="bg-gradient-to-r from-amber-500 to-yellow-600 text-white">
+                          <tr>
+                            <th className="py-4 px-6 text-left">功能</th>
+                            <th className="py-4 px-6 text-left">用途</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-200">
+                          <tr className="hover:bg-amber-50 transition-colors">
+                            <td className="py-4 px-6 font-bold">Processes</td>
+                            <td className="py-4 px-6">自動化流程部署</td>
+                          </tr>
+                          <tr className="hover:bg-amber-50 transition-colors">
+                            <td className="py-4 px-6 font-bold">Jobs</td>
+                            <td className="py-4 px-6">執行流程</td>
+                          </tr>
+                          <tr className="hover:bg-amber-50 transition-colors">
+                            <td className="py-4 px-6 font-bold">Triggers</td>
+                            <td className="py-4 px-6">排程</td>
+                          </tr>
+                          <tr className="hover:bg-amber-50 transition-colors">
+                            <td className="py-4 px-6 font-bold">Logs</td>
+                            <td className="py-4 px-6">執行紀錄</td>
+                          </tr>
+                          <tr className="hover:bg-amber-50 transition-colors">
+                            <td className="py-4 px-6 font-bold">Queues</td>
+                            <td className="py-4 px-6">大量任務分配</td>
+                          </tr>
+                          <tr className="hover:bg-amber-50 transition-colors">
+                            <td className="py-4 px-6 font-bold">Assets</td>
+                            <td className="py-4 px-6">設定管理</td>
+                          </tr>
+                          <tr className="hover:bg-amber-50 transition-colors">
+                            <td className="py-4 px-6 font-bold">Storage Buckets</td>
+                            <td className="py-4 px-6">檔案儲存</td>
+                          </tr>
+                          <tr className="hover:bg-amber-50 transition-colors">
+                            <td className="py-4 px-6 font-bold">Monitoring</td>
+                            <td className="py-4 px-6">運行監控</td>
+                          </tr>
+                          <tr className="hover:bg-amber-50 transition-colors">
+                            <td className="py-4 px-6 font-bold">Settings</td>
+                            <td className="py-4 px-6">權限與機器管理</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+
+                    <div className="mt-8 bg-amber-50 rounded-xl p-8 text-center border-2 border-amber-300">
+                      <p className="text-gray-800 text-xl font-bold">
+                        💡 掌握 Folder 的每個功能，就能完整控制部門或專案的自動化生命周期。
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      ) : showUiPathAssistant ? (
+        /* UiPath Assistant Detail View */
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
+        >
+          <div className="mb-8">
+            <motion.button
+              whileHover={{ scale: 1.05, x: -5 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => {
+                setShowUiPathAssistant(false);
+                if (articleEntrySource === 'main') {
+                  setSelectedTech(null);
+                } else {
+                  setSelectedTech('UiPath');
+                }
+              }}
+              className="inline-flex items-center gap-2 text-cyan-600 hover:text-cyan-700 mb-4"
+            >
+              <span className="text-2xl">←</span>
+              <span>{articleEntrySource === 'main' ? '返回技術文章' : '返回 UiPath 文章'}</span>
+            </motion.button>
+            
+            <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
+              {/* Header */}
+              <div className="bg-gradient-to-r from-cyan-500 to-blue-600 p-8 text-white">
+                <div className="flex items-center gap-4 mb-4">
+                  <motion.div
+                    animate={{ scale: [1, 1.1, 1] }}
+                    transition={{ duration: 3, repeat: Infinity }}
+                    className="text-6xl"
+                  >
+                    🔗
+                  </motion.div>
+                  <div>
+                    <h1 className="text-white mb-2">UiPath Assistant 連線與授權設定（開發者）</h1>
+                    <p className="text-white/90">Service URL 與 Machine Key 的差異、使用情境與設定方式總整理</p>
+                  </div>
+                </div>
+                <div className="flex gap-2 flex-wrap">
+                  {['Assistant', 'Machine Key', 'Service URL', 'Developer'].map((tag, i) => (
+                    <span key={i} className="bg-white/20 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm">
+                      #{tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Content */}
+              <div className="p-8 md:p-12 space-y-10">
+                {/* 介紹 */}
+                <div className="bg-gradient-to-br from-cyan-50 to-blue-50 rounded-2xl p-8">
+                  <p className="text-gray-800 text-xl leading-relaxed font-medium">
+                    在進行 UiPath 開發時，開發者需要先透過 <strong className="text-cyan-600 text-2xl">UiPath Assistant</strong>（或 UiPath Robot）與 Orchestrator 進行連線與授權，才能啟動 Studio、發佈流程、執行流程以及取得企業授權。
+                  </p>
+                  <p className="text-gray-800 text-lg leading-relaxed mt-4">
+                    本文將介紹兩種最常用的 Assistant 連線方式，並說明其差異、使用情境與最佳實務。
+                  </p>
+                </div>
+
+                {/* 一、連線設定入口 */}
+                <div>
+                  <h2 className="text-gray-900 mb-6 flex items-center gap-3 text-3xl font-bold">
+                    <span className="text-5xl">📌</span>
+                    一、連線設定入口
+                  </h2>
+                  
+                  <div className="bg-white border-2 border-cyan-200 rounded-2xl p-8">
+                    <div className="bg-cyan-50 rounded-xl p-6">
+                      <p className="text-gray-900 font-bold mb-4 text-xl">操作步驟：</p>
+                      <ol className="space-y-3 text-gray-800 text-lg">
+                        <li className="flex items-start gap-3">
+                          <span className="text-cyan-600 font-bold">1.</span>
+                          <span>開啟 <strong>UiPath Assistant</strong></span>
+                        </li>
+                        <li className="flex items-start gap-3">
+                          <span className="text-cyan-600 font-bold">2.</span>
+                          <span>右上角</span>
+                        </li>
+                        <li className="flex items-start gap-3">
+                          <span className="text-cyan-600 font-bold">3.</span>
+                          <span><strong>Preferences</strong></span>
+                        </li>
+                        <li className="flex items-start gap-3">
+                          <span className="text-cyan-600 font-bold">4.</span>
+                          <span><strong>Orchestrator Settings</strong></span>
+                        </li>
+                      </ol>
+                    </div>
+
+                    <div className="mt-6 bg-blue-50 rounded-xl p-6">
+                      <p className="text-gray-900 font-bold mb-3 text-lg">你會看到以下設定區塊：</p>
+                      <ul className="space-y-2 text-gray-800">
+                        <li className="flex items-start gap-2">
+                          <span className="text-blue-500 font-bold">•</span>
+                          <span>Connection Type（連線方式）</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-blue-500 font-bold">•</span>
+                          <span>Orchestrator URL</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-blue-500 font-bold">•</span>
+                          <span>Machine Key（使用機器金鑰時需要）</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-blue-500 font-bold">•</span>
+                          <span>Domain\User name（某些模式需要）</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-blue-500 font-bold">•</span>
+                          <span>連線狀態（Connected / Disconnected）</span>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 二、連線方式 1：Service URL */}
+                <div>
+                  <h2 className="text-gray-900 mb-6 flex items-center gap-3 text-3xl font-bold">
+                    <span className="text-5xl">📘</span>
+                    二、連線方式 1：Service URL（半自動模式）
+                  </h2>
+
+                  <div className="space-y-6">
+                    {/* 適用角色 */}
+                    <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-8">
+                      <h3 className="text-gray-900 mb-4 text-2xl font-bold flex items-center gap-2">
+                        <span>✔</span>
+                        <span>適用角色</span>
+                      </h3>
+                      <p className="text-gray-800 text-xl font-bold">
+                        開發者（Developer）、測試人員、需要看 Assistant 選單的人
+                      </p>
+                    </div>
+
+                    {/* 功能特性表格 */}
+                    <div className="overflow-x-auto">
+                      <table className="w-full bg-white rounded-xl overflow-hidden shadow-lg">
+                        <thead className="bg-gradient-to-r from-cyan-500 to-blue-600 text-white">
+                          <tr>
+                            <th className="py-4 px-6 text-left">項目</th>
+                            <th className="py-4 px-6 text-left">行為</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-200">
+                          <tr className="hover:bg-cyan-50 transition-colors">
+                            <td className="py-4 px-6 font-bold">連線方式</td>
+                            <td className="py-4 px-6">使用 Tenant / Folder 的 URL 登入</td>
+                          </tr>
+                          <tr className="hover:bg-cyan-50 transition-colors">
+                            <td className="py-4 px-6 font-bold">設定簡易度</td>
+                            <td className="py-4 px-6">高（使用 AD / SSO / Email 登入）</td>
+                          </tr>
+                          <tr className="hover:bg-cyan-50 transition-colors">
+                            <td className="py-4 px-6 font-bold">是否需要 Machine Key</td>
+                            <td className="py-4 px-6">❌ 不需要</td>
+                          </tr>
+                          <tr className="hover:bg-cyan-50 transition-colors">
+                            <td className="py-4 px-6 font-bold">是否能於 Assistant 手動啟動流程</td>
+                            <td className="py-4 px-6">✔ 可以</td>
+                          </tr>
+                          <tr className="hover:bg-cyan-50 transition-colors">
+                            <td className="py-4 px-6 font-bold">是否適合無人值守（Unattended）</td>
+                            <td className="py-4 px-6">❌ 不建議</td>
+                          </tr>
+                          <tr className="hover:bg-cyan-50 transition-colors">
+                            <td className="py-4 px-6 font-bold">是否適合開發</td>
+                            <td className="py-4 px-6">✔ 最常使用</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+
+                    {/* 說明 */}
+                    <div className="bg-white border-2 border-cyan-200 rounded-2xl p-8">
+                      <h3 className="text-gray-900 mb-4 text-xl font-bold">✔ 說明</h3>
+                      <p className="text-gray-800 leading-relaxed mb-4">
+                        Service URL 是使用租戶 URL（Ex: <code className="bg-gray-100 px-2 py-1 rounded text-sm">https://cloud.uipath.com/orgName/tenantName</code>）來進行登入。
+                      </p>
+                      <p className="text-gray-800 leading-relaxed mb-4">
+                        使用者透過 AD / SSO / Email 進行驗證，Assistant 會自動抓取：
+                      </p>
+                      <ul className="space-y-2 text-gray-800 mb-6">
+                        <li className="flex items-start gap-2">
+                          <span className="text-cyan-500 font-bold">•</span>
+                          <span>使用者授權（User License）</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-cyan-500 font-bold">•</span>
+                          <span>Folder 權限</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-cyan-500 font-bold">•</span>
+                          <span>可執行的流程列表</span>
+                        </li>
+                      </ul>
+
+                      <div className="bg-cyan-50 rounded-xl p-6">
+                        <h4 className="text-gray-900 mb-3 text-lg font-bold">✔ 特點</h4>
+                        <ul className="space-y-2 text-gray-800">
+                          <li className="flex items-start gap-2">
+                            <span className="text-cyan-500 font-bold">•</span>
+                            <span><strong>可在 Assistant 介面手動啟動流程（為何叫半自動）</strong></span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <span className="text-cyan-500 font-bold">•</span>
+                            <span>適合日常開發者要「看」流程列表</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <span className="text-cyan-500 font-bold">•</span>
+                            <span>適合需要互動式的桌面流程</span>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 三、連線方式 2：Machine Key */}
+                <div>
+                  <h2 className="text-gray-900 mb-6 flex items-center gap-3 text-3xl font-bold">
+                    <span className="text-5xl">📘</span>
+                    三、連線方式 2：Machine Key（全自動模式）
+                  </h2>
+
+                  <div className="space-y-6">
+                    {/* 適用角色 */}
+                    <div className="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-2xl p-8">
+                      <h3 className="text-gray-900 mb-4 text-2xl font-bold flex items-center gap-2">
+                        <span>✔</span>
+                        <span>適用角色</span>
+                      </h3>
+                      <p className="text-gray-800 text-xl font-bold">
+                        機器人執行環境（Unattended Robot）與進階開發者
+                      </p>
+                    </div>
+
+                    {/* 功能特性表格 */}
+                    <div className="overflow-x-auto">
+                      <table className="w-full bg-white rounded-xl overflow-hidden shadow-lg">
+                        <thead className="bg-gradient-to-r from-purple-500 to-indigo-600 text-white">
+                          <tr>
+                            <th className="py-4 px-6 text-left">項目</th>
+                            <th className="py-4 px-6 text-left">行為</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-200">
+                          <tr className="hover:bg-purple-50 transition-colors">
+                            <td className="py-4 px-6 font-bold">連線方式</td>
+                            <td className="py-4 px-6">使用 OC Machine Key ＋ Orchestrator URL</td>
+                          </tr>
+                          <tr className="hover:bg-purple-50 transition-colors">
+                            <td className="py-4 px-6 font-bold">設定簡易度</td>
+                            <td className="py-4 px-6">中（需管理員給 Machine Key）</td>
+                          </tr>
+                          <tr className="hover:bg-purple-50 transition-colors">
+                            <td className="py-4 px-6 font-bold">是否需要登入</td>
+                            <td className="py-4 px-6">❌ 不需要</td>
+                          </tr>
+                          <tr className="hover:bg-purple-50 transition-colors">
+                            <td className="py-4 px-6 font-bold">是否能於 Assistant 手動起動流程</td>
+                            <td className="py-4 px-6">❌ 不能（全自動模式）</td>
+                          </tr>
+                          <tr className="hover:bg-purple-50 transition-colors">
+                            <td className="py-4 px-6 font-bold">是否適合無人值守</td>
+                            <td className="py-4 px-6">✔ 最佳選擇</td>
+                          </tr>
+                          <tr className="hover:bg-purple-50 transition-colors">
+                            <td className="py-4 px-6 font-bold">是否適合開發</td>
+                            <td className="py-4 px-6">✔ 可用，但不常用（不會顯示流程列表）</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+
+                    {/* 說明 */}
+                    <div className="bg-white border-2 border-purple-200 rounded-2xl p-8">
+                      <h3 className="text-gray-900 mb-4 text-xl font-bold">✔ 說明</h3>
+                      <p className="text-gray-800 leading-relaxed mb-4">
+                        Machine Key 是由 OC 中 Machine 自動產生，將 Assistant 綁定特定機器。
+                      </p>
+                      <p className="text-gray-800 leading-relaxed mb-4">這種模式下：</p>
+                      <ul className="space-y-2 text-gray-800 mb-6">
+                        <li className="flex items-start gap-2">
+                          <span className="text-purple-500 font-bold">•</span>
+                          <span>Robot 自動從 OC 接收工作（全自動）</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-purple-500 font-bold">•</span>
+                          <span>不需要開啟 Assistant 操作</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-purple-500 font-bold">•</span>
+                          <span>Robot 會在後台靜默執行流程</span>
+                        </li>
+                      </ul>
+
+                      <div className="bg-purple-50 rounded-xl p-6">
+                        <h4 className="text-gray-900 mb-3 text-lg font-bold">✔ 特點</h4>
+                        <ul className="space-y-2 text-gray-800">
+                          <li className="flex items-start gap-2">
+                            <span className="text-purple-500 font-bold">•</span>
+                            <span><strong>完全自動化（無需人工啟動）</strong></span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <span className="text-purple-500 font-bold">•</span>
+                            <span>流程會由 Orchestrator 的 Triggers 直接下發</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <span className="text-purple-500 font-bold">•</span>
+                            <span>適用於伺服器、排程、無人值守流程</span>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 四、快速比較表 */}
+                <div>
+                  <h2 className="text-gray-900 mb-6 flex items-center gap-3 text-3xl font-bold">
+                    <span className="text-5xl">📘</span>
+                    四、Service URL vs Machine Key：快速比較表
+                  </h2>
+
+                  <div className="overflow-x-auto">
+                    <table className="w-full bg-white rounded-xl overflow-hidden shadow-lg">
+                      <thead className="bg-gradient-to-r from-cyan-500 to-blue-600 text-white">
+                        <tr>
+                          <th className="py-4 px-6 text-left">項目</th>
+                          <th className="py-4 px-6 text-left">Service URL（半自動）</th>
+                          <th className="py-4 px-6 text-left">Machine Key（全自動）</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-200">
+                        <tr className="hover:bg-cyan-50 transition-colors">
+                          <td className="py-4 px-6 font-bold">指定方式</td>
+                          <td className="py-4 px-6">Tenant URL</td>
+                          <td className="py-4 px-6">機器金鑰（Machine Key）</td>
+                        </tr>
+                        <tr className="hover:bg-cyan-50 transition-colors">
+                          <td className="py-4 px-6 font-bold">是否需要使用者登入</td>
+                          <td className="py-4 px-6">✔ 是</td>
+                          <td className="py-4 px-6">❌ 否</td>
+                        </tr>
+                        <tr className="hover:bg-cyan-50 transition-colors">
+                          <td className="py-4 px-6 font-bold">Assistant 可否看到流程列表</td>
+                          <td className="py-4 px-6">✔ 可以</td>
+                          <td className="py-4 px-6">❌ 無</td>
+                        </tr>
+                        <tr className="hover:bg-cyan-50 transition-colors">
+                          <td className="py-4 px-6 font-bold">是否可手動啟動流程</td>
+                          <td className="py-4 px-6">✔ 可以</td>
+                          <td className="py-4 px-6">❌ 不行</td>
+                        </tr>
+                        <tr className="hover:bg-cyan-50 transition-colors">
+                          <td className="py-4 px-6 font-bold">適合開發者</td>
+                          <td className="py-4 px-6">✔ 最佳</td>
+                          <td className="py-4 px-6">✔ 可用（較少用）</td>
+                        </tr>
+                        <tr className="hover:bg-cyan-50 transition-colors">
+                          <td className="py-4 px-6 font-bold">適合無人值守 Robot</td>
+                          <td className="py-4 px-6">❌ 不適合</td>
+                          <td className="py-4 px-6">✔ 最佳</td>
+                        </tr>
+                        <tr className="hover:bg-cyan-50 transition-colors">
+                          <td className="py-4 px-6 font-bold">適用環境</td>
+                          <td className="py-4 px-6">個人電腦、開發機</td>
+                          <td className="py-4 px-6">機器人執行主機、Server</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                {/* 五、同一台機器的使用 */}
+                <div>
+                  <h2 className="text-gray-900 mb-6 flex items-center gap-3 text-3xl font-bold">
+                    <span className="text-5xl">📘</span>
+                    五、「同一台機器可以同時做開發與機器人嗎？」
+                  </h2>
+
+                  <div className="bg-gradient-to-br from-orange-50 to-red-50 rounded-2xl p-8">
+                    <p className="text-gray-900 text-2xl font-bold mb-6">可以。</p>
+                    
+                    <p className="text-gray-800 text-lg leading-relaxed mb-4">
+                      ���要你使用兩種連線方式之一即可：
+                    </p>
+                    <ul className="space-y-3 text-gray-800 mb-6">
+                      <li className="flex items-start gap-3">
+                        <span className="text-orange-500 font-bold text-xl">•</span>
+                        <span className="text-lg">想開發 → 使用 Service URL</span>
+                      </li>
+                      <li className="flex items-start gap-3">
+                        <span className="text-orange-500 font-bold text-xl">•</span>
+                        <span className="text-lg">想讓機器人執行 → 使用 Machine Key</span>
+                      </li>
+                    </ul>
+
+                    <div className="bg-white rounded-xl p-6 mb-6">
+                      <p className="text-gray-800 leading-relaxed mb-4">
+                        但不建議同時並存（會造成權限、流程列表混亂）。
+                      </p>
+                      <p className="text-gray-900 font-bold mb-3">最佳作法：</p>
+                      <ul className="space-y-2 text-gray-800">
+                        <li className="flex items-start gap-2">
+                          <span className="text-orange-500 font-bold">→</span>
+                          <span><strong>開發機：Service URL</strong></span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-orange-500 font-bold">→</span>
+                          <span><strong>機器人執行機：Machine Key</strong></span>
+                        </li>
+                      </ul>
+                    </div>
+
+                    <div className="bg-orange-100 border-2 border-orange-300 rounded-xl p-6">
+                      <p className="text-gray-900 font-bold mb-2">如果是「一台機器兼任開發＋無人值守」</p>
+                      <ul className="space-y-2 text-gray-800">
+                        <li className="flex items-start gap-2">
+                          <span className="text-orange-500 font-bold">→</span>
+                          <span>用 Machine Key</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-orange-500 font-bold">→</span>
+                          <span>但用 <code className="bg-white px-2 py-1 rounded">Studio Pro（Developer）</code> 授權</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-orange-500 font-bold">→</span>
+                          <span>開發也能正常運作</span>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 六、開發者最佳建議 */}
+                <div>
+                  <h2 className="text-gray-900 mb-6 flex items-center gap-3 text-3xl font-bold">
+                    <span className="text-5xl">📘</span>
+                    六、開發者（Dev）最佳建議設定
+                  </h2>
+
+                  <div className="overflow-x-auto">
+                    <table className="w-full bg-white rounded-xl overflow-hidden shadow-lg">
+                      <thead className="bg-gradient-to-r from-green-500 to-emerald-600 text-white">
+                        <tr>
+                          <th className="py-4 px-6 text-left">使用情境</th>
+                          <th className="py-4 px-6 text-left">建議連線方式</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-200">
+                        <tr className="hover:bg-green-50 transition-colors">
+                          <td className="py-4 px-6 font-bold">本機開發、測試流程</td>
+                          <td className="py-4 px-6"><strong className="text-green-600">Service URL</strong></td>
+                        </tr>
+                        <tr className="hover:bg-green-50 transition-colors">
+                          <td className="py-4 px-6 font-bold">需要看 Assistant 上流程列表</td>
+                          <td className="py-4 px-6"><strong className="text-green-600">Service URL</strong></td>
+                        </tr>
+                        <tr className="hover:bg-green-50 transition-colors">
+                          <td className="py-4 px-6 font-bold">無人值守（Unattended）佈署</td>
+                          <td className="py-4 px-6"><strong className="text-purple-600">Machine Key</strong></td>
+                        </tr>
+                        <tr className="hover:bg-green-50 transition-colors">
+                          <td className="py-4 px-6 font-bold">混合用途（同台做 Dev + Robot）</td>
+                          <td className="py-4 px-6"><strong className="text-purple-600">Machine Key</strong>（但要設定 Developer License）</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                {/* 七、結論 */}
+                <div>
+                  <h2 className="text-gray-900 mb-6 flex items-center gap-3 text-3xl font-bold">
+                    <span className="text-5xl">🎯</span>
+                    七、結論（一句話版）
+                  </h2>
+                  
+                  <div className="bg-gradient-to-br from-cyan-50 to-blue-50 rounded-2xl p-8 border-2 border-cyan-300">
+                    <p className="text-gray-900 text-2xl font-bold text-center leading-relaxed">
+                      👉 <strong className="text-cyan-600">開發者用 Service URL（可手動可瀏覽）</strong>，<strong className="text-purple-600">機器人用 Machine Key（全自動）</strong>——同台機器也能兼用，只要授權設定正確。
                     </p>
                   </div>
                 </div>
@@ -4909,12 +6220,7 @@ Robots（執行端）`}
                           whileHover={{ scale: 1.1, y: -10 }}
                           whileTap={{ scale: 0.95 }}
                           onClick={() => {
-                            setArticleEntrySource('techStack');
-                            if (tech.label === 'Vue3') {
-                              setShowVue30Days(true);
-                            } else {
-                              setSelectedTech(tech.label);
-                            }
+                            navigate(`/tech/${techLabelToPath(tech.label)}`);
                           }}
                           className="text-center group cursor-pointer"
                         >
@@ -4942,8 +6248,7 @@ Robots（執行端）`}
                           whileHover={{ scale: 1.1, y: -10 }}
                           whileTap={{ scale: 0.95 }}
                           onClick={() => {
-                            setArticleEntrySource('techStack');
-                            setSelectedTech(tech.label);
+                            navigate(`/tech/${techLabelToPath(tech.label)}`);
                           }}
                           className="text-center group cursor-pointer"
                         >
@@ -4984,7 +6289,7 @@ Robots（執行端）`}
                     whileHover={{ scale: 1.2, rotate: 10 }}
                     transition={{ type: "spring" }}
                   >
-                    🤖
+                    🚀
                   </motion.div>
                   <motion.div
                     animate={{ opacity: [0.3, 0.7, 0.3] }}
@@ -5005,7 +6310,7 @@ Robots（執行端）`}
                   </div>
 
                   <h3 className="text-gray-900 mb-3 group-hover:text-orange-500 transition-colors">
-                    UiPath 技術分享
+                    UiPath 技術全貌
                   </h3>
 
                   <p className="text-gray-600 mb-4 line-clamp-2">
@@ -5143,6 +6448,10 @@ Robots（執行端）`}
                       setShowUiPathManagement(true);
                     } else if (article.id === 5) {
                       setShowUiPathTenant(true);
+                    } else if (article.id === 6) {
+                      setShowUiPathFolder(true);
+                    } else if (article.id === 7) {
+                      setShowUiPathAssistant(true);
                     }
                   }
                 }}
