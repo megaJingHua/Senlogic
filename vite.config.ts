@@ -5,8 +5,8 @@
 
   export default defineConfig({
     plugins: [react()],
-    resolve: {
        base: '/Senlogic/',
+    resolve: {
       extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
       alias: {
         'vaul@1.1.2': 'vaul',
