@@ -1,6 +1,7 @@
 import { motion } from "motion/react";
 import { Home, Gamepad2, Heart, Code } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
+import bunnyIcon from "figma:asset/590019623cd421e334ef14f2b64fb07cc0267a3f.png";
 
 export function Header() {
   const navigate = useNavigate();
@@ -8,9 +9,24 @@ export function Header() {
 
   const navItems = [
     { id: "home", label: "首頁", icon: Home, path: "/" },
-    { id: "games", label: "好玩遊戲區", icon: Gamepad2, path: "/games" },
-    { id: "parenting", label: "教養文章", icon: Heart, path: "/parenting" },
-    { id: "tech", label: "技術文章", icon: Code, path: "/tech" },
+    {
+      id: "games",
+      label: "好玩遊戲區",
+      icon: Gamepad2,
+      path: "/games",
+    },
+    {
+      id: "parenting",
+      label: "教養文章",
+      icon: Heart,
+      path: "/parenting",
+    },
+    {
+      id: "tech",
+      label: "技術文章",
+      icon: Code,
+      path: "/tech",
+    },
   ];
 
   const isActive = (path: string) => {
@@ -34,8 +50,8 @@ export function Header() {
             className="flex items-center gap-2 cursor-pointer"
             onClick={() => navigate("/")}
           >
-            <div className="w-10 h-10 bg-gradient-to-br from-orange-400 to-amber-500 rounded-full flex items-center justify-center">
-              <span className="text-white">🐰</span>
+            <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm">
+              <img src={bunnyIcon} alt="兔子" className="w-8 h-8" />
             </div>
             <span className="text-amber-900">森森邏輯</span>
           </motion.div>

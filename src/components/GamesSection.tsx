@@ -8,6 +8,7 @@ import { AlphabetForest } from './AlphabetForest';
 import { PuzzleParadise } from './PuzzleParadise';
 import { MusicRhythm } from './MusicRhythm';
 import { ScienceExperiment } from './ScienceExperiment';
+import { LadderLottery } from './LadderLottery';
 
 export function GamesSection() {
   const [selectedGame, setSelectedGame] = useState<number | null>(null);
@@ -66,6 +67,15 @@ export function GamesSection() {
       color: 'from-teal-300 to-green-400',
       difficulty: '困難',
       points: 200
+    },
+    {
+      id: 7,
+      title: '爬梯子抽禮物',
+      description: '設定玩家和禮物，開始抽獎',
+      emoji: '🎁',
+      color: 'from-purple-300 to-pink-400',
+      difficulty: '簡單',
+      points: 180
     }
   ];
 
@@ -94,6 +104,9 @@ export function GamesSection() {
   }
   if (selectedGame === 6) {
     return <ScienceExperiment onClose={() => setSelectedGame(null)} />;
+  }
+  if (selectedGame === 7) {
+    return <LadderLottery onClose={() => setSelectedGame(null)} />;
   }
 
   return (

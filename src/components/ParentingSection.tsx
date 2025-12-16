@@ -15,76 +15,28 @@ export function ParentingSection() {
   const navigate = useNavigate();
   const articles = [
     {
-      id: 1,
-      title: "如何培養孩子的自律能力",
+      id: 8,
+      title: "寫給疲憊媽媽的一封信：在教養的路上，你真的已經做得很好了",
       excerpt:
-        "自律是孩子成長過程中最重要的能力之一。本文將分享如何透過日常生活中的小習慣，幫助孩子建立良好的自我管理能力...",
-      category: "品格教育",
-      readTime: "5 分鐘",
-      likes: 234,
-      image:
-        "https://images.unsplash.com/photo-1758598737528-77505cac475f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwYXJlbnQlMjBjaGlsZCUyMHJlYWRpbmd8ZW58MXx8fHwxNzY0NjU1OTg3fDA&ixlib=rb-4.1.0&q=80&w=1080",
-      color: "from-pink-300 to-rose-400",
-    },
-    {
-      id: 2,
-      title: "親子溝通的黃金法則",
-      excerpt:
-        "良好的親子溝通是建立親密關係的基礎。了解這些溝通技巧，讓你和孩子的對話更有效、更溫暖...",
-      category: "溝通技巧",
-      readTime: "7 分鐘",
-      likes: 189,
-      image:
-        "https://images.unsplash.com/photo-1542810634-71277d95dcbb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxraWRzJTIwbGVhcm5pbmclMjBoYXBweXxlbnwxfHx8fDE3NjQ2NTU5ODZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      color: "from-blue-300 to-cyan-400",
-    },
-    {
-      id: 3,
-      title: "培養孩子的創造力與想像力",
-      excerpt:
-        "創造力是未來最重要的競爭力。透過這些方法，激發孩子無限的創意潛能...",
-      category: "創意發展",
-      readTime: "6 分鐘",
-      likes: 312,
-      image:
-        "https://images.unsplash.com/photo-1639454025136-d785f1776c7c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjaGlsZHJlbiUyMHBsYXlpbmclMjBnYW1lcyUyMGNvbG9yZnVsfGVufDF8fHx8MTc2NDY1NTk4Nnww&ixlib=rb-4.1.0&q=80&w=1080",
-      color: "from-purple-300 to-pink-400",
-    },
-    {
-      id: 4,
-      title: "建立良好的睡眠習慣",
-      excerpt:
-        "充足的睡眠對孩子的成長至關重要。學習如何幫助孩子建立規律的作息...",
-      category: "健康生活",
-      readTime: "4 分鐘",
-      likes: 267,
-      image:
-        "https://images.unsplash.com/photo-1758598737528-77505cac475f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwYXJlbnQlMjBjaGlsZCUyMHJlYWRpbmd8ZW58MXx8fHwxNzY0NjU1OTg3fDA&ixlib=rb-4.1.0&q=80&w=1080",
-      color: "from-green-300 to-emerald-400",
-    },
-    {
-      id: 5,
-      title: "情緒管理從小開始",
-      excerpt:
-        "教導孩子認識和管理情緒，是給他們一生的禮物。這些實用策略將幫助你引導孩子...",
-      category: "情緒教育",
+        "成為媽媽後，我才真正明白——原來世界上最累、最甜、最難、最有力量的角色，就是「媽媽」。這是送給每一位努力的媽媽的十句話，希望你在最累的時候，能重新看見自己的力量。",
+      category: "親子關係",
       readTime: "8 分鐘",
-      likes: 421,
+      likes: 567,
       image:
-        "https://images.unsplash.com/photo-1542810634-71277d95dcbb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxraWRzJTIwbGVhcm5pbmclMjBoYXBweXxlbnwxfHx8fDE3NjQ2NTU5ODZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      color: "from-orange-300 to-amber-400",
+        "https://images.unsplash.com/photo-1762174241767-498fbe248a30?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb3RoZXIlMjBjaGlsZCUyMHdhcm0lMjBodWclMjBjb21mb3J0fGVufDF8fHx8MTc2NTE4MzEyNnww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+      color: "from-amber-300 to-orange-400",
     },
     {
-      id: 6,
-      title: "數位時代的教養挑戰",
+      id: 7,
+      title: "三歲的孩子不是故意的：寫給每一位在教養路上跌跌撞撞的媽媽",
       excerpt:
-        "如何在科技環境中保護孩子，同時培養他們的數位素養？找到平衡的關鍵...",
-      category: "數位教養",
-      readTime: "6 分鐘",
-      likes: 356,
+        "三歲的孩子不是在挑戰你，他是在尋找安全的大人。當孩子做出讓你困擾的行為時，他其實是在問：「媽媽，你會因為我做錯事就不愛我嗎？」「界線在哪裡？」",
+      category: "情緒教育",
+      readTime: "10 分鐘",
+      likes: 489,
       image:
-        "https://images.unsplash.com/photo-1639454025136-d785f1776c7c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjaGlsZHJlbiUyMHBsYXlpbmclMjBnYW1lcyUyMGNvbG9yZnVsfGVufDF8fHx8MTc2NDY1NTk4Nnww&ixlib=rb-4.1.0&q=80&w=1080",
-      color: "from-teal-300 to-cyan-400",
+        "https://images.unsplash.com/photo-1587235587178-e4a6dbe63726?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb3RoZXIlMjB0b2RkbGVyJTIwbG92ZXxlbnwxfHx8fDE3NjUxNzI4NDJ8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+      color: "from-rose-300 to-pink-400",
     },
   ];
 
@@ -163,7 +115,7 @@ export function ParentingSection() {
                 👩‍💻
               </motion.div>
               <h3 className="text-gray-900 mb-2">
-                寶哥媽咪（Mega）
+                寶哥媽咪Mega）
               </h3>
               <div className="flex flex-wrap gap-2 justify-center">
                 <span className="bg-white/60 px-2 py-1 rounded-full text-gray-700">
@@ -212,26 +164,25 @@ export function ParentingSection() {
                 精選文章
               </span>
               <h3 className="text-amber-900 mb-4">
-                如何培養孩子的自律能力
+                三歲的孩子不是故意的：寫給每一位在教養路上跌跌撞撞的媽媽
               </h3>
               <p className="text-gray-700 mb-6">
-                自律是孩子成長過程中最重要的能力之一。本文將分享如何透過日常生活中的小習慣，
-                幫助孩子建立良好的自我管理能力，為未來奠定堅實的基礎。
+                三歲的孩子不是在挑戰你，他是在尋找安全的大人。當孩子做出讓你困擾的行為時，他其實是在問：「媽媽，你會因為我做錯事就不愛我嗎？」「界線在哪裡？」
               </p>
               <div className="flex items-center gap-6 mb-6">
                 <span className="flex items-center gap-2 text-gray-600">
-                  <Clock className="w-4 h-4" />5 分鐘閱讀
+                  <Clock className="w-4 h-4" />10 分鐘閱讀
                 </span>
                 <span className="flex items-center gap-2 text-gray-600">
                   <Heart className="w-4 h-4 fill-current text-rose-500" />
-                  234 個讚
+                  489 個讚
                 </span>
               </div>
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className="bg-gradient-to-r from-orange-400 to-amber-500 text-white px-8 py-3 rounded-full shadow-lg hover:shadow-xl transition-shadow inline-flex items-center gap-2"
-                onClick={() => navigate(`/article/${1}`)}
+                onClick={() => navigate(`/parenting/${7}`)}
               >
                 <BookOpen className="w-5 h-5" />
                 閱讀全文

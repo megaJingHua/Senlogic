@@ -5,7 +5,6 @@
 
   export default defineConfig({
     plugins: [react()],
-     base: '/Senlogic/',
     resolve: {
       extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
       alias: {
@@ -19,6 +18,7 @@
         'lucide-react@0.487.0': 'lucide-react',
         'input-otp@1.4.2': 'input-otp',
         'figma:asset/bb39f016a3dd8893163ade79d95a27bddfd0cbdf.png': path.resolve(__dirname, './src/assets/bb39f016a3dd8893163ade79d95a27bddfd0cbdf.png'),
+        'figma:asset/590019623cd421e334ef14f2b64fb07cc0267a3f.png': path.resolve(__dirname, './src/assets/590019623cd421e334ef14f2b64fb07cc0267a3f.png'),
         'embla-carousel-react@8.6.0': 'embla-carousel-react',
         'cmdk@1.1.1': 'cmdk',
         'class-variance-authority@0.7.1': 'class-variance-authority',

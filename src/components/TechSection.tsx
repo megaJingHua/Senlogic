@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import { Code, Terminal, Cpu, Rocket, GitBranch, Zap, Eye, Calendar, MessageCircle } from 'lucide-react';
+import { Code, Terminal, Cpu, Rocket, GitBranch, Zap, Eye, Calendar, MessageCircle, ChevronLeft, ChevronRight, Menu, X } from 'lucide-react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import { useState, useEffect, useRef } from 'react';
 import { Typewriter } from './Typewriter';
@@ -26,6 +26,9 @@ export function TechSection() {
   const [showUiPathTenant, setShowUiPathTenant] = useState(false);
   const [showUiPathFolder, setShowUiPathFolder] = useState(false);
   const [showUiPathAssistant, setShowUiPathAssistant] = useState(false);
+  
+  // 控制側邊欄是否顯示（移動端用）
+  const [showSidebar, setShowSidebar] = useState(false);
 
   // Handle URL params and set appropriate state
   useEffect(() => {
@@ -476,14 +479,14 @@ function getTodoIndex(todo) {
         sections: [
           {
             type: 'intro',
-            text: '你可以把「網站」想成一間房子，房子的大門就是你的首頁 (Home)，房間就像每個不同的功能頁面，而走廊就是 Router（路由�����，它負責帶你從大門走到不同的房間。'
+            text: '你可以把「網站」想成一間房子，房子的大門就是你的首頁 (Home)，房間就像每個不同的功能頁面，而走廊就是 Router（路由器，它負責帶你從大門走到不同的房間。'
           },
           {
             type: 'concept',
             title: '🚪 Vue Router 是什麼？',
             description: '就像家裡有走廊和門牌號碼，讓你可以走到不同的房間。在網站裡，這個「房間」就是不同的頁面。',
             examples: [
-              { path: '/', description: '首��' },
+              { path: '/', description: '首頁' },
               { path: '/about', description: '關於我們' },
               { path: '/game', description: '遊戲區' }
             ]
@@ -491,7 +494,7 @@ function getTodoIndex(todo) {
           {
             type: 'steps',
             title: '📦 今天的實作是什麼?',
-            description: '點擊「首頁」出現首頁內容，點擊「關於」出現介紹內容。就像家裡不用蓋兩間房子，同一個大門進去，走不同走廊就能到�����同房間。',
+            description: '點擊「首頁」出現首頁內容，點擊「關於」出現介紹內容。就像家裡不用蓋兩間房子，同一個大門進去，走不同走廊就能到不同房間。',
             steps: [
               {
                 number: 1,
@@ -682,7 +685,7 @@ const counter = useCounterStore()
           {
             type: 'perspective',
             title: '👩‍🍼 寶媽角度',
-            content: '寫���物清單時：如果漏寫「牛奶」，去超市就會買不到。如果數字寫錯，可能買太多或不夠。',
+            content: '寫購物清單時：如果漏寫「牛奶」，去超市就會買不到。如果數字寫錯，可能買太多或不夠。',
             highlight: '所以需要一個小幫手，在出門前提醒你「清單沒寫完整」。',
             conclusion: 'Vue 的表單驗證就是這個小幫手，確保資料正確無誤。'
           },
@@ -885,7 +888,7 @@ onUnmounted(() => console.log('🌙 元件卸載 → 餐館打烊'))
         sections: [
           {
             type: 'intro',
-            text: '在 Vue 專案裡，元件之間最常見的傳值方式是 **props**（父傳子）。但如果資料要從「爺爺 → 孫子」跨過好幾層，props 就會變得��長。👉 Vue 提供 **provide / inject**，讓「祖先元件」直接把資料提供給「後代元件」，中間的父母不用再幫忙轉交。'
+            text: '在 Vue 專案裡，元件之間最常見的傳值方式是 **props**（父傳子）。但如果資料要從「爺爺 → 孫子」跨過好幾層，props 就會變得很長。👉 Vue 提供 **provide / inject**，讓「祖先元件」直接把資料提供給「後代元件」，中間的父母不用再幫忙轉交。'
           },
           {
             type: 'perspective',
@@ -1048,7 +1051,7 @@ const theme = inject('theme')
             title: '📦 今天的實作',
             description: '需求：',
             tasks: [
-              '建立一個 Card 元件，裡面有「標�� slot」和「內容 slot」。',
+              '建立一個 Card 元件，裡面有「標題 slot」和「內容 slot」。',
               '父元件 App.vue 可以決定標題與內容顯示什麼。'
             ],
             steps: [
@@ -1233,7 +1236,7 @@ const show = ref(false)
           {
             type: '工程師角度',
             title: '## 💻 工程師角度',
-            text: '- 使用 `<transition>` 包裹元素。\n- Vue 會在元素顯示/消失時，自動套上 class：\n  - `v-enter-from`、`v-enter-active`、`v-enter-to`\n  - `v-leave-from`、`v-leave-active`、`v-leave-to`\n- 可以透過 CSS 控制動畫效果。'
+            text: '- 使用 <transition> 包裹元素。\n- Vue 會在元素顯示/消失時，自動套上 class：\n  - v-enter-from、v-enter-active、v-enter-to\n  - v-leave-from、v-leave-active、v-leave-to\n- 可以透過 CSS 控制動畫效果。'
           },
           {
             type: '今天的實作',
@@ -1343,7 +1346,7 @@ const { count, increment } = useCounter()
     { 
       day: 13, 
       date: '2025-11-13', 
-      title: '自訂 Hook —— 媽媽的獨門秘方', 
+      title: '自訂 Hook —媽媽的獨門秘方', 
       intro: '把重複邏輯抽成 Hook，隨時重用。',
       content: {
         sections: [
@@ -1390,7 +1393,7 @@ const { count, increment } = useCounter()
           {
             type: 'demo',
             title: '📦 今天的實作',
-            description: '製作一個���現在時間 Hook」。',
+            description: '製作一個現在時間 Hook」。',
             tasks: [],
             codeSections: [
               {
@@ -1711,7 +1714,7 @@ const show = ref(true)
             type: 'perspective',
             title: '👩‍🍼 寶媽角度',
             content: '烤餅乾：只要準備一份麵糰，就能一次烤出 12 塊餅乾。',
-            highlight: '不用一個一個慢慢做，用模��批量生產。',
+            highlight: '不用一個一個慢慢做，用模具批量生產。',
             conclusion: '效率提升，省時省力。'
           },
           {
@@ -2140,15 +2143,620 @@ export default router`,
         ]
       }
     },
-    { day: 22, date: '2025-11-22', title: '非同步資料 fetch —— 叫外送', intro: '用 fetch/axios 請求資料，更新畫面。' },
-    { day: 23, date: '2025-11-23', title: 'Loading 狀態 —— 廚房準備中', intro: '加上 loading 狀態提示資料載入中。' },
-    { day: 24, date: '2025-11-24', title: '錯誤處理 —— 缺貨的餐點', intro: '請求可能失敗，需要錯誤提示。' },
-    { day: 25, date: '2025-11-25', title: '環境變數 —— 家裡的小抄', intro: '不同環境用不同設定，Vue 用 .env 管理。' },
-    { day: 26, date: '2025-11-26', title: '專案架構整理 —— 大掃除', intro: '專案需要整理檔案結構，分門別類。' },
-    { day: 27, date: '2025-11-27', title: 'Pinia 插件 —— 智慧冰箱', intro: '插件擴展 Pinia，例如資料存 localStorage。' },
-    { day: 28, date: '2025-11-28', title: '測試（unit test）—— 模擬考', intro: '單元測試像模擬考，確保功能正確。' },
-    { day: 29, date: '2025-11-29', title: '部署網站 —— 喬遷新居', intro: '部署讓專案能被公開訪問。' },
-    { day: 30, date: '2025-11-30', title: '專案總結 & 展示 —— 成果發表會', intro: '把 30 天成果整合，做一個完整專案展示。' }
+    { 
+      day: 22, 
+      date: '2025-11-22', 
+      title: '非同步資料 fetch —— 叫外送', 
+      intro: '用 fetch/axios 請求資料，更新畫面。',
+      content: {
+        sections: [
+          {
+            type: 'intro',
+            text: '很多資料來自後端，需要「非同步請求 (fetch / axios)」。\n\n👉 Vue 可以在 `onMounted` 時發送請求，並用響應式資料更新畫面。'
+          },
+          {
+            type: 'perspective',
+            title: '👩‍🍼 寶媽角度',
+            content: '打電話叫披薩：',
+            listItems: [
+              {
+                items: [
+                  '打電話（發送請求）',
+                  '等外送員送來（等待回應）',
+                  '拿到披薩（更新畫面）'
+                ]
+              }
+            ]
+          },
+          {
+            type: 'perspective',
+            title: '💻 工程師角度',
+            content: '',
+            listItems: [
+              {
+                items: [
+                  '**fetch API**：原生方法，回傳 Promise。',
+                  '**axios**：常用第三方套件，語法更簡潔。',
+                  '在 Vue 中常搭配 `ref` 保存資料，並在 `onMounted` 呼叫 API。'
+                ]
+              }
+            ]
+          },
+          {
+            type: 'demo',
+            title: '📦 今天的實作',
+            description: '',
+            code: `<template>
+  <div>
+    <h2>文章清單</h2>
+    <p v-if="loading">載入中...</p>
+    <ul>
+      <li v-for="post in posts" :key="post.id">{{ post.title }}</li>
+    </ul>
+  </div>
+</template>
+
+<script setup>
+import { ref, onMounted } from 'vue'
+
+const posts = ref([])
+const loading = ref(true)
+
+onMounted(async () => {
+  const res = await fetch('https://jsonplaceholder.typicode.com/posts?_limit=5')
+  posts.value = await res.json()
+  loading.value = false
+})
+</script>`,
+            filename: ''
+          },
+          {
+            type: 'summary',
+            title: '✅ 學完重點',
+            points: [
+              {
+                title: '寶媽角度',
+                description: '等外送披薩，來了再開動。'
+              },
+              {
+                title: '工程師角度',
+                description: '熟悉 fetch/axios 請求與非同步資料處理。'
+              }
+            ]
+          }
+        ]
+      }
+    },
+    { 
+      day: 23, 
+      date: '2025-11-23', 
+      title: 'Loading 狀態 —— 廚房準備中', 
+      intro: '加上 loading 狀態提示資料載入中。',
+      content: {
+        sections: [
+          {
+            type: 'intro',
+            text: '在等待資料時，需要一個「Loading 狀態」告訴使用者「資料載入中」。'
+          },
+          {
+            type: 'perspective',
+            title: '👩‍🍼 寶媽角度',
+            content: '去餐廳：服務生會說「餐點準備中，請稍候」。'
+          },
+          {
+            type: 'perspective',
+            title: '💻 工程師角度',
+            content: '',
+            listItems: [
+              {
+                items: [
+                  '在非同步請求前：`loading = true`。',
+                  '資料回來後：`loading = false`。',
+                  '可搭配 spinner、骨架屏。'
+                ]
+              }
+            ]
+          },
+          {
+            type: 'demo',
+            title: '📦 今天的實作',
+            description: '延續 Day22，加上 Loading 標示。',
+            code: `<p v-if="loading">⏳ 資料載入中...</p>
+<ul v-else>
+  <li v-for="post in posts" :key="post.id">{{ post.title }}</li>
+</ul>`,
+            filename: ''
+          },
+          {
+            type: 'summary',
+            title: '✅ 學完重點',
+            points: [
+              {
+                title: '寶媽角度',
+                description: '等餐點時，先拿到「準備中」的訊息。'
+              },
+              {
+                title: '工程師角度',
+                description: '加上 loading 狀態，提升使用者體驗。'
+              }
+            ]
+          }
+        ]
+      }
+    },
+    { 
+      day: 24, 
+      date: '2025-11-24', 
+      title: '錯誤處理 —— 缺貨的餐點', 
+      intro: '請求可能失敗，需要錯誤提示。',
+      content: {
+        sections: [
+          {
+            type: 'intro',
+            text: '非同步請求不一定都成功，可能會出錯，需要妥善處理錯誤。'
+          },
+          {
+            type: 'perspective',
+            title: '👩‍🍼 寶媽角度',
+            content: '點菜時，服務生說：「這道菜賣完了！」'
+          },
+          {
+            type: 'perspective',
+            title: '💻 工程師角度',
+            content: '',
+            listItems: [
+              {
+                items: [
+                  '使用 `try/catch` 捕捉錯誤。',
+                  '可以顯示錯誤訊息給使用者。',
+                  '也能記錄到後端做除錯。'
+                ]
+              }
+            ]
+          },
+          {
+            type: 'demo',
+            title: '📦 今天的實作',
+            description: '',
+            code: `<script setup>
+import { ref, onMounted } from 'vue'
+
+const posts = ref([])
+const error = ref(null)
+
+onMounted(async () => {
+  try {
+    const res = await fetch('https://wrong-api-url.com/posts')
+    if (!res.ok) throw new Error('伺服器回應錯誤')
+    posts.value = await res.json()
+  } catch (err) {
+    error.value = err.message
+  }
+})
+</script>
+
+<template>
+  <div>
+    <p v-if="error">❌ 錯誤：{{ error }}</p>
+  </div>
+</template>`,
+            filename: ''
+          },
+          {
+            type: 'summary',
+            title: '✅ 學完重點',
+            points: [
+              {
+                title: '寶媽角度',
+                description: '餐點缺貨，要即時告知。'
+              },
+              {
+                title: '工程師角度',
+                description: '非同步請求必須加錯誤處理，避免程式崩潰。'
+              }
+            ]
+          }
+        ]
+      }
+    },
+    { 
+      day: 25, 
+      date: '2025-11-25', 
+      title: '環境變數 —— 家裡的小抄', 
+      intro: '不同環境用不同設定，Vue 用 .env 管理。',
+      content: {
+        sections: [
+          {
+            type: 'intro',
+            text: '不同環境（開發、測試、正式）可能需要不同的 API 網址或設定。\n\n👉 Vue 支援 `.env` 檔管理環境變數。'
+          },
+          {
+            type: 'perspective',
+            title: '👩‍🍼 寶媽角度',
+            content: '在家做飯跟辦桌大餐，用的菜單不同。'
+          },
+          {
+            type: 'perspective',
+            title: '💻 工程師角度',
+            content: '',
+            listItems: [
+              {
+                items: [
+                  '`.env.development`：開發環境',
+                  '`.env.production`：正式環境',
+                  '使用 `import.meta.env.VITE_APP_KEY` 讀取變數。'
+                ]
+              }
+            ]
+          },
+          {
+            type: 'demo',
+            title: '📦 今天的實作',
+            description: '',
+            code: `VITE_API_URL=https://dev-api.com`,
+            filename: '.env.development'
+          },
+          {
+            type: 'demo',
+            title: '',
+            description: '',
+            code: `VITE_API_URL=https://prod-api.com`,
+            filename: '.env.production'
+          },
+          {
+            type: 'demo',
+            title: '',
+            description: '',
+            code: `<script setup>
+console.log(import.meta.env.VITE_API_URL)
+</script>`,
+            filename: 'App.vue'
+          },
+          {
+            type: 'summary',
+            title: '✅ 學完重點',
+            points: [
+              {
+                title: '寶媽角度',
+                description: '不同場合要用不同菜單。'
+              },
+              {
+                title: '工程師角度',
+                description: '環境變數讓專案設定更靈活。'
+              }
+            ]
+          }
+        ]
+      }
+    },
+    { 
+      day: 26, 
+      date: '2025-11-26', 
+      title: '專案架構整理 —— 大掃除', 
+      intro: '專案需要整理檔案結構，分門別類。',
+      content: {
+        sections: [
+          {
+            type: 'intro',
+            text: '專案越大，檔案越多，需要良好的架構來維護。'
+          },
+          {
+            type: 'perspective',
+            title: '👩‍🍼 寶媽角度',
+            content: '大掃除：衣服、玩具、食材分門別類，找東西才快。'
+          },
+          {
+            type: 'perspective',
+            title: '💻 工程師角度',
+            content: '常見資料夾結構：',
+            listItems: [
+              {
+                items: [
+                  '`components`：可重用元件',
+                  '`views`：頁面',
+                  '`stores`：Pinia',
+                  '`router`：路由',
+                  '`assets`：靜態資源'
+                ]
+              }
+            ]
+          },
+          {
+            type: 'demo',
+            title: '📦 今天的實作',
+            description: '調整專案資料夾，並建立對應檔案。',
+            code: `src/
+ ├─ assets/
+ ├─ components/
+ ├─ views/
+ ├─ router/
+ ├─ stores/
+ └─ App.vue`,
+            filename: ''
+          },
+          {
+            type: 'summary',
+            title: '✅ 學完重點',
+            points: [
+              {
+                title: '寶媽角度',
+                description: '整理家裡，找東西更快。'
+              },
+              {
+                title: '工程師角度',
+                description: '良好的專案架構，提升維護性。'
+              }
+            ]
+          }
+        ]
+      }
+    },
+    { 
+      day: 27, 
+      date: '2025-11-27', 
+      title: 'Pinia 插件 —— 智慧冰箱', 
+      intro: '插件擴展 Pinia，例如資料存 localStorage。',
+      content: {
+        sections: [
+          {
+            type: 'intro',
+            text: 'Pinia 支援 **插件 (plugin)**，可以擴展 store 的功能，例如：存到 localStorage。'
+          },
+          {
+            type: 'perspective',
+            title: '👩‍🍼 寶媽角度',
+            content: '冰箱加裝提醒螢幕：牛奶快過期時會通知。'
+          },
+          {
+            type: 'perspective',
+            title: '💻 工程師角度',
+            content: '',
+            listItems: [
+              {
+                items: [
+                  '`pinia.use()`：註冊插件。',
+                  '插件可攔截 state，新增功能（持久化、紀錄 log）。'
+                ]
+              }
+            ]
+          },
+          {
+            type: 'demo',
+            title: '📦 今天的實作',
+            description: '',
+            code: `export function persistPlugin({ store }) {
+  const saved = localStorage.getItem(store.$id)
+  if (saved) store.$state = JSON.parse(saved)
+
+  store.$subscribe((_, state) => {
+    localStorage.setItem(store.$id, JSON.stringify(state))
+  })
+}`,
+            filename: 'plugins/persist.js'
+          },
+          {
+            type: 'demo',
+            title: '',
+            description: '',
+            code: `import { createPinia } from 'pinia'
+import { persistPlugin } from './plugins/persist'
+
+const pinia = createPinia()
+pinia.use(persistPlugin)
+
+app.use(pinia)`,
+            filename: 'main.js'
+          },
+          {
+            type: 'summary',
+            title: '✅ 學完重點',
+            points: [
+              {
+                title: '寶媽角度',
+                description: '智慧冰箱會提醒牛奶快過期。'
+              },
+              {
+                title: '工程師角度',
+                description: 'Pinia 插件讓 store 功能更強大，例如資料持久化。'
+              }
+            ]
+          }
+        ]
+      }
+    },
+    { 
+      day: 28, 
+      date: '2025-11-28', 
+      title: '測試（unit test）—— 模擬考', 
+      intro: '單元測試像模擬考，確保功能正確。',
+      content: {
+        sections: [
+          {
+            type: 'intro',
+            text: '在正式上線前，必須確保功能正確。單元測試就像「模擬考」，幫助驗證每個功能。'
+          },
+          {
+            type: 'perspective',
+            title: '👩‍🍼 寶媽角度',
+            content: '小孩考試前在家做模擬考，正式考試時就不會緊張。'
+          },
+          {
+            type: 'perspective',
+            title: '💻 工程師角度',
+            content: '',
+            listItems: [
+              {
+                items: [
+                  '常用測試框架：Jest、Vitest。',
+                  '單元測試：測試單一函式或元件。',
+                  '優點：提前發現錯誤，減少上線風險。'
+                ]
+              }
+            ]
+          },
+          {
+            type: 'demo',
+            title: '📦 今天的實作',
+            description: '測試一個加法函式。',
+            code: `export function add(a, b) {
+  return a + b
+}`,
+            filename: 'math.js'
+          },
+          {
+            type: 'demo',
+            title: '',
+            description: '',
+            code: `import { describe, it, expect } from 'vitest'
+import { add } from './math'
+
+describe('加法測試', () => {
+  it('1+2=3', () => {
+    expect(add(1, 2)).toBe(3)
+  })
+})`,
+            filename: 'math.test.js (使用 Vitest)'
+          },
+          {
+            type: 'summary',
+            title: '✅ 學完重點',
+            points: [
+              {
+                title: '寶媽角度',
+                description: '模擬考，提前練習。'
+              },
+              {
+                title: '工程師角度',
+                description: '單元測試確保功能正確，降低 bug 風險。'
+              }
+            ]
+          }
+        ]
+      }
+    },
+    { 
+      day: 29, 
+      date: '2025-11-29', 
+      title: '部署網站 —— 喬遷新居', 
+      intro: '部署讓專案能被公開訪問。',
+      content: {
+        sections: [
+          {
+            type: 'intro',
+            text: '專案開發完成後，需要「部署」到伺服器，讓別人可以透過網址訪問。'
+          },
+          {
+            type: 'perspective',
+            title: '👩‍🍼 寶媽角度',
+            content: '一家人搬進新家，掛上「喬遷之喜」紅布條。'
+          },
+          {
+            type: 'perspective',
+            title: '💻 工程師角度',
+            content: 'Vue 專案打包：`npm run build`。',
+            listItems: [
+              {
+                title: '常見部署方式：',
+                items: [
+                  'Netlify / Vercel（免伺服器）',
+                  'GitHub Pages',
+                  '自架伺服器 (Nginx)'
+                ]
+              }
+            ]
+          },
+          {
+            type: 'demo',
+            title: '📦 今天的實作',
+            description: '將專案部署到 Netlify：',
+            steps: [
+              '將專案 push 到 GitHub。',
+              '在 Netlify 連接 repo。',
+              '部署成功後即可獲得網址。'
+            ]
+          },
+          {
+            type: 'summary',
+            title: '✅ 學完重點',
+            points: [
+              {
+                title: '寶媽角度',
+                description: '搬家喬遷，讓朋友來參觀。'
+              },
+              {
+                title: '工程師角度',
+                description: '部署是讓程式真正被使用者訪問的最後一步。'
+              }
+            ]
+          }
+        ]
+      }
+    },
+    { 
+      day: 30, 
+      date: '2025-11-30', 
+      title: '專案總結 & 展示 —— 成果發表會', 
+      intro: '把 30 天成果整合，做一個完整專案展示。',
+      content: {
+        sections: [
+          {
+            type: 'intro',
+            text: '30 天學習結束，將所有練習整合成一個小專案，並展示成果。'
+          },
+          {
+            type: 'perspective',
+            title: '👩‍🍼 寶媽角度',
+            content: '小孩期末成果發表會，把學到的才藝展示給大家看。'
+          },
+          {
+            type: 'perspective',
+            title: '💻 工程師角度',
+            content: '',
+            listItems: [
+              {
+                title: '把所有功能整合到一個 SPA：',
+                items: [
+                  'Router 分頁',
+                  'Pinia 狀態管理',
+                  'API 請求',
+                  'Slot/Teleport/Transition 等'
+                ]
+              },
+              {
+                items: [
+                  '發佈到 GitHub / Netlify，讓大家能看到。'
+                ]
+              }
+            ]
+          },
+          {
+            type: 'demo',
+            title: '📦 今天的實作',
+            description: '建立一個「Todo + 使用者系統」的 Demo：',
+            steps: [
+              '登入 → Pinia 存取使用者',
+              '新增代辦 → v-for 列表',
+              '儲存代辦到 localStorage → Pinia 插件',
+              '分頁切換 → Router'
+            ]
+          },
+          {
+            type: 'summary',
+            title: '✅ 學完重點',
+            points: [
+              {
+                title: '寶媽角度',
+                description: '期末成果發表，展現努力的成果。'
+              },
+              {
+                title: '工程師角度',
+                description: '完整整合 Vue3 技能，從學習到實戰，形成一個小專案。'
+              }
+            ]
+          }
+        ]
+      }
+    }
   ];
 
   const articles = [
@@ -2474,6 +3082,102 @@ export default router`,
               <span>返回章節列表</span>
             </motion.button>
             
+            {/* Mobile sidebar toggle button */}
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setShowSidebar(!showSidebar)}
+              className="lg:hidden fixed bottom-6 left-6 z-50 bg-emerald-500 text-white p-3 rounded-full shadow-xl hover:bg-emerald-600 transition-colors"
+            >
+              {showSidebar ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </motion.button>
+
+            {/* Layout with sidebar and content */}
+            <div className="flex gap-8 relative">
+              {/* Sidebar Navigation - Desktop */}
+              <motion.aside
+                initial={{ x: -20, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ delay: 0.2 }}
+                className="hidden lg:block w-64 flex-shrink-0 sticky top-24 self-start max-h-[calc(100vh-8rem)] overflow-y-auto"
+              >
+                <div className="bg-white rounded-2xl shadow-lg p-4">
+                  <h3 className="text-gray-900 mb-4 px-2">快速導覽</h3>
+                  <div className="space-y-1">
+                    {vue30Days.map((day) => (
+                      <motion.button
+                        key={day.day}
+                        whileHover={{ scale: 1.02, x: 4 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => setSelectedDay(day.day)}
+                        className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
+                          selectedDay === day.day
+                            ? 'bg-emerald-500 text-white'
+                            : 'hover:bg-emerald-50 text-gray-700'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className={`${selectedDay === day.day ? 'font-semibold' : ''}`}>
+                            Day {day.day}
+                          </span>
+                        </div>
+                        <div className={`text-sm mt-1 line-clamp-1 ${
+                          selectedDay === day.day ? 'text-white/90' : 'text-gray-500'
+                        }`}>
+                          {day.title}
+                        </div>
+                      </motion.button>
+                    ))}
+                  </div>
+                </div>
+              </motion.aside>
+
+              {/* Sidebar Navigation - Mobile */}
+              {showSidebar && (
+                <motion.div
+                  initial={{ x: -300, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  exit={{ x: -300, opacity: 0 }}
+                  className="lg:hidden fixed inset-y-0 left-0 z-40 w-80 bg-white shadow-2xl overflow-y-auto"
+                >
+                  <div className="p-6">
+                    <h3 className="text-gray-900 mb-4">快速導覽</h3>
+                    <div className="space-y-1">
+                      {vue30Days.map((day) => (
+                        <motion.button
+                          key={day.day}
+                          whileHover={{ scale: 1.02, x: 4 }}
+                          whileTap={{ scale: 0.98 }}
+                          onClick={() => {
+                            setSelectedDay(day.day);
+                            setShowSidebar(false);
+                          }}
+                          className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
+                            selectedDay === day.day
+                              ? 'bg-emerald-500 text-white'
+                              : 'hover:bg-emerald-50 text-gray-700'
+                          }`}
+                        >
+                          <div className="flex items-center gap-2">
+                            <span className={`${selectedDay === day.day ? 'font-semibold' : ''}`}>
+                              Day {day.day}
+                            </span>
+                          </div>
+                          <div className={`text-sm mt-1 line-clamp-1 ${
+                            selectedDay === day.day ? 'text-white/90' : 'text-gray-500'
+                          }`}>
+                            {day.title}
+                          </div>
+                        </motion.button>
+                      ))}
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+
+              {/* Main content */}
+              <div className="flex-1 min-w-0">
+            
             {vue30Days[selectedDay - 1]?.content && (
               <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
                 {/* Header */}
@@ -2538,10 +3242,10 @@ export default router`,
                           </p>
                           {section.tasks && section.tasks.length > 0 && (
                             <div className="bg-white border-2 border-emerald-200 rounded-2xl p-6 mb-6">
-                              {section.tasks.map((task: string, i: number) => (
+                              {section.tasks.map((task: any, i: number) => (
                                 <div key={i} className="flex items-center gap-3 mb-2 last:mb-0">
                                   <span className="text-emerald-500 text-xl">✅</span>
-                                  <span className="text-gray-700">{task}</span>
+                                  <span className="text-gray-700">{typeof task === 'string' ? task : task.title}</span>
                                 </div>
                               ))}
                             </div>
@@ -2572,10 +3276,10 @@ export default router`,
                             <RichText text={section.description} />
                           </p>
                           <div className="bg-white border-2 border-emerald-200 rounded-2xl p-6 mb-6">
-                            {section.tasks.map((task: string, i: number) => (
+                            {section.tasks.map((task: any, i: number) => (
                               <div key={i} className="flex items-center gap-3 mb-2 last:mb-0">
                                 <span className="text-emerald-500 text-xl">✅</span>
-                                <span className="text-gray-700">{task}</span>
+                                <span className="text-gray-700">{typeof task === 'string' ? task : task.title}</span>
                               </div>
                             ))}
                           </div>
@@ -2754,77 +3458,115 @@ export default router`,
                       {section.type === 'perspective' && (
                         <div>
                           <h2 className="text-gray-900 mb-6">{section.title}</h2>
-                          <div className="bg-gradient-to-br from-emerald-50 to-green-50 rounded-2xl p-6 border border-emerald-200">
-                            <p className="text-gray-700 leading-relaxed mb-4">
-                              <RichText text={section.content} />
-                            </p>
-                            {section.highlight && (
-                              <div className="bg-white/50 rounded-xl p-4 mb-4 border-l-4 border-emerald-500">
-                                <p className="text-emerald-800">
-                                  👉 <RichText text={section.highlight} />
+                          
+                          {/* 如果有图片，使用两栏布局 */}
+                          {section.image ? (
+                            <div className="grid md:grid-cols-5 gap-6 items-start">
+                              {/* 左侧：文字内容（占3列） */}
+                              <div className="md:col-span-3 bg-gradient-to-br from-emerald-50 to-green-50 rounded-2xl p-6 border border-emerald-200">
+                                <p className="text-gray-700 leading-relaxed mb-4">
+                                  <RichText text={section.content} />
                                 </p>
+                                {section.highlight && (
+                                  <div className="bg-white/50 rounded-xl p-4 mb-4 border-l-4 border-emerald-500">
+                                    <p className="text-emerald-800">
+                                      👉 <RichText text={section.highlight} />
+                                    </p>
+                                  </div>
+                                )}
+                                {section.conclusion && (
+                                  <p className="text-gray-700 leading-relaxed">
+                                    <RichText text={section.conclusion} />
+                                  </p>
+                                )}
                               </div>
-                            )}
-                            {section.conclusion && (
+                              
+                              {/* 右侧：图片（占2列） */}
+                              <div className="md:col-span-2 flex items-start justify-center">
+                                <motion.div
+                                  initial={{ opacity: 0, x: 20 }}
+                                  animate={{ opacity: 1, x: 0 }}
+                                  transition={{ delay: 0.2, duration: 0.5 }}
+                                  whileHover={{ y: -5 }}
+                                  className="relative w-full max-w-sm"
+                                >
+                                  <div className="absolute -inset-4 bg-gradient-to-br from-emerald-400/10 to-green-500/10 rounded-3xl blur-2xl" />
+                                  <div className="relative bg-white p-3 rounded-2xl shadow-lg">
+                                    <img 
+                                      src={piniaImage} 
+                                      alt="Pinia 公共冰箱示意圖" 
+                                      className="w-full rounded-xl"
+                                    />
+                                    <p className="text-center text-sm text-gray-500 mt-2">🧊 網站的公共冰箱</p>
+                                  </div>
+                                </motion.div>
+                              </div>
+                            </div>
+                          ) : (
+                            /* 没有图片时的原布局 */
+                            <div className="bg-gradient-to-br from-emerald-50 to-green-50 rounded-2xl p-6 border border-emerald-200">
                               <p className="text-gray-700 leading-relaxed mb-4">
-                                <RichText text={section.conclusion} />
+                                <RichText text={section.content} />
                               </p>
-                            )}
-                            {section.concepts && (
-                              <div className="mt-4">
-                                <h4 className="text-emerald-800 mb-3">核心概念：</h4>
-                                <div className="grid gap-3">
-                                  {section.concepts.map((concept: any, i: number) => (
-                                    <div key={i} className="bg-white rounded-xl p-3 flex items-center gap-3">
-                                      <span className="bg-emerald-500 text-white px-3 py-1 rounded-lg font-mono">
-                                        {concept.term}
-                                      </span>
-                                      <span className="text-gray-700">{concept.description}</span>
+                              {section.highlight && (
+                                <div className="bg-white/50 rounded-xl p-4 mb-4 border-l-4 border-emerald-500">
+                                  <p className="text-emerald-800">
+                                    👉 <RichText text={section.highlight} />
+                                  </p>
+                                </div>
+                              )}
+                              {section.conclusion && (
+                                <p className="text-gray-700 leading-relaxed mb-4">
+                                  <RichText text={section.conclusion} />
+                                </p>
+                              )}
+                              {section.concepts && (
+                                <div className="mt-4">
+                                  <h4 className="text-emerald-800 mb-3">核心概念：</h4>
+                                  <div className="grid gap-3">
+                                    {section.concepts.map((concept: any, i: number) => (
+                                      <div key={i} className="bg-white rounded-xl p-3 flex items-center gap-3">
+                                        <span className="bg-emerald-500 text-white px-3 py-1 rounded-lg font-mono">
+                                          {concept.term}
+                                        </span>
+                                        <span className="text-gray-700">{concept.description}</span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+                              {section.advantages && (
+                                <div className="mt-4">
+                                  <h4 className="text-emerald-800 mb-3">優點：</h4>
+                                  <ul className="space-y-2">
+                                    {section.advantages.map((advantage: string, i: number) => (
+                                      <li key={i} className="flex items-start gap-3">
+                                        <span className="text-emerald-500 mt-1">✓</span>
+                                        <span className="text-gray-700 flex-1">{advantage}</span>
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              )}
+                              {section.listItems && (
+                                <div className="mt-4 space-y-4">
+                                  {section.listItems.map((listItem: any, i: number) => (
+                                    <div key={i}>
+                                      <h4 className="text-emerald-800 mb-2">{listItem.title}：</h4>
+                                      <ul className="space-y-2">
+                                        {listItem.items.map((item: string, j: number) => (
+                                          <li key={j} className="flex items-start gap-3 ml-4">
+                                            <span className="text-emerald-500 mt-1">•</span>
+                                            <span className="text-gray-700 flex-1">{item}</span>
+                                          </li>
+                                        ))}
+                                      </ul>
                                     </div>
                                   ))}
                                 </div>
-                              </div>
-                            )}
-                            {section.advantages && (
-                              <div className="mt-4">
-                                <h4 className="text-emerald-800 mb-3">優點：</h4>
-                                <ul className="space-y-2">
-                                  {section.advantages.map((advantage: string, i: number) => (
-                                    <li key={i} className="flex items-start gap-3">
-                                      <span className="text-emerald-500 mt-1">✓</span>
-                                      <span className="text-gray-700 flex-1">{advantage}</span>
-                                    </li>
-                                  ))}
-                                </ul>
-                              </div>
-                            )}
-                            {section.listItems && (
-                              <div className="mt-4 space-y-4">
-                                {section.listItems.map((listItem: any, i: number) => (
-                                  <div key={i}>
-                                    <h4 className="text-emerald-800 mb-2">{listItem.title}：</h4>
-                                    <ul className="space-y-2">
-                                      {listItem.items.map((item: string, j: number) => (
-                                        <li key={j} className="flex items-start gap-3 ml-4">
-                                          <span className="text-emerald-500 mt-1">•</span>
-                                          <span className="text-gray-700 flex-1">{item}</span>
-                                        </li>
-                                      ))}
-                                    </ul>
-                                  </div>
-                                ))}
-                              </div>
-                            )}
-                            {section.image && (
-                              <div className="mt-6 flex justify-center">
-                                <img 
-                                  src={piniaImage} 
-                                  alt="Pinia 公共冰箱示意圖" 
-                                  className="max-w-md w-full rounded-2xl shadow-lg"
-                                />
-                              </div>
-                            )}
-                          </div>
+                              )}
+                            </div>
+                          )}
                         </div>
                       )}
 
@@ -2871,8 +3613,53 @@ export default router`,
                         </div>
                       )}
 
-                      {/* Demo Section with Steps */}
-                      {section.type === 'demo' && section.steps && (
+                      {/* Demo Section with Tasks that have code */}
+                      {section.type === 'demo' && !section.codeSections && !section.steps && section.tasks && section.tasks.length > 0 && section.tasks[0].code && (
+                        <div>
+                          <h2 className="text-gray-900 mb-4">{section.title}</h2>
+                          {section.description && (
+                            <p className="text-gray-700 mb-4">
+                              <RichText text={section.description} />
+                            </p>
+                          )}
+                          
+                          {/* Multiple Code Blocks in Tasks */}
+                          {section.tasks.map((task: any, i: number) => (
+                            <div key={i} className="mb-8 last:mb-0">
+                              <h3 className="text-gray-900 mb-3">
+                                <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-emerald-500 text-white mr-3">
+                                  {task.step || i + 1}
+                                </span>
+                                {task.title}
+                              </h3>
+                              <div className="bg-gray-900 rounded-2xl overflow-hidden">
+                                <div className="flex items-center gap-2 px-4 py-3 bg-gray-800">
+                                  <div className="w-3 h-3 rounded-full bg-red-500" />
+                                  <div className="w-3 h-3 rounded-full bg-yellow-500" />
+                                  <div className="w-3 h-3 rounded-full bg-green-500" />
+                                  <span className="ml-2 text-gray-400">{task.title}</span>
+                                </div>
+                                <pre className="p-6 overflow-x-auto">
+                                  <code className="text-green-400 font-mono text-sm leading-relaxed whitespace-pre">
+                                    {task.code}
+                                  </code>
+                                </pre>
+                              </div>
+                            </div>
+                          ))}
+                          
+                          {section.additionalNote && (
+                            <div className="mt-6 bg-emerald-50 border-l-4 border-emerald-500 rounded-r-2xl p-4">
+                              <p className="text-emerald-800">
+                                💡 {section.additionalNote}
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Demo Section with Steps (with code) */}
+                      {section.type === 'demo' && section.steps && section.steps.length > 0 && typeof section.steps[0] === 'object' && section.steps[0].code && (
                         <div>
                           <h2 className="text-gray-900 mb-4">{section.title}</h2>
                           {section.description && (
@@ -2880,10 +3667,10 @@ export default router`,
                           )}
                           {section.tasks && section.tasks.length > 0 && (
                             <div className="bg-white border-2 border-emerald-200 rounded-2xl p-6 mb-6">
-                              {section.tasks.map((task: string, i: number) => (
+                              {section.tasks.map((task: any, i: number) => (
                                 <div key={i} className="flex items-center gap-3 mb-2 last:mb-0">
                                   <span className="text-emerald-500 text-xl">✅</span>
-                                  <span className="text-gray-700">{task}</span>
+                                  <span className="text-gray-700">{typeof task === 'string' ? task : task.title}</span>
                                 </div>
                               ))}
                             </div>
@@ -2908,6 +3695,32 @@ export default router`,
                               </div>
                             </div>
                           ))}
+                        </div>
+                      )}
+
+                      {/* Demo Section with Steps (text only) */}
+                      {section.type === 'demo' && section.steps && section.steps.length > 0 && typeof section.steps[0] === 'string' && (
+                        <div>
+                          <h2 className="text-gray-900 mb-4">{section.title}</h2>
+                          {section.description && (
+                            <p className="text-gray-700 mb-4">
+                              <RichText text={section.description} />
+                            </p>
+                          )}
+                          
+                          {/* Steps as Text List */}
+                          <div className="bg-white border-2 border-emerald-200 rounded-2xl p-6">
+                            <ol className="space-y-3">
+                              {section.steps.map((step: string, i: number) => (
+                                <li key={i} className="flex items-start gap-3">
+                                  <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-emerald-500 text-white flex-shrink-0">
+                                    {i + 1}
+                                  </span>
+                                  <span className="text-gray-700 flex-1 pt-1">{step}</span>
+                                </li>
+                              ))}
+                            </ol>
+                          </div>
                         </div>
                       )}
 
@@ -3000,10 +3813,59 @@ export default router`,
                       )}
                     </div>
                   ))}
+
+                  {/* Previous/Next Navigation */}
+                  <div className="mt-12 pt-8 border-t-2 border-gray-200">
+                    <div className="flex justify-between items-center gap-4">
+                      {/* Previous Article */}
+                      {selectedDay > 1 ? (
+                        <motion.button
+                          whileHover={{ scale: 1.03, x: -5 }}
+                          whileTap={{ scale: 0.97 }}
+                          onClick={() => setSelectedDay(selectedDay - 1)}
+                          className="flex-1 group bg-gradient-to-r from-emerald-50 to-green-50 rounded-2xl p-6 border-2 border-emerald-200 hover:border-emerald-400 transition-all text-left"
+                        >
+                          <div className="flex items-center gap-3 mb-2">
+                            <ChevronLeft className="w-5 h-5 text-emerald-600 group-hover:translate-x-[-4px] transition-transform" />
+                            <span className="text-sm text-emerald-600">上一篇</span>
+                          </div>
+                          <div className="text-gray-500 text-sm">Day {selectedDay - 1}</div>
+                          <div className="text-gray-900 line-clamp-2 mt-1">
+                            {vue30Days[selectedDay - 2].title}
+                          </div>
+                        </motion.button>
+                      ) : (
+                        <div className="flex-1" />
+                      )}
+
+                      {/* Next Article */}
+                      {selectedDay < 30 ? (
+                        <motion.button
+                          whileHover={{ scale: 1.03, x: 5 }}
+                          whileTap={{ scale: 0.97 }}
+                          onClick={() => setSelectedDay(selectedDay + 1)}
+                          className="flex-1 group bg-gradient-to-r from-emerald-50 to-green-50 rounded-2xl p-6 border-2 border-emerald-200 hover:border-emerald-400 transition-all text-right"
+                        >
+                          <div className="flex items-center justify-end gap-3 mb-2">
+                            <span className="text-sm text-emerald-600">下一篇</span>
+                            <ChevronRight className="w-5 h-5 text-emerald-600 group-hover:translate-x-[4px] transition-transform" />
+                          </div>
+                          <div className="text-gray-500 text-sm">Day {selectedDay + 1}</div>
+                          <div className="text-gray-900 line-clamp-2 mt-1">
+                            {vue30Days[selectedDay].title}
+                          </div>
+                        </motion.button>
+                      ) : (
+                        <div className="flex-1" />
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
           </div>
+        </div>
+      </div>
         </motion.div>
       ) : selectedTech === 'Vue3' && !showVue30Days ? (
         /* Vue3 Single Card View */
@@ -3523,7 +4385,7 @@ export default router`,
               <div className="p-8 md:p-12 space-y-8">
                 {/* 一、UiPath 開發流程全貌 */}
                 <div className="bg-blue-50 rounded-2xl p-6">
-                  <h3 className="text-blue-900 mb-4">🚀 一、UiPath 開發流程全貌</h3>
+                  <h2 className="text-blue-900 mb-6 text-2xl font-bold border-b-4 border-blue-500 pb-3">🚀 一、UiPath 開發流程全貌</h2>
                   <p className="text-gray-700 mb-4">
                     UiPath 的自動化不是只有單純在本機跑流程，而是一套完整的 開發 → 管理 → 派送 → 執行 → 監控的生命週期。
                   </p>
@@ -3542,7 +4404,7 @@ Robots（執行端）`}
 
                   <div className="space-y-4 mt-6">
                     <div className="border-l-4 border-blue-500 pl-4">
-                      <h4 className="text-gray-900 mb-2">✔ 1. Studio（流程設計）</h4>
+                      <h4 className="text-gray-900 mb-2 font-bold text-lg">✔ 1. Studio（流程設計）</h4>
                       <ul className="list-disc list-inside space-y-1 text-gray-700 ml-4">
                         <li>開發者在這裡設計自動化流程（Workflows）</li>
                         <li>支援調試、版本管理、Activity 套件擴充</li>
@@ -3551,7 +4413,7 @@ Robots（執行端）`}
                     </div>
 
                     <div className="border-l-4 border-orange-500 pl-4">
-                      <h4 className="text-gray-900 mb-2">✔ 2. Orchestrator（管控平台）</h4>
+                      <h4 className="text-gray-900 mb-2 font-bold text-lg">✔ 2. Orchestrator（管控平台）</h4>
                       <ul className="list-disc list-inside space-y-1 text-gray-700 ml-4">
                         <li>這是整個 UiPath 生態系的「大腦」</li>
                         <li>功能涵蓋：流程派送、排程、資源管理、監控、機器人授權、Exception log</li>
@@ -3560,7 +4422,7 @@ Robots（執行端）`}
                     </div>
 
                     <div className="border-l-4 border-green-500 pl-4">
-                      <h4 className="text-gray-900 mb-2">✔ 3. Robots（機器人執行端）</h4>
+                      <h4 className="text-gray-900 mb-2 font-bold text-lg">✔ 3. Robots（機器人執行端）</h4>
                       <ul className="list-disc list-inside space-y-1 text-gray-700 ml-4">
                         <li>真正執行流程的端點</li>
                         <li>分為 Attended / Unattended</li>
@@ -3579,12 +4441,12 @@ Robots（執行端）`}
 
                 {/* 二、UiPath AI 功能簡介 */}
                 <div className="bg-purple-50 rounded-2xl p-6">
-                  <h3 className="text-purple-900 mb-4">🤖 二、UiPath AI 功能簡介（雲端方案才有）</h3>
+                  <h2 className="text-purple-900 mb-6 text-2xl font-bold border-b-4 border-purple-500 pb-3">🤖 二、UiPath AI 功能簡介（雲端方案才有）</h2>
                   <p className="text-gray-700 mb-4">
                     如果企業使用 UiPath Automation Cloud，就能啟用官方提供的一系列 AI 能力：
                   </p>
                   
-                  <h4 className="text-gray-900 mb-3">✦ AI 的協助方式：</h4>
+                  <h4 className="text-gray-900 mb-3 font-bold text-lg">✦ AI 的協助方式：</h4>
                   <ul className="space-y-2 text-gray-700 ml-4">
                     <li><strong>RPA 執行過程遇到異常：</strong>可呼叫 AI 進行錯誤診斷</li>
                     <li><strong>文件處理：</strong>使用 Document Understanding + AI 模型做 OCR、分類、抽取</li>
@@ -3599,7 +4461,7 @@ Robots（執行端）`}
 
                 {/* 三、Orchestrator 平台核心組成 */}
                 <div className="bg-green-50 rounded-2xl p-6">
-                  <h3 className="text-green-900 mb-4">🏢 三、Orchestrator 平台（OC）的核心組成</h3>
+                  <h2 className="text-green-900 mb-6 text-2xl font-bold border-b-4 border-green-500 pb-3">🏢 三、Orchestrator 平台（OC）的核心組成</h2>
                   <p className="text-gray-700 mb-4">
                     UiPath Orchestrator 的資源架構是階層式的。理解這個階層很重要，因為所有管理邏輯都建立在這個概念上。
                   </p>
@@ -3619,7 +4481,7 @@ Robots（執行端）`}
                   <div className="space-y-6">
                     {/* Host */}
                     <div className="border-l-4 border-red-500 pl-4">
-                      <h4 className="text-gray-900 mb-3">✔ 1️⃣ Host（最高權限層級）</h4>
+                      <h3 className="text-gray-900 mb-3 text-xl font-bold">✔ 1️⃣ Host（最高權限層級）</h3>
                       <p className="text-gray-700 mb-3">
                         只存在於 on-prem 版（自架）的 OC
                       </p>
@@ -3640,7 +4502,7 @@ Robots（執行端）`}
 
                     {/* Tenant */}
                     <div className="border-l-4 border-blue-500 pl-4">
-                      <h4 className="text-gray-900 mb-3">✔ 2️⃣ Tenant（租戶層級）</h4>
+                      <h3 className="text-gray-900 mb-3 text-xl font-bold">✔ 2️⃣ Tenant（租戶層級）</h3>
                       <p className="text-gray-700 mb-3">
                         每個 Tenant 就像一個獨立的 OC 世界。
                       </p>
@@ -3661,7 +4523,7 @@ Robots（執行端）`}
 
                     {/* Management */}
                     <div className="border-l-4 border-green-500 pl-4">
-                      <h4 className="text-gray-900 mb-3">✔ 3️⃣ Management（Tenant 下的人員/機器配置）</h4>
+                      <h3 className="text-gray-900 mb-3 text-xl font-bold">✔ 3️⃣ Management（Tenant 下的人員/機器配置）</h3>
                       <p className="text-gray-700 mb-3">
                         Management 是 Tenant 之下的管理區，用來管理：
                       </p>
@@ -3678,7 +4540,7 @@ Robots（執行端）`}
 
                     {/* Folder */}
                     <div className="border-l-4 border-purple-500 pl-4">
-                      <h4 className="text-gray-900 mb-3">✔ 4️⃣ Folder（資料夾/部門）</h4>
+                      <h3 className="text-gray-900 mb-3 text-xl font-bold">✔ 4️⃣ Folder（資料夾/部門）</h3>
                       <p className="text-gray-700 mb-3">
                         Folder 用於將流程、使用者、資源組織化。
                       </p>
@@ -3705,7 +4567,7 @@ Robots（執行端）`}
 
                 {/* 四、Orchestrator 建議階層架構 */}
                 <div className="bg-yellow-50 rounded-2xl p-6">
-                  <h3 className="text-yellow-900 mb-4">🧱 四、Orchestrator 建議階層架構</h3>
+                  <h2 className="text-yellow-900 mb-6 text-2xl font-bold border-b-4 border-yellow-500 pb-3">🧱 四、Orchestrator 建議階層架構</h2>
                   <p className="text-gray-700 mb-4">建議的層級設計如下：</p>
 
                   <div className="bg-white rounded-xl p-4 mb-6">
@@ -3717,7 +4579,7 @@ Robots（執行端）`}
                     </pre>
                   </div>
 
-                  <h4 className="text-gray-900 mb-3">📌 為什麼這樣分？</h4>
+                  <h4 className="text-gray-900 mb-3 font-bold text-lg">📌 為什麼這樣分？</h4>
                   <ul className="list-disc list-inside space-y-2 text-gray-700 ml-4 mb-6">
                     <li>Host 不給一般使用者，只給 infra team</li>
                     <li>Tenant 代表企業整體資源池</li>
@@ -3725,7 +4587,7 @@ Robots（執行端）`}
                     <li>Process 落在 Folder 裡，方便控管排程與權限</li>
                   </ul>
 
-                  <h4 className="text-gray-900 mb-3">舉例：</h4>
+                  <h4 className="text-gray-900 mb-3 font-bold text-lg">舉例：</h4>
                   <div className="bg-white rounded-xl p-4">
                     <pre className="text-gray-700 text-sm overflow-x-auto">
 {`Host
@@ -3745,7 +4607,7 @@ Robots（執行端）`}
 
                 {/* 五、核心觀念總結 */}
                 <div className="bg-red-50 rounded-2xl p-6">
-                  <h3 className="text-red-900 mb-4">🎯 五、核心觀念總結（最重要的三句話）</h3>
+                  <h2 className="text-red-900 mb-6 text-2xl font-bold border-b-4 border-red-500 pb-3">🎯 五、核心觀念總結（最重要的三句話）</h2>
                   <div className="space-y-4">
                     <div className="bg-white rounded-xl p-4">
                       <p className="text-gray-900"><strong>1.</strong> Studio 是設計流程的地方，OC 是管理流程的地方。</p>
@@ -3761,7 +4623,7 @@ Robots（執行端）`}
 
                 {/* 總結 */}
                 <div className="bg-gradient-to-r from-orange-100 to-yellow-100 rounded-2xl p-8 text-center">
-                  <h3 className="text-gray-900 mb-4">🎉 完整掌握 UiPath Orchestrator</h3>
+                  <h2 className="text-gray-900 mb-4 text-2xl font-bold">🎉 完整掌握 UiPath Orchestrator</h2>
                   <p className="text-gray-700 text-lg mb-4">
                     從開發流程、平台架構到 Host / Tenant / Folder 管理全解析
                   </p>
@@ -3977,7 +4839,7 @@ Robots（執行端）`}
                   <p className="text-gray-700 mb-6">
                     當企業調整授權數量（例如由 10 改為 8），Host 需先將 Tenant 多使用的 2 個授權調整回來，否則更新時會因數字不一致而報錯。
                   </p>
-                  <p className="text-gray-700 mb-6">以下���正確流程。</p>
+                  <p className="text-gray-700 mb-6">以下為正確流程。</p>
 
                   <div className="space-y-6">
                     <div className="bg-red-100 rounded-xl p-4">
@@ -4101,8 +4963,10 @@ Robots（執行端）`}
                 setShowUiPathManagement(false);
                 if (articleEntrySource === 'main') {
                   setSelectedTech(null);
+                  navigate('/tech');
                 } else {
                   setSelectedTech('UiPath');
+                  navigate('/tech/uipath');
                 }
               }}
               className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 mb-4"
@@ -4248,7 +5112,7 @@ Robots（執行端）`}
                         <div className="bg-white rounded-xl p-4">
                           <h4 className="text-gray-900 mb-2 text-lg font-semibold">4. Mail Settings（SMTP 設定）</h4>
                           <ul className="list-disc list-inside space-y-1 text-gray-700 ml-4">
-                            <li>設定平台的郵��伺服器（SMTP）</li>
+                            <li>設定平台的郵件伺服器（SMTP）</li>
                             <li>用於接收 Host 層級的錯誤通知或告警</li>
                           </ul>
                         </div>
@@ -4496,8 +5360,10 @@ Robots（執行端）`}
                 setShowUiPathTenant(false);
                 if (articleEntrySource === 'main') {
                   setSelectedTech(null);
+                  navigate('/tech');
                 } else {
                   setSelectedTech('UiPath');
+                  navigate('/tech/uipath');
                 }
               }}
               className="inline-flex items-center gap-2 text-teal-600 hover:text-teal-700 mb-4"
@@ -4743,7 +5609,7 @@ Robots（執行端）`}
                     {/* 5-11 其他功能 */}
                     <div className="grid md:grid-cols-2 gap-5">
                       {[
-                        { num: '5️⃣', title: 'Machines', desc: '定義 OC 與 Robot 的連線橋樑，建���連線 Key、定義執行能力（Capacity）、授權 Unattended Robot' },
+                        { num: '5️⃣', title: 'Machines', desc: '定義 OC 與 Robot 的連線橋樑，建立連線 Key、定義執行能力（Capacity）、授權 Unattended Robot' },
                         { num: '6️⃣', title: 'Packages', desc: '流程包管理，顯示所有被發佈到此 Tenant 的流程包，企業可統一控管流程版本' },
                         { num: '7️⃣', title: 'Audit', desc: '稽核紀錄，記錄 Tenant 內所有重要操作，對資訊安全、稽核、故障排查非常重要' },
                         { num: '8️⃣', title: 'Credential Stores', desc: '密碼儲存區，安全儲存敏感資訊，可與 CyberArk、Azure Key Vault 等企業級金鑰系統整合' },
@@ -4847,8 +5713,10 @@ Robots（執行端）`}
                 setShowUiPathFolder(false);
                 if (articleEntrySource === 'main') {
                   setSelectedTech(null);
+                  navigate('/tech');
                 } else {
                   setSelectedTech('UiPath');
+                  navigate('/tech/uipath');
                 }
               }}
               className="inline-flex items-center gap-2 text-amber-600 hover:text-amber-700 mb-4"
@@ -5469,8 +6337,10 @@ Robots（執行端）`}
                 setShowUiPathAssistant(false);
                 if (articleEntrySource === 'main') {
                   setSelectedTech(null);
+                  navigate('/tech');
                 } else {
                   setSelectedTech('UiPath');
+                  navigate('/tech/uipath');
                 }
               }}
               className="inline-flex items-center gap-2 text-cyan-600 hover:text-cyan-700 mb-4"
@@ -5836,7 +6706,6 @@ Robots（執行端）`}
                 {/* 五、同一台機器的使用 */}
                 <div>
                   <h2 className="text-gray-900 mb-6 flex items-center gap-3 text-3xl font-bold">
-                    <span className="text-5xl">📘</span>
                     五、「同一台機器可以同時做開發與機器人嗎？」
                   </h2>
 
@@ -5844,7 +6713,7 @@ Robots（執行端）`}
                     <p className="text-gray-900 text-2xl font-bold mb-6">可以。</p>
                     
                     <p className="text-gray-800 text-lg leading-relaxed mb-4">
-                      ���要你使用兩種連線方式之一即可：
+                      只要你使用兩種連線方式之一即可：
                     </p>
                     <ul className="space-y-3 text-gray-800 mb-6">
                       <li className="flex items-start gap-3">
