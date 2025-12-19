@@ -5,30 +5,8 @@ import { GamesSection } from './components/GamesSection';
 import { ParentingSection } from './components/ParentingSection';
 import { TechSection } from './components/TechSection';
 import { ArticleDetail } from './components/ArticleDetail';
-import { useEffect } from "react"
-import { supabase } from "./lib/supabase"
+
 export default function App() {
-    useEffect(() => {
-    const increaseView = async () => {
-      const { data, error } = await supabase
-        .from("page_views")
-        .select("views")
-        .eq("page", "home")
-        .single()
-
-      if (error) {
-        console.error(error)
-        return
-      }
-
-      await supabase
-        .from("page_views")
-        .update({ views: data.views + 1 })
-        .eq("page", "home")
-    }
-
-    increaseView()
-  }, [])
   return (
     <Router>
       <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-green-50">

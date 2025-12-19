@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from 'motion/react';
-import { X, Plus, Trash2, Gift, Users, Ticket, Search, Copy, Check, ArrowLeft, Calendar, Ban } from 'lucide-react';
+import { X, Plus, Trash2, Gift, Users, Ticket, Search, Copy, Check, ArrowLeft, Calendar, Ban, History, Database } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { projectId, publicAnonKey } from '../utils/supabase/info';
 
 interface Player {
   id: string;
@@ -29,7 +30,7 @@ interface LadderLotteryProps {
 }
 
 export function LadderLottery({ onClose }: LadderLotteryProps) {
-  const [step, setStep] = useState<'setup' | 'playing' | 'result'>('setup');
+  const [step, setStep] = useState<'setup' | 'playing' | 'result' | 'history'>('setup');
   const [players, setPlayers] = useState<Player[]>([]);
   const [prizes, setPrizes] = useState<Prize[]>([]);
   const [newPlayerName, setNewPlayerName] = useState('');
@@ -44,6 +45,11 @@ export function LadderLottery({ onClose }: LadderLotteryProps) {
   const [lotteryTimestamp, setLotteryTimestamp] = useState<number>(0);
   const [showExcludeModal, setShowExcludeModal] = useState(false);
   const [excludingPlayer, setExcludingPlayer] = useState<Player | null>(null);
+  const [historyRecords, setHistoryRecords] = useState<any[]>([]);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle');
+
+  const API_BASE = `https://${projectId}.supabase.co/functions/v1/make-server-ff545811`;
 
   // 將數據編碼到ID中
   const generateIdWithData = (data: LotteryData): string => {
@@ -316,6 +322,72 @@ export function LadderLottery({ onClose }: LadderLotteryProps) {
       second: '2-digit'
     });
   };
+
+  // 獲取歷史記錄
+  const fetchHistory = async () => {
+    try {
+      const response = await fetch(`${API_BASE}/lottery`, {
+        headers: {
+          'Authorization': `Bearer ${publicAnonKey}`
+        }
+      });
+      if (!response.ok) {
+        console.error('無法獲取歷史記錄:', response.statusText);
+        return;
+      }
+      const result = await response.json();
+      if (result.success && result.data) {
+        setHistoryRecords(result.data);
+      }
+    } catch (error) {
+      console.error('獲取歷史記錄失敗:', error);
+    }
+  };
+
+  // 保存當前抽獎結果
+  const saveResult = async () => {
+    setIsSaving(true);
+    setSaveStatus('saving');
+    try {
+      const data: LotteryData = {
+        timestamp: lotteryTimestamp,
+        players: players,
+        prizes: prizes
+      };
+      const response = await fetch(`${API_BASE}/lottery/save`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${publicAnonKey}`
+        },
+        body: JSON.stringify({
+          lotteryId: lotteryId,
+          data: data
+        })
+      });
+      if (!response.ok) {
+        throw new Error('無法保存結果');
+      }
+      const result = await response.json();
+      if (result.success) {
+        setSaveStatus('success');
+        await fetchHistory();
+      } else {
+        throw new Error(result.error || '保存失敗');
+      }
+    } catch (error) {
+      console.error('保存結果失敗:', error);
+      setSaveStatus('error');
+    } finally {
+      setIsSaving(false);
+      // 3秒後重置狀態
+      setTimeout(() => setSaveStatus('idle'), 3000);
+    }
+  };
+
+  useEffect(() => {
+    fetchHistory();
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-100 via-pink-100 to-orange-100 py-12 px-4">
@@ -873,6 +945,106 @@ export function LadderLottery({ onClose }: LadderLotteryProps) {
                             <div className="text-gray-500">尚未被抽取</div>
                           )}
                         </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Save Button */}
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={saveResult}
+              disabled={isSaving || saveStatus === 'success'}
+              className={`w-full py-6 rounded-3xl shadow-2xl text-2xl transition-all ${
+                isSaving || saveStatus === 'success' ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-gradient-to-r from-orange-400 via-pink-500 to-purple-500 text-white'
+              }`}
+            >
+              {isSaving ? '💾 保存中...' : saveStatus === 'success' ? '✅ 已保存到資料庫' : '💾 保存結果到資料庫'}
+            </motion.button>
+
+            {/* Save Status */}
+            {saveStatus === 'success' && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-green-50 border-2 border-green-400 text-green-700 px-6 py-4 rounded-2xl text-center"
+              >
+                ✅ 結果已成功保存到資料庫！您可以隨時查看歷史記錄。
+              </motion.div>
+            )}
+            {saveStatus === 'error' && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-red-50 border-2 border-red-400 text-red-700 px-6 py-4 rounded-2xl text-center"
+              >
+                ❌ 保存結果失敗，請檢查網路連接後重試。
+              </motion.div>
+            )}
+          </motion.div>
+        )}
+
+        {/* History Step */}
+        {step === 'history' && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="space-y-6"
+          >
+            {/* History Card */}
+            <div className="bg-gradient-to-br from-amber-400 to-orange-500 rounded-3xl shadow-2xl p-8 text-white">
+              <div className="flex items-start justify-between mb-4 flex-wrap gap-4">
+                <div>
+                  <h2 className="mb-2">📜 歷史記錄</h2>
+                  <p className="text-white/90">
+                    查看過去的抽獎結果
+                  </p>
+                </div>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={restart}
+                  className="bg-white text-orange-500 px-6 py-3 rounded-2xl shadow-lg"
+                >
+                  重新開始
+                </motion.button>
+              </div>
+
+              <div className="bg-white/20 backdrop-blur-md rounded-2xl p-6">
+                <div className="flex items-center gap-2 mb-3">
+                  <History className="w-6 h-6" />
+                  <h3 className="text-white">歷史記錄</h3>
+                </div>
+                <div className="space-y-3">
+                  {historyRecords.map((record, index) => (
+                    <motion.div
+                      key={index}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.1 }}
+                      className="bg-gray-50 rounded-2xl p-4"
+                    >
+                      <div className="flex items-center gap-3 mb-2">
+                        <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-cyan-500 rounded-full flex items-center justify-center text-white">
+                          {index + 1}
+                        </div>
+                        <div className="flex-1">
+                          <div className="text-gray-900">抽獎時間：{formatDate(record.timestamp)}</div>
+                          <div className="text-gray-500">
+                            玩家數：{record.players.length}，禮物數：{record.prizes.length}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="space-y-1">
+                        {record.players.map((player: Player, i) => (
+                          <div key={i} className="text-gray-700 flex items-center gap-2">
+                            <span className="text-pink-500">🎁</span>
+                            {player.name} 抽到了 {player.prizes.join(', ')}
+                          </div>
+                        ))}
                       </div>
                     </motion.div>
                   ))}

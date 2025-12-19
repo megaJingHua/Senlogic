@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import { Code, Terminal, Cpu, Rocket, GitBranch, Zap, Eye, Calendar, MessageCircle, ChevronLeft, ChevronRight, Menu, X } from 'lucide-react';
+import { Code, Terminal, Cpu, Rocket, GitBranch, Zap, Eye, Calendar, MessageCircle, ChevronLeft, ChevronRight } from 'lucide-react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import { useState, useEffect, useRef } from 'react';
 import { Typewriter } from './Typewriter';
@@ -26,9 +26,6 @@ export function TechSection() {
   const [showUiPathTenant, setShowUiPathTenant] = useState(false);
   const [showUiPathFolder, setShowUiPathFolder] = useState(false);
   const [showUiPathAssistant, setShowUiPathAssistant] = useState(false);
-  
-  // 控制側邊欄是否顯示（移動端用）
-  const [showSidebar, setShowSidebar] = useState(false);
 
   // Handle URL params and set appropriate state
   useEffect(() => {
@@ -37,7 +34,7 @@ export function TechSection() {
       if (techLabel) {
         setArticleEntrySource('techStack');
         if (techLabel === 'Vue3') {
-          setShowVue30Days(true);
+          setSelectedTech('Vue3');
         } else {
           setSelectedTech(techLabel);
         }
@@ -2958,15 +2955,15 @@ describe('加法測試', () => {
 
           {/* Teams Style Chat Interface */}
           <div className="bg-white rounded-3xl shadow-xl overflow-hidden" style={{ height: '80vh' }}>
-            <div className="grid grid-cols-12 h-full">
+            <div className="flex flex-col md:grid md:grid-cols-12 h-full">
               {/* Left Sidebar - Chat List */}
-              <div className="col-span-12 md:col-span-4 bg-gray-50 border-r border-gray-200 flex flex-col">
-                <div className="bg-gradient-to-r from-pink-500 to-purple-600 p-6 text-white">
+              <div className="md:col-span-4 bg-gray-50 border-b md:border-b-0 md:border-r border-gray-200 flex flex-col max-h-[30vh] md:max-h-none overflow-hidden">
+                <div className="bg-gradient-to-r from-pink-500 to-purple-600 p-4 md:p-6 text-white flex-shrink-0">
                   <h2 className="text-white mb-2">工程師's 543</h2>
                   <p className="text-white/90 text-sm">真實職場對話紀錄 💬</p>
                 </div>
                 
-                <div className="flex-1 overflow-y-auto p-4 space-y-2">
+                <div className="flex-1 overflow-y-auto p-2 md:p-4 space-y-2">
                   {engineerChats.map((chat) => (
                     <motion.div
                       key={chat.id}
@@ -2999,9 +2996,9 @@ describe('加法測試', () => {
               </div>
 
               {/* Right Side - Chat Messages */}
-              <div className="col-span-12 md:col-span-8 flex flex-col bg-white">
+              <div className="flex-1 md:col-span-8 flex flex-col bg-white overflow-hidden">
                 {/* Chat Header */}
-                <div className="border-b border-gray-200 p-6 bg-gray-50">
+                <div className="border-b border-gray-200 p-4 md:p-6 bg-gray-50 flex-shrink-0">
                   <div className="flex items-center gap-3">
                     <div className="text-3xl">{engineerChats[selectedChat].avatar}</div>
                     <div>
@@ -3014,7 +3011,7 @@ describe('加法測試', () => {
                 </div>
 
                 {/* Messages */}
-                <div className="flex-1 overflow-y-auto p-6 space-y-4">
+                <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4">
                   {engineerChats[selectedChat].messages.map((message, idx) => (
                     <motion.div
                       key={idx}
@@ -3055,7 +3052,7 @@ describe('加法測試', () => {
                 </div>
 
                 {/* Input Area (Disabled - Read Only) */}
-                <div className="border-t border-gray-200 p-4 bg-gray-50">
+                <div className="border-t border-gray-200 p-4 bg-gray-50 flex-shrink-0">
                   <div className="bg-gray-200 rounded-full px-4 py-3 text-gray-500 text-sm text-center">
                     📖 這是歷史對話紀錄，僅供閱讀
                   </div>
@@ -3081,104 +3078,11 @@ describe('加法測試', () => {
               <span className="text-2xl">←</span>
               <span>返回章節列表</span>
             </motion.button>
+
+            {/* Main content */}
+            <div className="w-full">
             
-            {/* Mobile sidebar toggle button */}
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setShowSidebar(!showSidebar)}
-              className="lg:hidden fixed bottom-6 left-6 z-50 bg-emerald-500 text-white p-3 rounded-full shadow-xl hover:bg-emerald-600 transition-colors"
-            >
-              {showSidebar ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </motion.button>
-
-            {/* Layout with sidebar and content */}
-            <div className="flex gap-8 relative">
-              {/* Sidebar Navigation - Desktop */}
-              <motion.aside
-                initial={{ x: -20, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                transition={{ delay: 0.2 }}
-                className="hidden lg:block w-64 flex-shrink-0 sticky top-24 self-start max-h-[calc(100vh-8rem)] overflow-y-auto"
-              >
-                <div className="bg-white rounded-2xl shadow-lg p-4">
-                  <h3 className="text-gray-900 mb-4 px-2">快速導覽</h3>
-                  <div className="space-y-1">
-                    {vue30Days.map((day) => (
-                      <motion.button
-                        key={day.day}
-                        whileHover={{ scale: 1.02, x: 4 }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={() => setSelectedDay(day.day)}
-                        className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
-                          selectedDay === day.day
-                            ? 'bg-emerald-500 text-white'
-                            : 'hover:bg-emerald-50 text-gray-700'
-                        }`}
-                      >
-                        <div className="flex items-center gap-2">
-                          <span className={`${selectedDay === day.day ? 'font-semibold' : ''}`}>
-                            Day {day.day}
-                          </span>
-                        </div>
-                        <div className={`text-sm mt-1 line-clamp-1 ${
-                          selectedDay === day.day ? 'text-white/90' : 'text-gray-500'
-                        }`}>
-                          {day.title}
-                        </div>
-                      </motion.button>
-                    ))}
-                  </div>
-                </div>
-              </motion.aside>
-
-              {/* Sidebar Navigation - Mobile */}
-              {showSidebar && (
-                <motion.div
-                  initial={{ x: -300, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  exit={{ x: -300, opacity: 0 }}
-                  className="lg:hidden fixed inset-y-0 left-0 z-40 w-80 bg-white shadow-2xl overflow-y-auto"
-                >
-                  <div className="p-6">
-                    <h3 className="text-gray-900 mb-4">快速導覽</h3>
-                    <div className="space-y-1">
-                      {vue30Days.map((day) => (
-                        <motion.button
-                          key={day.day}
-                          whileHover={{ scale: 1.02, x: 4 }}
-                          whileTap={{ scale: 0.98 }}
-                          onClick={() => {
-                            setSelectedDay(day.day);
-                            setShowSidebar(false);
-                          }}
-                          className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
-                            selectedDay === day.day
-                              ? 'bg-emerald-500 text-white'
-                              : 'hover:bg-emerald-50 text-gray-700'
-                          }`}
-                        >
-                          <div className="flex items-center gap-2">
-                            <span className={`${selectedDay === day.day ? 'font-semibold' : ''}`}>
-                              Day {day.day}
-                            </span>
-                          </div>
-                          <div className={`text-sm mt-1 line-clamp-1 ${
-                            selectedDay === day.day ? 'text-white/90' : 'text-gray-500'
-                          }`}>
-                            {day.title}
-                          </div>
-                        </motion.button>
-                      ))}
-                    </div>
-                  </div>
-                </motion.div>
-              )}
-
-              {/* Main content */}
-              <div className="flex-1 min-w-0">
-            
-            {vue30Days[selectedDay - 1]?.content && (
+{vue30Days[selectedDay - 1]?.content && (
               <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
                 {/* Header */}
                 <div className="bg-gradient-to-r from-emerald-400 to-green-500 p-8 text-white">
@@ -3864,8 +3768,7 @@ describe('加法測試', () => {
               </div>
             )}
           </div>
-        </div>
-      </div>
+          </div>
         </motion.div>
       ) : selectedTech === 'Vue3' && !showVue30Days ? (
         /* Vue3 Single Card View */
@@ -6252,7 +6155,7 @@ Robots（執行端）`}
                 <div>
                   <h2 className="text-gray-900 mb-6 flex items-center gap-3 text-3xl font-bold">
                     <span className="text-5xl">🎯</span>
-                    六、總結：Folder 是自動化的最小運作單位
+                    六、���結：Folder 是自動化的最小運作單位
                   </h2>
                   
                   <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl p-8">
@@ -6817,45 +6720,6 @@ Robots（執行端）`}
             </div>
           </div>
         </motion.div>
-      ) : selectedTech ? (
-        /* Coming Soon View for other tech stacks */
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.3 }}
-        >
-          <div className="mb-8">
-            <motion.button
-              whileHover={{ scale: 1.05, x: -5 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setSelectedTech(null)}
-              className="inline-flex items-center gap-2 text-emerald-600 hover:text-emerald-700 mb-4"
-            >
-              <span className="text-2xl">←</span>
-              <span>返回技術文章</span>
-            </motion.button>
-            
-            <div className="bg-white rounded-3xl p-16 text-center shadow-xl">
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ type: "spring", delay: 0.2 }}
-                className="text-9xl mb-8"
-              >
-                🚧
-              </motion.div>
-              <h2 className="text-gray-900 mb-4">{selectedTech} 相關文章</h2>
-              <p className="text-gray-600 mb-8 text-xl">尚無文章，敬請期待</p>
-              <motion.div
-                animate={{ y: [0, -10, 0] }}
-                transition={{ duration: 2, repeat: Infinity }}
-                className="text-gray-400"
-              >
-                文章撰寫中...
-              </motion.div>
-            </div>
-          </div>
-        </motion.div>
       ) : showVue30Days ? (
         /* Vue 30 Days Detail View */
         <motion.div
@@ -6937,6 +6801,45 @@ Robots（執行端）`}
                 </div>
               </motion.div>
             ))}
+          </div>
+        </motion.div>
+      ) : selectedTech ? (
+        /* Coming Soon View for other tech stacks */
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
+        >
+          <div className="mb-8">
+            <motion.button
+              whileHover={{ scale: 1.05, x: -5 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setSelectedTech(null)}
+              className="inline-flex items-center gap-2 text-emerald-600 hover:text-emerald-700 mb-4"
+            >
+              <span className="text-2xl">←</span>
+              <span>返回技術文章</span>
+            </motion.button>
+            
+            <div className="bg-white rounded-3xl p-16 text-center shadow-xl">
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ type: "spring", delay: 0.2 }}
+                className="text-9xl mb-8"
+              >
+                🚧
+              </motion.div>
+              <h2 className="text-gray-900 mb-4">{selectedTech} 相關文章</h2>
+              <p className="text-gray-600 mb-8 text-xl">尚無文章，敬請期待</p>
+              <motion.div
+                animate={{ y: [0, -10, 0] }}
+                transition={{ duration: 2, repeat: Infinity }}
+                className="text-gray-400"
+              >
+                文章撰寫中...
+              </motion.div>
+            </div>
           </div>
         </motion.div>
       ) : (
