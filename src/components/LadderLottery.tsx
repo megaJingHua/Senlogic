@@ -647,6 +647,20 @@ export function LadderLottery({ onClose }: LadderLotteryProps) {
                   ? '⚠️ 請先添加玩家和禮物'
                   : '🎉 開始抽獎遊戲 🎉'}
               </motion.button>
+
+              {/* View History Button */}
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => {
+                  fetchHistory();
+                  setStep('history');
+                }}
+                className="w-full py-4 rounded-3xl shadow-xl bg-gradient-to-r from-indigo-400 to-purple-500 text-white flex items-center justify-center gap-3"
+              >
+                <Database className="w-6 h-6" />
+                📊 查看所有保存的抽獎紀錄
+              </motion.button>
             </motion.div>
           </div>
         )}
@@ -994,63 +1008,183 @@ export function LadderLottery({ onClose }: LadderLotteryProps) {
             animate={{ opacity: 1, scale: 1 }}
             className="space-y-6"
           >
-            {/* History Card */}
-            <div className="bg-gradient-to-br from-amber-400 to-orange-500 rounded-3xl shadow-2xl p-8 text-white">
+            {/* History Header */}
+            <div className="bg-gradient-to-br from-indigo-400 to-purple-500 rounded-3xl shadow-2xl p-8 text-white">
               <div className="flex items-start justify-between mb-4 flex-wrap gap-4">
                 <div>
-                  <h2 className="mb-2">📜 歷史記錄</h2>
+                  <h2 className="mb-2 flex items-center gap-3">
+                    <Database className="w-8 h-8" />
+                    📊 所有保存的抽獎紀錄
+                  </h2>
                   <p className="text-white/90">
-                    查看過去的抽獎結果
+                    共有 {historyRecords.length} 筆抽獎紀錄
                   </p>
                 </div>
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={restart}
-                  className="bg-white text-orange-500 px-6 py-3 rounded-2xl shadow-lg"
+                  className="bg-white text-purple-600 px-6 py-3 rounded-2xl shadow-lg"
                 >
-                  重新開始
+                  返回首頁
                 </motion.button>
               </div>
+            </div>
 
-              <div className="bg-white/20 backdrop-blur-md rounded-2xl p-6">
-                <div className="flex items-center gap-2 mb-3">
-                  <History className="w-6 h-6" />
-                  <h3 className="text-white">歷史記錄</h3>
-                </div>
-                <div className="space-y-3">
-                  {historyRecords.map((record, index) => (
-                    <motion.div
-                      key={index}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                      className="bg-gray-50 rounded-2xl p-4"
-                    >
-                      <div className="flex items-center gap-3 mb-2">
-                        <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-cyan-500 rounded-full flex items-center justify-center text-white">
+            {/* History Records */}
+            {historyRecords.length === 0 ? (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-white rounded-3xl shadow-xl p-12 text-center"
+              >
+                <motion.div
+                  animate={{ y: [0, -10, 0] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                  className="text-6xl mb-4"
+                >
+                  📭
+                </motion.div>
+                <h3 className="text-gray-900 mb-2">尚無保存的抽獎紀錄</h3>
+                <p className="text-gray-600 mb-6">
+                  完成抽獎後，記得點擊「保存結果到資料庫」按鈕喔！
+                </p>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={restart}
+                  className="bg-gradient-to-r from-orange-400 to-amber-500 text-white px-8 py-3 rounded-2xl shadow-lg"
+                >
+                  開始新的抽獎
+                </motion.button>
+              </motion.div>
+            ) : (
+              <div className="grid gap-6">
+                {historyRecords.map((record, index) => (
+                  <motion.div
+                    key={record.id || index}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    className="bg-white rounded-3xl shadow-xl p-6 hover:shadow-2xl transition-shadow"
+                  >
+                    {/* Record Header */}
+                    <div className="flex items-start justify-between mb-4 pb-4 border-b-2 border-gray-100">
+                      <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-full flex items-center justify-center text-white text-xl">
                           {index + 1}
                         </div>
-                        <div className="flex-1">
-                          <div className="text-gray-900">抽獎時間：{formatDate(record.timestamp)}</div>
-                          <div className="text-gray-500">
-                            玩家數：{record.players.length}，禮物數：{record.prizes.length}
+                        <div>
+                          <div className="flex items-center gap-2 text-gray-900 mb-1">
+                            <Calendar className="w-5 h-5 text-indigo-500" />
+                            {formatDate(record.timestamp)}
+                          </div>
+                          <div className="text-gray-600">
+                            {record.players.length} 位玩家 • {record.prizes.length} 個禮物
                           </div>
                         </div>
                       </div>
-                      <div className="space-y-1">
-                        {record.players.map((player: Player, i) => (
-                          <div key={i} className="text-gray-700 flex items-center gap-2">
-                            <span className="text-pink-500">🎁</span>
-                            {player.name} 抽到了 {player.prizes.join(', ')}
-                          </div>
-                        ))}
+                      <div className="text-xs text-gray-400">
+                        {record.savedAt && `保存於 ${formatDate(record.savedAt)}`}
                       </div>
-                    </motion.div>
-                  ))}
-                </div>
+                    </div>
+
+                    {/* Record Content */}
+                    <div className="grid md:grid-cols-2 gap-6">
+                      {/* Players Section */}
+                      <div>
+                        <h4 className="text-gray-900 mb-3 flex items-center gap-2">
+                          <Users className="w-5 h-5 text-blue-500" />
+                          玩家獲獎情況
+                        </h4>
+                        <div className="space-y-2">
+                          {record.players.map((player: Player, i: number) => (
+                            <div key={i} className="bg-blue-50 rounded-xl p-3">
+                              <div className="flex items-center gap-2 mb-1">
+                                <div className="w-6 h-6 bg-gradient-to-br from-blue-400 to-cyan-500 rounded-full flex items-center justify-center text-white text-xs">
+                                  {i + 1}
+                                </div>
+                                <span className="text-gray-900">{player.name}</span>
+                              </div>
+                              {player.prizes.length > 0 ? (
+                                <div className="ml-8 space-y-1">
+                                  {player.prizes.map((prize: string, j: number) => (
+                                    <div key={j} className="text-gray-700 text-sm flex items-center gap-2">
+                                      <span className="text-pink-500">🎁</span>
+                                      {prize}
+                                    </div>
+                                  ))}
+                                </div>
+                              ) : (
+                                <div className="ml-8 text-gray-400 text-sm">未抽到禮物</div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Prizes Section */}
+                      <div>
+                        <h4 className="text-gray-900 mb-3 flex items-center gap-2">
+                          <Gift className="w-5 h-5 text-pink-500" />
+                          禮物分配狀態
+                        </h4>
+                        <div className="space-y-2">
+                          {record.prizes.map((prize: Prize, i: number) => (
+                            <div
+                              key={i}
+                              className={`rounded-xl p-3 ${
+                                prize.isDrawn ? 'bg-green-50' : 'bg-gray-50'
+                              }`}
+                            >
+                              <div className="flex items-center gap-2">
+                                <span className="text-2xl">
+                                  {prize.isDrawn ? '✅' : '🎁'}
+                                </span>
+                                <div className="flex-1">
+                                  <div className="text-gray-900">{prize.name}</div>
+                                  {prize.isDrawn && prize.drawnBy && (
+                                    <div className="text-green-600 text-sm">
+                                      已被 {prize.drawnBy} 抽走
+                                    </div>
+                                  )}
+                                  {!prize.isDrawn && (
+                                    <div className="text-gray-500 text-sm">未被抽取</div>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* View Detail Button */}
+                    <div className="mt-4 pt-4 border-t-2 border-gray-100">
+                      <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => {
+                          setLotteryTimestamp(record.timestamp);
+                          setPlayers(record.players);
+                          setPrizes(record.prizes);
+                          const id = generateIdWithData({
+                            timestamp: record.timestamp,
+                            players: record.players,
+                            prizes: record.prizes
+                          });
+                          setLotteryId(id);
+                          setStep('result');
+                        }}
+                        className="w-full bg-gradient-to-r from-indigo-400 to-purple-500 text-white py-3 rounded-xl shadow-md hover:shadow-lg transition-shadow"
+                      >
+                        查看完整結果
+                      </motion.button>
+                    </div>
+                  </motion.div>
+                ))}
               </div>
-            </div>
+            )}
           </motion.div>
         )}
 
