@@ -5,7 +5,8 @@ import { GamesSection } from './components/GamesSection';
 import { ParentingSection } from './components/ParentingSection';
 import { TechSection } from './components/TechSection';
 import { ArticleDetail } from './components/ArticleDetail';
-
+import { useEffect } from "react"
+import { supabase } from "./lib/supabase"
 export default function App() {
   return (
     <Router>
