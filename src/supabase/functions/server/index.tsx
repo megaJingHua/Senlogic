@@ -88,8 +88,42 @@ app.get("/make-server-ff545811/lottery", async (c) => {
     // Get all lottery records
     const results = await kv.getByPrefix("lottery:");
 
+    // If no results, return empty array
+    if (!results || results.length === 0) {
+      return c.json({ 
+        success: true, 
+        data: [],
+        count: 0
+      });
+    }
+
+    // getByPrefix only returns values, not keys
+    // We need to get the full records with keys
+    const supabase = await import("jsr:@supabase/supabase-js@2.49.8").then(m => m.createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+    ));
+    
+    const { data, error } = await supabase
+      .from("kv_store_ff545811")
+      .select("key, value")
+      .like("key", "lottery:%");
+
+    if (error) {
+      console.error("Error fetching lottery results from DB:", error);
+      throw new Error(error.message);
+    }
+
+    if (!data || data.length === 0) {
+      return c.json({ 
+        success: true, 
+        data: [],
+        count: 0
+      });
+    }
+
     // Sort by savedAt timestamp (newest first)
-    const sorted = results
+    const sorted = data
       .map(item => ({
         id: item.key.replace("lottery:", ""),
         ...item.value
