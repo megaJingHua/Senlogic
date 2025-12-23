@@ -37,3 +37,11 @@ jobs:
           git add .github/workflows/deploy.yml vite.config.ts
           git commit -m "Rescue: Restore deploy.yml and auto-add base path" || echo "No changes"
           git push origin main
+          
+      - name: Install and Build
+        run: |
+          npm install
+          npm run build
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4          
