@@ -1,15 +1,10 @@
-這個報錯代表你的 Vite 專案產出資料夾名稱並非 dist。根據 Figma 插件常見的 React 模板，產出資料夾通常名為 build。
-
-以下是為你修正後的完整 guardian.yml 代碼。我同步加入了自動偵測邏輯，確保不論產出是 dist 還是 build 都能成功部署：
-
-YAML
-
 name: Ultimate Guardian - No Manual Needed
 
 on:
   push:
-    branches: [ main ]
-  workflow_dispatch: 
+    branches:
+      - main
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -20,44 +15,32 @@ jobs:
   auto-repair-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      # 1. 下載 main 分支 (Figma Push 的目標)
       - name: Checkout Main Branch
         uses: actions/checkout@v4
         with:
           ref: main
           fetch-depth: 0
 
-      # 2. 從 automation 分支強行恢復設定並推回 main
       - name: Restore Configs from Automation
         run: |
           git config user.name "GitHub Action"
           git config user.email "action@github.com"
-          
-          # 從遠端的 automation 分支提取被刪除的 .github 目錄
           git fetch origin automation
           git checkout origin/automation -- .github/
-          
-          # 強行修正 vite.config.ts 的 base 路徑為專案名稱
           sed -i "s|base:.*|base: '/Senlogic/',|g" vite.config.ts || true
-          
-          # 將修復後的檔案推回 main，確保 main 與 automation 狀態同步
           git add .github/ vite.config.ts
           git commit -m "Guardian: Auto-repair configs and path" || echo "No changes"
           git push origin main
 
-      # 3. 安裝與編譯
       - name: Install and Build
         run: |
           npm install
           npm run build
-          # 檢查編譯後的檔案位置 (Debug 用)
           ls -F
 
-      # 4. 自動偵測並上傳網頁檔案
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # 此處邏輯：如果 build 資料夾存在就用 build，否則用 dist
           path: ${{ hashFiles('build/index.html') != '' && './build' || './dist' }}
 
   deploy:
