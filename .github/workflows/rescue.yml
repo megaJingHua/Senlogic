@@ -1,0 +1,38 @@
+name: Manual Rescue - Restore Deploy Script
+
+on:
+  workflow_dispatch: # 開啟手動觸發按鈕
+
+permissions:
+  contents: write
+
+jobs:
+  rescue:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Force Restore Deploy Script to Main
+        run: |
+          git config user.name "GitHub Action"
+          git config user.email "action@github.com"
+          
+          # 1. 切換到 main 分支
+          git checkout main
+          
+          # 2. 確保 .github/workflows 資料夾存在 (萬一被 Figma 整個刪掉時)
+          mkdir -p .github/workflows
+          
+          # 3. 從 automation 分支只抓取 deploy.yml 這一個檔案
+          git checkout automation -- .github/workflows/deploy.yml
+          
+          # 4. 強制修正 vite.config.ts (確保部署路徑正確)
+          sed -i "s|base:.*|base: '/Senlogic/',|g" vite.config.ts || true
+          
+          # 5. 將變更推回 main
+          git add .github/workflows/deploy.yml vite.config.ts
+          git commit -m "Rescue: Restore deploy.yml and patch vite.config.ts" || echo "No changes"
+          git push origin main
