@@ -1,0 +1,55 @@
+name: Guardian - Auto Restore and Deploy
+
+on:
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  fix-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # 取得完整歷史以便找回被刪除的檔案
+
+      - name: Restore Config Files
+        run: |
+          # 1. 檢查並恢復 deploy.yml
+          if [ ! -f .github/workflows/deploy.yml ]; then
+            echo "Deploy script missing, restoring from last commit..."
+            git checkout HEAD^1 -- .github/workflows/deploy.yml || echo "name: Backup" > .github/workflows/deploy.yml
+          fi
+
+          # 2. 強行修正 vite.config.ts 的 base 路徑 (解決手動修改問題)
+          # 這行會把 base: '/' 變成 base: '/Senlogic/'
+          sed -i "s|base:.*|base: '/Senlogic/',|g" vite.config.ts || true
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build
+        run: npm run build
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist # Vite 預設是 dist，請根據你的專案確認
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: fix-and-deploy
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deploy
+        uses: actions/deploy-pages@v4
