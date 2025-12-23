@@ -23,12 +23,15 @@ jobs:
           git config user.name "GitHub Action"
           git config user.email "action@github.com"
           git checkout main
+
+          # 2. 長回資料夾並精準拿回 deploy.yml
+          mkdir -p .github/workflows
+          git checkout automation -- .github/workflows/deploy.yml 
           
           # 自動插入 base 路徑
           sed -i "/base:/d" vite.config.ts
-          sed -i "/plugins: \[/i \  base: '/Senlogic/'," vite.config.ts
-          
-          git add vite.config.ts
+          sed -i "/plugins: \[/i \  base: '/Senlogic/'," vite.config.ts  
+          git add .github/workflows/deploy.yml vite.config.ts
           git commit -m "Rescue: Fixed base path for deployment" || echo "No changes"
           git push origin main
 
