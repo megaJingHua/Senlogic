@@ -14,47 +14,40 @@ jobs:
   auto-repair-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Code
+# 1. 直接下載 main 分支 (這是 Figma Push 的對象)
+      - name: Checkout Main Branch
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # 取得完整歷史以利分支操作
-
-      - name: Force Repair Main Branch
+          ref: main
+          fetch-depth: 0
+# 2. 從 automation 分支強行抓取 .github 資料夾回來
+      - name: Restore Configs from Automation
         run: |
-          # 1. 配置 Git 身份
           git config user.name "GitHub Action"
           git config user.email "action@github.com"
-
-          # 2. 切換到 main
-          git checkout main
           
-          # 3. 從 automation 分支強行拿回 .github 資料夾
-          git checkout automation -- .github/
+          # 從遠端的 automation 分支提取 .github 目錄
+          git fetch origin automation
+          git checkout origin/automation -- .github/
           
-          # 4. 強行修正 vite.config.ts (解決專案名稱/base路徑問題)
+          # 自動修正 vite.config.ts 的 base 路徑
           sed -i "s|base:.*|base: '/Senlogic/',|g" vite.config.ts || true
           
-          # 5. 推回修復後的內容到 main，消除「落後」狀態
+          # 將修復後的檔案推回 main 分支
           git add .github/ vite.config.ts
-          git commit -m "Guardian: Auto-repair configs (No Manual Merge Needed)" || echo "No changes"
+          git commit -m "Guardian: Auto-repair configs" || echo "No changes"
           git push origin main
-
+# 3. 在當前目錄直接 Build (不再需要 cd main_repo)
       - name: Install and Build
         run: |
           npm install
           npm run build
-          
-      - name: Build from Main
-        run: |
-          cd main_repo
-          npm install
-          npm run build
-          
+
+      # 4. 上傳產出物 (請確認 Vite 產出資料夾名稱，通常是 dist)
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./main_repo/build
-
+          path: ./dist # 如果報錯找不到 dist，試著改成 ./build
   deploy:
     runs-on: ubuntu-latest
     needs: auto-repair-and-deploy
