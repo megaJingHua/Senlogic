@@ -1,13 +1,16 @@
-name: Manual Rescue - Restore Deploy Script
+name: Manual Rescue & Force Deploy
 
 on:
   workflow_dispatch:
 
+# 核心修正：必須包含 id-token: write
 permissions:
   contents: write
+  pages: write
+  id-token: write
 
 jobs:
-  rescue:
+  rescue_and_deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
@@ -15,33 +18,31 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Force Restore Deploy Script to Main
+      - name: Repair Main Branch
         run: |
           git config user.name "GitHub Action"
           git config user.email "action@github.com"
-          
-          # 1. 切換到 main
           git checkout main
           
-          # 2. 確保資料夾存在並恢復 deploy.yml
-          mkdir -p .github/workflows
-          git checkout automation -- .github/workflows/deploy.yml
-          
-          # 3. 自動修改 vite.config.ts (核心重點)
-          # 使用 sed 在 plugins: [ 這一行前面插入 base 設定
-          # 如果原本已經有 base 會先刪除再重新插入，確保不重複
+          # 自動插入 base 路徑
           sed -i "/base:/d" vite.config.ts
           sed -i "/plugins: \[/i \  base: '/Senlogic/'," vite.config.ts
           
-          # 4. 推回 main
-          git add .github/workflows/deploy.yml vite.config.ts
-          git commit -m "Rescue: Restore deploy.yml and auto-add base path" || echo "No changes"
+          git add vite.config.ts
+          git commit -m "Rescue: Fixed base path for deployment" || echo "No changes"
           git push origin main
-          
+
       - name: Install and Build
         run: |
           npm install
           npm run build
 
+      # 必須先「上傳」檔案，部署步驟才抓得到東西
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./build
+
       - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v4          
+        id: deploy
+        uses: actions/deploy-pages@v4
