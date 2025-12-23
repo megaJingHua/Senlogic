@@ -11,6 +11,7 @@ import { ParentingSection } from "./components/ParentingSection";
 import { TechSection } from "./components/TechSection";
 import { ArticleDetail } from "./components/ArticleDetail";
 
+
 export default function App() {
   return (
     <Router>
