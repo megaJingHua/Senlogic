@@ -43,11 +43,17 @@ jobs:
         run: |
           npm install
           npm run build
-
+          
+      - name: Build from Main
+        run: |
+          cd main_repo
+          npm install
+          npm run build
+          
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./dist # Vite 預設產出
+          path: ./main_repo/build
 
   deploy:
     runs-on: ubuntu-latest
