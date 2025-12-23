@@ -1,0 +1,72 @@
+name: Cross-Branch Guardian
+
+on:
+  push:
+    branches: [ main ] # 關鍵：雖然腳本在 automation，但它監控 main 的變動
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  repair-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout automation branch (to get the backup)
+        uses: actions/checkout@v4
+        with:
+          ref: automation # 先拿 automation 分支裡的備份
+
+      - name: Copy Configs to Workspace
+        run: |
+          mkdir -p backup_configs
+          cp -r .github backup_configs/
+
+      - name: Checkout main branch (the one Figma just messed up)
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: main_repo
+          fetch-depth: 0
+
+      - name: Repair main branch
+        run: |
+          cd main_repo
+          # 1. 恢復 .github 資料夾
+          cp -r ../backup_configs/.github .
+          
+          # 2. 自動修正 vite.config.ts (不必再手動改)
+          sed -i "s|base:.*|base: '/Senlogic/',|g" vite.config.ts || true
+          
+          # 3. 回推修復後的檔案到 main (這步會讓 main 變回正確狀態)
+          git config user.name "GitHub Action"
+          git config user.email "action@github.com"
+          git add .github vite.config.ts
+          git commit -m "Guardian: Auto-restore configs and patch Vite" || echo "Nothing to fix"
+          git push origin main
+
+      # --- 以下為部署邏輯 ---
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Build from Main
+        run: |
+          cd main_repo
+          npm install
+          npm run build
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./main_repo/dist
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: repair-and-deploy
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deploy
+        uses: actions/deploy-pages@v4
