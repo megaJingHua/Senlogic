@@ -1,7 +1,8 @@
 import { motion, AnimatePresence } from 'motion/react';
-import { X, Plus, Trash2, Gift, Users, Ticket, Search, Copy, Check, ArrowLeft, Calendar, Ban, History, Database } from 'lucide-react';
+import { X, Plus, Trash2, Gift, Users, Ticket, Search, Copy, Check, ArrowLeft, Calendar, Ban, History, Database, Save, LogIn } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { projectId, publicAnonKey } from '../utils/supabase/info';
+import { toast } from 'sonner@2.0.3';
 
 interface Player {
   id: string;
@@ -27,9 +28,10 @@ interface LotteryData {
 
 interface LadderLotteryProps {
   onClose: () => void;
+  session?: any;
 }
 
-export function LadderLottery({ onClose }: LadderLotteryProps) {
+export function LadderLottery({ onClose, session }: LadderLotteryProps) {
   const [step, setStep] = useState<'setup' | 'playing' | 'result' | 'history'>('setup');
   const [players, setPlayers] = useState<Player[]>([]);
   const [prizes, setPrizes] = useState<Prize[]>([]);
@@ -40,7 +42,6 @@ export function LadderLottery({ onClose }: LadderLotteryProps) {
   const [isDrawing, setIsDrawing] = useState(false);
   const [drawnPrize, setDrawnPrize] = useState<Prize | null>(null);
   const [lotteryId, setLotteryId] = useState('');
-  const [searchId, setSearchId] = useState('');
   const [copied, setCopied] = useState(false);
   const [lotteryTimestamp, setLotteryTimestamp] = useState<number>(0);
   const [showExcludeModal, setShowExcludeModal] = useState(false);
@@ -56,22 +57,6 @@ export function LadderLottery({ onClose }: LadderLotteryProps) {
     const jsonString = JSON.stringify(data);
     const base64 = btoa(encodeURIComponent(jsonString));
     return `LOTTERY-${base64}`;
-  };
-
-  // 從ID中解析數據
-  const parseIdToData = (id: string): LotteryData | null => {
-    try {
-      if (!id.startsWith('LOTTERY-')) {
-        return null;
-      }
-      const base64 = id.replace('LOTTERY-', '');
-      const jsonString = decodeURIComponent(atob(base64));
-      const data: LotteryData = JSON.parse(jsonString);
-      return data;
-    } catch (error) {
-      console.error('解析ID失敗:', error);
-      return null;
-    }
   };
 
   // 添加玩家
@@ -240,71 +225,12 @@ export function LadderLottery({ onClose }: LadderLotteryProps) {
     setStep('result');
   };
 
-  // 搜索抽獎結果
-  const searchResult = () => {
-    if (!searchId.trim()) {
-      alert('請輸入抽獎ID！');
-      return;
-    }
-
-    const data = parseIdToData(searchId.trim());
-    if (data) {
-      setLotteryTimestamp(data.timestamp);
-      setPlayers(data.players);
-      setPrizes(data.prizes);
-      setLotteryId(searchId.trim());
-      setStep('result');
-    } else {
-      alert('無效的抽獎ID！請確認ID格式正確。');
-    }
-  };
-
-  // 複製ID
-  const copyId = () => {
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(lotteryId)
-        .then(() => {
-          setCopied(true);
-          setTimeout(() => setCopied(false), 2000);
-        })
-        .catch(() => {
-          fallbackCopy(lotteryId);
-        });
-    } else {
-      fallbackCopy(lotteryId);
-    }
-  };
-
-  // 回退的複製方法
-  const fallbackCopy = (text: string) => {
-    const textArea = document.createElement('textarea');
-    textArea.value = text;
-    textArea.style.position = 'fixed';
-    textArea.style.left = '-999999px';
-    textArea.style.top = '-999999px';
-    document.body.appendChild(textArea);
-    textArea.focus();
-    textArea.select();
-    
-    try {
-      document.execCommand('copy');
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
-      console.error('複製失敗:', err);
-      alert('複製失敗，請手動複製ID');
-    }
-    
-    document.body.removeChild(textArea);
-  };
-
   // 重新開始
   const restart = () => {
     setStep('setup');
     setPlayers([]);
     setPrizes([]);
     setLotteryId('');
-    setSearchId('');
     setCurrentPlayer(null);
     setDrawnPrize(null);
     setLotteryTimestamp(0);
@@ -346,6 +272,11 @@ export function LadderLottery({ onClose }: LadderLotteryProps) {
 
   // 保存當前抽獎結果
   const saveResult = async () => {
+    if (!session) {
+      toast.error('請先登入才能保存結果！');
+      return;
+    }
+
     setIsSaving(true);
     setSaveStatus('saving');
     try {
@@ -358,7 +289,7 @@ export function LadderLottery({ onClose }: LadderLotteryProps) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${publicAnonKey}`
+          'Authorization': `Bearer ${session.access_token}`
         },
         body: JSON.stringify({
           lotteryId: lotteryId,
@@ -371,6 +302,7 @@ export function LadderLottery({ onClose }: LadderLotteryProps) {
       const result = await response.json();
       if (result.success) {
         setSaveStatus('success');
+        toast.success('結果已保存！');
         await fetchHistory();
       } else {
         throw new Error(result.error || '保存失敗');
@@ -378,10 +310,41 @@ export function LadderLottery({ onClose }: LadderLotteryProps) {
     } catch (error) {
       console.error('保存結果失敗:', error);
       setSaveStatus('error');
+      toast.error('保存失敗');
     } finally {
       setIsSaving(false);
       // 3秒後重置狀態
       setTimeout(() => setSaveStatus('idle'), 3000);
+    }
+  };
+
+  // 刪除歷史記錄
+  const deleteRecord = async (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!confirm('確定要刪除這筆記錄嗎？此操作無法復原。')) return;
+
+    try {
+      const response = await fetch(`${API_BASE}/lottery/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${session?.access_token || publicAnonKey}`
+        }
+      });
+      
+      if (response.ok) {
+        toast.success('記錄已刪除');
+        // 從列表中移除
+        setHistoryRecords(prev => prev.filter(record => {
+           // 這裡需要根據 record 的 ID 來過濾，但 record 結構不確定，假設 id 屬性存在
+           // 注意：get /lottery API 返回的結構包含 id
+           return record.id !== id;
+        }));
+      } else {
+        throw new Error('刪除失敗');
+      }
+    } catch (error) {
+      console.error('刪除記錄失敗:', error);
+      toast.error('刪除失敗');
     }
   };
 
@@ -595,42 +558,12 @@ export function LadderLottery({ onClose }: LadderLotteryProps) {
               </div>
             </motion.div>
 
-            {/* Search and Start Buttons */}
+            {/* Start and History Buttons */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               className="md:col-span-2 space-y-4"
             >
-              {/* Search Section */}
-              <div className="bg-white rounded-3xl shadow-xl p-6">
-                <h3 className="text-gray-900 mb-3 flex items-center gap-2">
-                  <Search className="w-5 h-5 text-purple-500" />
-                  查看歷史抽獎結果
-                </h3>
-                <p className="text-gray-600 text-sm mb-3">
-                  💡 提示：抽獎ID包含完整的抽獎結果，任何人只要有ID就能查看結果！
-                </p>
-                <div className="flex gap-3">
-                  <input
-                    type="text"
-                    value={searchId}
-                    onChange={(e) => setSearchId(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && searchResult()}
-                    placeholder="輸入完整的抽獎ID（以 LOTTERY- 開頭）"
-                    className="flex-1 px-4 py-3 rounded-2xl border-2 border-gray-200 focus:border-purple-400 focus:outline-none"
-                  />
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={searchResult}
-                    className="bg-gradient-to-r from-purple-400 to-indigo-500 text-white px-8 py-3 rounded-2xl shadow-lg flex items-center gap-2"
-                  >
-                    <Search className="w-5 h-5" />
-                    查詢
-                  </motion.button>
-                </div>
-              </div>
-
               {/* Start Button */}
               <motion.button
                 whileHover={{ scale: 1.02 }}
@@ -648,19 +581,21 @@ export function LadderLottery({ onClose }: LadderLotteryProps) {
                   : '🎉 開始抽獎遊戲 🎉'}
               </motion.button>
 
-              {/* View History Button */}
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => {
-                  fetchHistory();
-                  setStep('history');
-                }}
-                className="w-full py-4 rounded-3xl shadow-xl bg-gradient-to-r from-indigo-400 to-purple-500 text-white flex items-center justify-center gap-3"
-              >
-                <Database className="w-6 h-6" />
-                📊 查看所有保存的抽獎紀錄
-              </motion.button>
+              {/* View History Button - Only show if there are records */}
+              {historyRecords.length > 0 && (
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => {
+                    fetchHistory();
+                    setStep('history');
+                  }}
+                  className="w-full py-4 rounded-3xl shadow-xl bg-gradient-to-r from-indigo-400 to-purple-500 text-white flex items-center justify-center gap-3"
+                >
+                  <Database className="w-6 h-6" />
+                  📊 查看所有保存的抽獎紀錄
+                </motion.button>
+              )}
             </motion.div>
           </div>
         )}
@@ -772,34 +707,36 @@ export function LadderLottery({ onClose }: LadderLotteryProps) {
                 return (
                   <motion.div
                     key={player.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                    whileHover={{ scale: canDraw && availableForPlayer > 0 ? 1.05 : 1 }}
-                    onClick={() => canDraw && availableForPlayer > 0 && selectPlayer(player)}
-                    className={`bg-white rounded-2xl p-6 shadow-lg ${
-                      canDraw && availableForPlayer > 0 ? 'cursor-pointer hover:shadow-xl' : 'opacity-50'
-                    } ${currentPlayer?.id === player.id ? 'ring-4 ring-orange-400' : ''}`}
+                    layout
+                    onClick={() => selectPlayer(player)}
+                    whileHover={canDraw ? { scale: 1.05 } : {}}
+                    whileTap={canDraw ? { scale: 0.95 } : {}}
+                    className={`p-6 rounded-2xl shadow-lg transition-all ${
+                      currentPlayer?.id === player.id
+                        ? 'bg-yellow-100 ring-4 ring-yellow-400'
+                        : player.remainingDraws === 0
+                        ? 'bg-gray-100 opacity-60'
+                        : canDraw
+                        ? 'bg-white cursor-pointer hover:shadow-xl'
+                        : 'bg-white opacity-80'
+                    }`}
                   >
                     <div className="flex items-center justify-between mb-3">
-                      <h3 className="text-gray-900">{player.name}</h3>
-                      <div className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full">
-                        {player.remainingDraws}/{player.maxDraws}
+                      <div className="text-xl font-bold text-gray-800">{player.name}</div>
+                      <div className="text-sm bg-blue-100 text-blue-600 px-3 py-1 rounded-full">
+                        剩 {player.remainingDraws} 次
                       </div>
                     </div>
-                    {availableForPlayer === 0 && player.remainingDraws > 0 && (
-                      <div className="text-red-500 text-sm mb-2">⚠️ 無可抽取的禮物</div>
-                    )}
-                    <div className="space-y-1">
-                      {player.prizes.length > 0 ? (
-                        player.prizes.map((prize, i) => (
-                          <div key={i} className="text-gray-600 flex items-center gap-2">
-                            <span className="text-pink-500">🎁</span>
-                            {prize}
-                          </div>
-                        ))
-                      ) : (
-                        <div className="text-gray-400">尚未抽獎</div>
+                    
+                    <div className="space-y-2">
+                      {player.prizes.map((prizeName, i) => (
+                        <div key={i} className="flex items-center gap-2 text-pink-600 text-sm">
+                          <span>🎁</span>
+                          <span>{prizeName}</span>
+                        </div>
+                      ))}
+                      {player.remainingDraws === 0 && player.prizes.length === 0 && (
+                        <div className="text-gray-400 text-sm">未中獎</div>
                       )}
                     </div>
                   </motion.div>
@@ -811,460 +748,222 @@ export function LadderLottery({ onClose }: LadderLotteryProps) {
 
         {/* Result Step */}
         {step === 'result' && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="space-y-6"
-          >
-            {/* Lottery ID Card */}
-            <div className="bg-gradient-to-br from-amber-400 to-orange-500 rounded-3xl shadow-2xl p-8 text-white">
-              <div className="flex items-start justify-between mb-4 flex-wrap gap-4">
-                <div>
-                  <h2 className="mb-2">🎊 抽獎完成！</h2>
-                  <p className="text-white/90">
-                    抽獎時間：{formatDate(lotteryTimestamp)}
-                  </p>
-                </div>
+          <div className="space-y-6">
+            <div className="bg-white rounded-3xl shadow-xl p-8">
+              <div className="text-center mb-8">
+                <h2 className="text-3xl text-gray-900 mb-2">🎉 抽獎結果 🎉</h2>
+                <p className="text-gray-600">{formatDate(lotteryTimestamp)}</p>
+              </div>
+
+              {/* Results Grid */}
+              <div className="grid md:grid-cols-2 gap-6 mb-8">
+                {players.map((player) => (
+                  <div key={player.id} className="bg-orange-50 rounded-2xl p-6">
+                    <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                      <span className="w-8 h-8 bg-orange-200 rounded-full flex items-center justify-center text-sm">
+                        👤
+                      </span>
+                      {player.name}
+                    </h3>
+                    {player.prizes.length > 0 ? (
+                      <ul className="space-y-2">
+                        {player.prizes.map((prize, i) => (
+                          <li key={i} className="flex items-center gap-2 text-pink-600 bg-white p-3 rounded-xl shadow-sm">
+                            <span className="text-2xl">🎁</span>
+                            <span className="font-medium">{prize}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <div className="text-gray-400 italic bg-white p-3 rounded-xl text-center">
+                        未獲得禮物
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              {/* Actions */}
+              <div className="flex flex-col md:flex-row gap-4 justify-center">
+                {session ? (
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={saveResult}
+                    disabled={isSaving || saveStatus === 'success'}
+                    className={`px-8 py-3 rounded-2xl shadow-lg flex items-center justify-center gap-2 text-white ${
+                      saveStatus === 'success' ? 'bg-green-500' :
+                      saveStatus === 'error' ? 'bg-red-500' :
+                      'bg-gradient-to-r from-blue-400 to-indigo-500'
+                    }`}
+                  >
+                    {isSaving ? (
+                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    ) : saveStatus === 'success' ? (
+                      <>
+                        <Check className="w-5 h-5" />
+                        已保存
+                      </>
+                    ) : (
+                      <>
+                        <Save className="w-5 h-5" />
+                        保存結果
+                      </>
+                    )}
+                  </motion.button>
+                ) : (
+                  <div className="flex items-center gap-2 text-orange-500 bg-orange-50 px-4 py-2 rounded-xl">
+                    <LogIn className="w-5 h-5" />
+                    <span className="text-sm">登入後即可保存抽獎記錄</span>
+                  </div>
+                )}
+
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={restart}
-                  className="bg-white text-orange-500 px-6 py-3 rounded-2xl shadow-lg"
+                  className="px-8 py-3 rounded-2xl shadow-lg bg-gray-100 text-gray-700 flex items-center justify-center gap-2"
                 >
-                  重新開始
+                  <Plus className="w-5 h-5" />
+                  開始新遊戲
                 </motion.button>
               </div>
-
-              <div className="bg-white/20 backdrop-blur-md rounded-2xl p-6">
-                <div className="flex items-center gap-2 mb-3">
-                  <Ticket className="w-6 h-6" />
-                  <h3 className="text-white">抽獎ID（含完整結果）</h3>
-                </div>
-                <div className="bg-white/90 rounded-xl p-4 mb-3">
-                  <p className="text-gray-800 break-all font-mono text-sm">
-                    {lotteryId}
-                  </p>
-                </div>
-                <div className="flex gap-3">
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={copyId}
-                    className="flex-1 bg-white text-orange-500 px-6 py-3 rounded-xl shadow-lg flex items-center justify-center gap-2"
-                  >
-                    {copied ? (
-                      <>
-                        <Check className="w-5 h-5" />
-                        已複製
-                      </>
-                    ) : (
-                      <>
-                        <Copy className="w-5 h-5" />
-                        複製ID
-                      </>
-                    )}
-                  </motion.button>
-                </div>
-                <p className="text-white/80 text-sm mt-3">
-                  💡 將此ID分享給其他人，他們就能查看完整的抽獎結果！
-                </p>
-              </div>
             </div>
-
-            {/* Results Grid */}
-            <div className="grid md:grid-cols-2 gap-6">
-              {/* Players Results */}
-              <div className="bg-white rounded-3xl shadow-xl p-6">
-                <h3 className="text-gray-900 mb-4 flex items-center gap-2">
-                  <Users className="w-5 h-5 text-blue-500" />
-                  玩家獲獎情況
-                </h3>
-                <div className="space-y-3">
-                  {players.map((player, index) => (
-                    <motion.div
-                      key={player.id}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                      className="bg-blue-50 rounded-2xl p-4"
-                    >
-                      <div className="flex items-center gap-3 mb-2">
-                        <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-cyan-500 rounded-full flex items-center justify-center text-white">
-                          {index + 1}
-                        </div>
-                        <div className="flex-1">
-                          <div className="text-gray-900">{player.name}</div>
-                          <div className="text-gray-500">
-                            抽了 {player.maxDraws - player.remainingDraws}/{player.maxDraws} 次
-                          </div>
-                        </div>
-                      </div>
-                      {player.excludedPrizes.length > 0 && (
-                        <div className="mb-2 text-xs text-gray-600">
-                          禁止抽取：{player.excludedPrizes.map((p, i) => (
-                            <span key={i} className="text-red-600">
-                              {i > 0 && '、'}{p}
-                            </span>
-                          ))}
-                        </div>
-                      )}
-                      {player.prizes.length > 0 ? (
-                        <div className="ml-13 space-y-1">
-                          {player.prizes.map((prize, i) => (
-                            <div key={i} className="text-gray-700 flex items-center gap-2">
-                              <span className="text-pink-500">🎁</span>
-                              {prize}
-                            </div>
-                          ))}
-                        </div>
-                      ) : (
-                        <div className="ml-13 text-gray-400">未抽到任何禮物</div>
-                      )}
-                    </motion.div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Prizes Status */}
-              <div className="bg-white rounded-3xl shadow-xl p-6">
-                <h3 className="text-gray-900 mb-4 flex items-center gap-2">
-                  <Gift className="w-5 h-5 text-pink-500" />
-                  禮物狀態
-                </h3>
-                <div className="space-y-3">
-                  {prizes.map((prize, index) => (
-                    <motion.div
-                      key={prize.id}
-                      initial={{ opacity: 0, x: 20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                      className={`rounded-2xl p-4 ${
-                        prize.isDrawn ? 'bg-green-50' : 'bg-gray-50'
-                      }`}
-                    >
-                      <div className="flex items-center gap-3">
-                        <motion.div
-                          animate={!prize.isDrawn ? { rotate: [0, 10, -10, 0] } : {}}
-                          transition={{ duration: 2, repeat: Infinity }}
-                          className="text-3xl"
-                        >
-                          {prize.isDrawn ? '✅' : '🎁'}
-                        </motion.div>
-                        <div className="flex-1">
-                          <div className="text-gray-900">{prize.name}</div>
-                          {prize.isDrawn && prize.drawnBy && (
-                            <div className="text-green-600">已被 {prize.drawnBy} 抽走</div>
-                          )}
-                          {!prize.isDrawn && (
-                            <div className="text-gray-500">尚未被抽取</div>
-                          )}
-                        </div>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Save Button */}
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={saveResult}
-              disabled={isSaving || saveStatus === 'success'}
-              className={`w-full py-6 rounded-3xl shadow-2xl text-2xl transition-all ${
-                isSaving || saveStatus === 'success' ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-gradient-to-r from-orange-400 via-pink-500 to-purple-500 text-white'
-              }`}
-            >
-              {isSaving ? '💾 保存中...' : saveStatus === 'success' ? '✅ 已保存到資料庫' : '💾 保存結果到資料庫'}
-            </motion.button>
-
-            {/* Save Status */}
-            {saveStatus === 'success' && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-green-50 border-2 border-green-400 text-green-700 px-6 py-4 rounded-2xl text-center"
-              >
-                ✅ 結果已成功保存到資料庫！您可以隨時查看歷史記錄。
-              </motion.div>
-            )}
-            {saveStatus === 'error' && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-red-50 border-2 border-red-400 text-red-700 px-6 py-4 rounded-2xl text-center"
-              >
-                ❌ 保存結果失敗，請檢查網路連接後重試。
-              </motion.div>
-            )}
-          </motion.div>
+          </div>
         )}
 
         {/* History Step */}
         {step === 'history' && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="space-y-6"
-          >
-            {/* History Header */}
-            <div className="bg-gradient-to-br from-indigo-400 to-purple-500 rounded-3xl shadow-2xl p-8 text-white">
-              <div className="flex items-start justify-between mb-4 flex-wrap gap-4">
-                <div>
-                  <h2 className="mb-2 flex items-center gap-3">
-                    <Database className="w-8 h-8" />
-                    📊 所有保存的抽獎紀錄
-                  </h2>
-                  <p className="text-white/90">
-                    共有 {historyRecords.length} 筆抽獎紀錄
-                  </p>
-                </div>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={restart}
-                  className="bg-white text-purple-600 px-6 py-3 rounded-2xl shadow-lg"
-                >
-                  返回首頁
-                </motion.button>
-              </div>
+          <div className="space-y-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
+                <Database className="w-6 h-6 text-purple-600" />
+                歷史抽獎紀錄
+              </h2>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setStep('setup')}
+                className="bg-white px-4 py-2 rounded-xl shadow text-gray-600"
+              >
+                返回
+              </motion.button>
             </div>
 
-            {/* History Records */}
-            {historyRecords.length === 0 ? (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-white rounded-3xl shadow-xl p-12 text-center"
-              >
-                <motion.div
-                  animate={{ y: [0, -10, 0] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                  className="text-6xl mb-4"
-                >
-                  📭
-                </motion.div>
-                <h3 className="text-gray-900 mb-2">尚無保存的抽獎紀錄</h3>
-                <p className="text-gray-600 mb-6">
-                  完成抽獎後，記得點擊「保存結果到資料庫」按鈕喔！
-                </p>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={restart}
-                  className="bg-gradient-to-r from-orange-400 to-amber-500 text-white px-8 py-3 rounded-2xl shadow-lg"
-                >
-                  開始新的抽獎
-                </motion.button>
-              </motion.div>
-            ) : (
-              <div className="grid gap-6">
-                {historyRecords.map((record, index) => (
+            <div className="grid gap-4">
+              {historyRecords.length === 0 ? (
+                <div className="text-center py-12 bg-white rounded-3xl shadow-lg text-gray-500">
+                  尚無保存的記錄
+                </div>
+              ) : (
+                historyRecords.map((record) => (
                   <motion.div
-                    key={record.id || index}
+                    key={record.id} // 假設 API 返回 id
+                    layout
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                    className="bg-white rounded-3xl shadow-xl p-6 hover:shadow-2xl transition-shadow"
+                    onClick={() => {
+                      setLotteryTimestamp(record.timestamp);
+                      setPlayers(record.players);
+                      setPrizes(record.prizes);
+                      setLotteryId(record.id || generateIdWithData(record));
+                      setStep('result');
+                    }}
+                    className="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-shadow cursor-pointer border border-transparent hover:border-purple-200"
                   >
-                    {/* Record Header */}
-                    <div className="flex items-start justify-between mb-4 pb-4 border-b-2 border-gray-100">
+                    <div className="flex items-center justify-between">
                       <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-full flex items-center justify-center text-white text-xl">
-                          {index + 1}
+                        <div className="bg-purple-100 p-3 rounded-full text-purple-600">
+                          <Gift className="w-6 h-6" />
                         </div>
                         <div>
-                          <div className="flex items-center gap-2 text-gray-900 mb-1">
-                            <Calendar className="w-5 h-5 text-indigo-500" />
+                          <div className="text-gray-900 font-bold text-lg">
                             {formatDate(record.timestamp)}
                           </div>
-                          <div className="text-gray-600">
-                            {record.players.length} 位玩家 • {record.prizes.length} 個禮物
+                          <div className="text-gray-500 text-sm flex gap-3">
+                            <span>👥 {record.players?.length || 0} 位玩家</span>
+                            <span>🎁 {record.prizes?.length || 0} 個禮物</span>
                           </div>
                         </div>
                       </div>
-                      <div className="text-xs text-gray-400">
-                        {record.savedAt && `保存於 ${formatDate(record.savedAt)}`}
-                      </div>
-                    </div>
-
-                    {/* Record Content */}
-                    <div className="grid md:grid-cols-2 gap-6">
-                      {/* Players Section */}
-                      <div>
-                        <h4 className="text-gray-900 mb-3 flex items-center gap-2">
-                          <Users className="w-5 h-5 text-blue-500" />
-                          玩家獲獎情況
-                        </h4>
-                        <div className="space-y-2">
-                          {record.players.map((player: Player, i: number) => (
-                            <div key={i} className="bg-blue-50 rounded-xl p-3">
-                              <div className="flex items-center gap-2 mb-1">
-                                <div className="w-6 h-6 bg-gradient-to-br from-blue-400 to-cyan-500 rounded-full flex items-center justify-center text-white text-xs">
-                                  {i + 1}
-                                </div>
-                                <span className="text-gray-900">{player.name}</span>
-                              </div>
-                              {player.prizes.length > 0 ? (
-                                <div className="ml-8 space-y-1">
-                                  {player.prizes.map((prize: string, j: number) => (
-                                    <div key={j} className="text-gray-700 text-sm flex items-center gap-2">
-                                      <span className="text-pink-500">🎁</span>
-                                      {prize}
-                                    </div>
-                                  ))}
-                                </div>
-                              ) : (
-                                <div className="ml-8 text-gray-400 text-sm">未抽到禮物</div>
-                              )}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Prizes Section */}
-                      <div>
-                        <h4 className="text-gray-900 mb-3 flex items-center gap-2">
-                          <Gift className="w-5 h-5 text-pink-500" />
-                          禮物分配狀態
-                        </h4>
-                        <div className="space-y-2">
-                          {record.prizes.map((prize: Prize, i: number) => (
-                            <div
-                              key={i}
-                              className={`rounded-xl p-3 ${
-                                prize.isDrawn ? 'bg-green-50' : 'bg-gray-50'
-                              }`}
-                            >
-                              <div className="flex items-center gap-2">
-                                <span className="text-2xl">
-                                  {prize.isDrawn ? '✅' : '🎁'}
-                                </span>
-                                <div className="flex-1">
-                                  <div className="text-gray-900">{prize.name}</div>
-                                  {prize.isDrawn && prize.drawnBy && (
-                                    <div className="text-green-600 text-sm">
-                                      已被 {prize.drawnBy} 抽走
-                                    </div>
-                                  )}
-                                  {!prize.isDrawn && (
-                                    <div className="text-gray-500 text-sm">未被抽取</div>
-                                  )}
-                                </div>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* View Detail Button */}
-                    <div className="mt-4 pt-4 border-t-2 border-gray-100">
-                      <motion.button
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={() => {
-                          setLotteryTimestamp(record.timestamp);
-                          setPlayers(record.players);
-                          setPrizes(record.prizes);
-                          const id = generateIdWithData({
-                            timestamp: record.timestamp,
-                            players: record.players,
-                            prizes: record.prizes
-                          });
-                          setLotteryId(id);
-                          setStep('result');
-                        }}
-                        className="w-full bg-gradient-to-r from-indigo-400 to-purple-500 text-white py-3 rounded-xl shadow-md hover:shadow-lg transition-shadow"
-                      >
-                        查看完整結果
-                      </motion.button>
+                      
+                      {/* Delete Button */}
+                      {session && (
+                        <motion.button
+                          whileHover={{ scale: 1.1, backgroundColor: '#fee2e2' }}
+                          whileTap={{ scale: 0.9 }}
+                          onClick={(e) => deleteRecord(record.id, e)} // 傳遞 record ID
+                          className="p-2 rounded-full text-red-400 hover:text-red-600 transition-colors"
+                          title="刪除此記錄"
+                        >
+                          <Trash2 className="w-5 h-5" />
+                        </motion.button>
+                      )}
                     </div>
                   </motion.div>
-                ))}
-              </div>
-            )}
-          </motion.div>
+                ))
+              )}
+            </div>
+          </div>
         )}
 
-        {/* Exclude Prize Modal */}
+        {/* Exclude Modal */}
         <AnimatePresence>
           {showExcludeModal && excludingPlayer && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+              className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
               onClick={() => setShowExcludeModal(false)}
             >
               <motion.div
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.9, opacity: 0 }}
-                onClick={(e) => e.stopPropagation()}
-                className="bg-white rounded-3xl shadow-2xl p-8 max-w-md w-full max-h-[80vh] overflow-y-auto"
+                initial={{ scale: 0.9, y: 20 }}
+                animate={{ scale: 1, y: 0 }}
+                exit={{ scale: 0.9, y: 20 }}
+                className="bg-white rounded-3xl p-6 w-full max-w-md shadow-2xl"
+                onClick={e => e.stopPropagation()}
               >
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-gray-900 flex items-center gap-2">
-                    <Ban className="w-6 h-6 text-orange-500" />
-                    設定 {excludingPlayer.name} 禁止抽取的禮物
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                    <Ban className="w-6 h-6 text-red-500" />
+                    設定禁止抽取的禮物
                   </h3>
-                  <motion.button
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    onClick={() => setShowExcludeModal(false)}
-                    className="text-gray-400 hover:text-gray-600"
-                  >
+                  <button onClick={() => setShowExcludeModal(false)} className="text-gray-400 hover:text-gray-600">
                     <X className="w-6 h-6" />
-                  </motion.button>
+                  </button>
                 </div>
-
-                <p className="text-gray-600 text-sm mb-4">
-                  點擊選擇該玩家無法抽取的禮物
+                
+                <p className="text-gray-600 mb-4">
+                  點擊禮物將其加入禁止列表，<span className="font-bold text-blue-600">{excludingPlayer.name}</span> 將不會抽到這些禮物。
                 </p>
 
-                <div className="space-y-2">
-                  {prizes.map((prize) => {
+                <div className="grid grid-cols-2 gap-3 max-h-60 overflow-y-auto mb-6">
+                  {prizes.map(prize => {
                     const isExcluded = excludingPlayer.excludedPrizes.includes(prize.name);
                     return (
-                      <motion.div
+                      <button
                         key={prize.id}
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
                         onClick={() => toggleExcludePrize(prize.name)}
-                        className={`p-4 rounded-2xl cursor-pointer transition-all ${
+                        className={`p-3 rounded-xl flex items-center gap-2 transition-all ${
                           isExcluded
-                            ? 'bg-red-100 border-2 border-red-400'
-                            : 'bg-gray-50 border-2 border-transparent hover:border-gray-300'
+                            ? 'bg-red-100 text-red-700 ring-2 ring-red-400'
+                            : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
                         }`}
                       >
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-3">
-                            <span className="text-2xl">
-                              {isExcluded ? '🚫' : '🎁'}
-                            </span>
-                            <span className={isExcluded ? 'text-red-700' : 'text-gray-900'}>
-                              {prize.name}
-                            </span>
-                          </div>
-                          {isExcluded && (
-                            <span className="text-red-600 text-sm">已禁止</span>
-                          )}
-                        </div>
-                      </motion.div>
+                        <span className="text-xl">{isExcluded ? '🚫' : '🎁'}</span>
+                        <span className="truncate">{prize.name}</span>
+                      </button>
                     );
                   })}
                 </div>
 
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                <button
                   onClick={() => setShowExcludeModal(false)}
-                  className="w-full mt-6 bg-gradient-to-r from-orange-400 to-amber-500 text-white py-3 rounded-2xl shadow-lg"
+                  className="w-full bg-blue-500 text-white py-3 rounded-xl font-medium hover:bg-blue-600 transition-colors"
                 >
                   完成設定
-                </motion.button>
+                </button>
               </motion.div>
             </motion.div>
           )}

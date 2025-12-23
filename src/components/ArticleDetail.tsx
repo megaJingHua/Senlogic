@@ -1,29 +1,213 @@
 import { motion } from 'motion/react';
-import { ArrowLeft, Clock, Heart, Share2, Bookmark, User, Calendar, Tag } from 'lucide-react';
+import { ArrowLeft, Clock, Heart, Share2, Bookmark, User, Calendar, Tag, Eye } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ImageWithFallback } from './figma/ImageWithFallback';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { projectId } from '../utils/supabase/info';
 
 export function ArticleDetail() {
   const navigate = useNavigate();
   const { articleId } = useParams<{ articleId: string }>();
+  const [views, setViews] = useState(0);
+  const [allViews, setAllViews] = useState<Record<string, number>>({});
   
-  // 當進入文章詳細頁面時自動捲動到頂部
+  // 當進入文章詳細頁面時自動捲動到頂部並增加閱讀數
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    
+    const fetchData = async () => {
+      // 1. Fetch all views for popular articles
+      try {
+        const viewsRes = await fetch(
+          `https://${projectId}.supabase.co/functions/v1/make-server-ff545811/articles/views`
+        );
+        const viewsResult = await viewsRes.json();
+        if (viewsResult.success && viewsResult.data) {
+          setAllViews(viewsResult.data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch all views:", error);
+      }
+
+      // 2. Increment current article view
+      if (!articleId) return;
+      try {
+        const response = await fetch(
+          `https://${projectId}.supabase.co/functions/v1/make-server-ff545811/articles/${articleId}/views`,
+          { method: 'POST' }
+        );
+        const result = await response.json();
+        if (result.success) {
+          setViews(result.views);
+          // Also update local state for immediate consistency in popular list if needed
+          setAllViews(prev => ({
+            ...prev,
+            [articleId]: result.views
+          }));
+        }
+      } catch (error) {
+        console.error("Failed to increment views:", error);
+      }
+    };
+
+    fetchData();
   }, [articleId]);
   
   const articlesData: { [key: number]: any } = {
+    9: {
+      id: 9,
+      title: '高敏兒不是問題，是天賦：給父母的一封安心信',
+      category: '情緒教育',
+      readTime: '12 分鐘',
+      date: '2024年12月23日',
+      author: '寶哥媽咪（Mega）',
+      authorBio: '工程師媽媽，與孩子一起成長學習',
+      image: "https://images.unsplash.com/photo-1532679839948-7ebc758d26b0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx0aG91Z2h0ZnVsJTIwY2hpbGQlMjBuYXR1cmUlMjBzZW5zaXRpdmV8ZW58MXx8fHwxNzY2NDc3MzY5fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+      tags: ['高敏感', '情緒教育', '親子溝通', '天賦開發', '教養心法'],
+      content: [
+        {
+          type: 'paragraph',
+          text: '親愛的爸爸媽媽，當您看著自己的孩子，是否曾感到他們與眾不同？他們可能對微小的聲音特別敏感，在陌生環境中顯得退縮，或是對他人的情緒有著異於常人的洞察力。'
+        },
+        {
+          type: 'paragraph',
+          text: '您或許會擔心：「我的孩子是不是太膽小？」、「他們是不是太愛哭了？」、「為什麼總是這麼容易焦慮？」請您放心，您的孩子很可能擁有一項獨特而美好的特質——他們是 「高敏感族（Highly Sensitive Person, HSP）」，而這絕不是問題，而是一種天賦。'
+        },
+        {
+          type: 'heading',
+          text: '什麼是高敏感？'
+        },
+        {
+          type: 'paragraph',
+          text: '「高敏感」並不是一種疾病，也不是性格缺陷，而是一種與生俱來的神經系統特質。高敏感的孩子（簡稱高敏兒）的大腦處理訊息的方式比一般人更深入、更細膩。他們就像一台配備了「超強感測器」的孩子，能接收到更多、更微小的外界刺激：'
+        },
+        {
+          type: 'list',
+          items: [
+            '感官敏銳：對光線、聲音、氣味、觸感等反應更強烈，例如討厭粗糙的衣服，或被突如其來的聲音嚇到。',
+            '情緒豐富：能深刻感受到自身和他人的情緒，同理心強，也更容易被感動或受傷。',
+            '反應更深：對新事物、新環境需要更多時間適應，因為他們在腦中處理了更多細節。',
+            '觀察細膩：能注意到旁人忽略的細節，有著豐富的內心世界和想像力。'
+          ]
+        },
+        {
+          type: 'heading',
+          text: '高敏兒的超能力與挑戰'
+        },
+        {
+          type: 'paragraph',
+          text: '這些特質帶來了獨特的「超能力」，但也可能伴隨一些「挑戰」：'
+        },
+        {
+          type: 'heading',
+          text: '🌟 高敏兒的超能力 (Gifts)'
+        },
+        {
+          type: 'list',
+          items: [
+            '強大同理心：能深刻理解他人感受，成為很好的傾聽者與朋友。',
+            '豐富創造力：對細節的敏銳觀察力與深度思考，常在藝術、文學、設計等領域展現天賦。',
+            '深度思考者：喜歡探索事物的本質，對哲學、科學或任何需要深入鑽研的領域有潛力。',
+            '細膩的覺察力：能發現環境中細微的美好與變化，對環境有高度的敏感與欣賞。',
+            '高道德感與責任心：對公平正義有強烈追求，對自己和他人有較高標準。'
+          ]
+        },
+        {
+          type: 'heading',
+          text: '🌪 高敏兒可能面臨的挑戰'
+        },
+        {
+          type: 'list',
+          items: [
+            '容易被情緒淹沒：吸收過多情緒，導致自身壓力過大或情緒崩潰。',
+            '過度刺激（Overstimulation）：在嘈雜或混亂的環境中容易感到不適、疲憊，甚至想逃離。',
+            '過度擔憂與焦慮：對未來、社交或失敗有更多考量，容易陷入擔憂情緒。',
+            '社交壓力：需要更多獨處時間來恢復能量，可能被誤解為害羞或不合群。',
+            '害怕犯錯：因深度思考可能的後果，有時會不敢嘗試或過於追求完美。'
+          ]
+        },
+        {
+          type: 'heading',
+          text: '給高敏兒父母的安心指南'
+        },
+        {
+          type: 'paragraph',
+          text: '作為父母，您可以這樣支持您的孩子：'
+        },
+        {
+          type: 'heading',
+          text: '1. 理解與接納是基石'
+        },
+        {
+          type: 'list',
+          items: [
+            '「這就是他（她）！」：認識到高敏感是孩子天生的一部分，而不是需要被「矯正」的缺點。',
+            '情緒的鏡子：了解孩子的情緒反應激烈，常常是接收到太多訊息的正常表現，而非故意搗蛋。'
+          ]
+        },
+        {
+          type: 'heading',
+          text: '2. 創造一個「避風港」'
+        },
+        {
+          type: 'list',
+          items: [
+            '安靜的空間：確保家中有一個能讓孩子獨處、放鬆、免受刺激的角落。',
+            '減少過度刺激：避免過多嘈雜的環境、緊湊的行程，給予孩子足夠的緩衝時間。',
+            '預告變化：任何新的活動、環境或人物，都請提前跟孩子溝通，讓他們有心理準備。'
+          ]
+        },
+        {
+          type: 'heading',
+          text: '3. 教導情緒調節與自我保護'
+        },
+        {
+          type: 'list',
+          items: [
+            '命名情緒：幫助孩子認識和說出自己的情緒：「你現在是不是覺得很生氣/難過/害怕？」',
+            '建立儀式：引導孩子在情緒高漲時，做一些能平復心情的事（例如深呼吸、抱抱玩偶、聽輕音樂）。',
+            '設立界限：教導孩子如何拒絕過多的刺激或要求，保護自己的能量。'
+          ]
+        },
+        {
+          type: 'heading',
+          text: '4. 發掘與培養天賦'
+        },
+        {
+          type: 'list',
+          items: [
+            '觀察優勢：留意孩子在哪方面展現出細膩、專注、同理心等特質。',
+            '鼓勵獨特：支持他們在藝術、音樂、閱讀、大自然探索等領域發展興趣。',
+            '欣賞差異：讓孩子知道他們與眾不同之處正是其力量所在。'
+          ]
+        },
+        {
+          type: 'quote',
+          text: '您的孩子不是「太脆弱」，而是「太有感」。他們不是「愛找麻煩」，而是「在嘗試理解這個複雜的世界」。'
+        },
+        {
+          type: 'heading',
+          text: '結語'
+        },
+        {
+          type: 'paragraph',
+          text: '高敏感是一種獨特的天賦，它能讓孩子更深入地體驗生活的美好，擁有更豐富的內心世界。'
+        },
+        {
+          type: 'paragraph',
+          text: '作為父母，您的理解、接納與引導，將是高敏兒成長路上最堅實的後盾，幫助他們將這份與生俱來的敏感，轉化為未來人生中最寶貴的禮物。放鬆心情，與您的孩子一同探索這份美好的天賦吧！'
+        }
+      ]
+    },
     8: {
       id: 8,
       title: '寫給疲憊媽媽的一封信：在教養的路上，你真的已經做得很好了',
       category: '親子關係',
       readTime: '8 分鐘',
-      likes: 567,
       date: '2024年12月8日',
       author: '寶哥媽咪（Mega）',
       authorBio: '工程師媽媽，與孩子一起成長學習',
-      image: 'https://images.unsplash.com/photo-1762174241767-498fbe248a30?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb3RoZXIlMjBjaGlsZCUyMHdhcm0lMjBodWclMjBjb21mb3J0fGVufDF8fHx8MTc2NTE4MzEyNnww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
+      image: 'https://images.unsplash.com/photo-1730632166954-80098b725e14?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb3RoZXIlMjBodWdnaW5nJTIwY2hpbGQlMjB3YXJtJTIwY29tZm9ydHxlbnwxfHx8fDE3NjY0NzczNjl8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
       tags: ['媽媽', '自我照顧', '親子關係', '情緒支持', '溫柔教養'],
       content: [
         {
@@ -157,11 +341,10 @@ export function ArticleDetail() {
       title: '三歲的孩子不是故意的：寫給每一位在教養路上跌跌撞撞的媽媽',
       category: '情緒教育',
       readTime: '10 分鐘',
-      likes: 489,
       date: '2024年12月8日',
       author: '寶哥媽咪（Mega）',
       authorBio: '工程師媽媽，與孩子一起成長學習',
-      image: 'https://images.unsplash.com/photo-1587235587178-e4a6dbe63726?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb3RoZXIlMjB0b2RkbGVyJTIwbG92ZXxlbnwxfHx8fDE3NjUxNzI4NDJ8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
+      image: 'https://images.unsplash.com/photo-1612191310678-6660188d61a1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb3RoZXIlMjB0YWxraW5nJTIwdG8lMjB0b2RkbGVyJTIwZ2VudGxlJTIwcGFyZW50aW5nfGVufDF8fHx8MTc2NjQ3NzM2OXww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
       tags: ['三歲孩子', '情緒教育', '界線設定', '親子關係', '溫柔教養'],
       content: [
         {
@@ -366,19 +549,16 @@ export function ArticleDetail() {
 
   const article = articlesData[Number(articleId)] || articlesData[8];
 
-  // 熱門文章列表 - 顯示現有的兩篇文章，但排除當前正在閱讀的文章
-  const popularArticles = [
-    { 
-      id: 8, 
-      title: '寫給疲憊媽媽的一封信：在教養的路上，你真的已經做得很好了', 
-      views: '567' 
-    },
-    { 
-      id: 7, 
-      title: '三歲的孩子不是故意的：寫給每一位在教養路上跌跌撞撞的媽媽', 
-      views: '489' 
-    }
-  ].filter(item => item.id !== article.id);
+  // 熱門文章列表 - 根據閱讀次數排序
+  const popularArticles = Object.values(articlesData)
+    .map((item: any) => ({
+      id: item.id,
+      title: item.title,
+      views: allViews[item.id] || 0
+    }))
+    .filter((item: any) => item.id !== article.id)
+    .sort((a: any, b: any) => b.views - a.views)
+    .slice(0, 3);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-green-50">
@@ -429,8 +609,8 @@ export function ArticleDetail() {
                   {article.readTime}閱讀
                 </span>
                 <span className="flex items-center gap-2">
-                  <Heart className="w-5 h-5 fill-current" />
-                  {article.likes} 個讚
+                  <Eye className="w-5 h-5" />
+                  {views} 次閱讀
                 </span>
               </div>
             </motion.div>
@@ -599,7 +779,10 @@ export function ArticleDetail() {
                       <div className="text-gray-900 group-hover:text-orange-500 transition-colors mb-1">
                         {item.title}
                       </div>
-                      <div className="text-gray-500">{item.views} 個讚</div>
+                      <div className="text-gray-500 flex items-center gap-1">
+                        <Eye className="w-3 h-3" /> 
+                        {item.views} 次閱讀
+                      </div>
                     </div>
                   </motion.div>
                 ))}

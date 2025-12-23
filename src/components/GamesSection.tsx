@@ -1,17 +1,27 @@
 import { motion } from 'motion/react';
 import { Star, Trophy, Target, Zap } from 'lucide-react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { MemoryGame } from './MemoryGame';
 import { MathAdventure } from './MathAdventure';
-import { AlphabetForest } from './AlphabetForest';
-import { PuzzleParadise } from './PuzzleParadise';
-import { MusicRhythm } from './MusicRhythm';
-import { ScienceExperiment } from './ScienceExperiment';
 import { LadderLottery } from './LadderLottery';
+import { projectId, publicAnonKey } from '../utils/supabase/info';
+import { createClient } from '@supabase/supabase-js';
+import { toast } from 'sonner@2.0.3';
+
+// Initialize Supabase client
+const supabase = createClient(
+  `https://${projectId}.supabase.co`,
+  publicAnonKey
+);
+
+const API_BASE = `https://${projectId}.supabase.co/functions/v1/make-server-ff545811`;
 
 export function GamesSection() {
   const [selectedGame, setSelectedGame] = useState<number | null>(null);
+  const [session, setSession] = useState<any>(null);
+  const [leaderboard, setLeaderboard] = useState<any[]>([]);
+  const [dailyStats, setDailyStats] = useState({ count: 0, points: 0 });
 
   const games = [
     {
@@ -24,15 +34,6 @@ export function GamesSection() {
       points: 100
     },
     {
-      id: 2,
-      title: '字母森林',
-      description: '探索字母的奇妙世界',
-      emoji: '🌳',
-      color: 'from-green-300 to-emerald-400',
-      difficulty: '簡單',
-      points: 120
-    },
-    {
       id: 3,
       title: '記憶大師',
       description: '訓練你的超強記憶力',
@@ -42,35 +43,8 @@ export function GamesSection() {
       points: 150
     },
     {
-      id: 4,
-      title: '拼圖樂園',
-      description: '動手完成美麗的拼圖',
-      emoji: '🧩',
-      color: 'from-blue-300 to-cyan-400',
-      difficulty: '簡單',
-      points: 80
-    },
-    {
-      id: 5,
-      title: '音樂節奏',
-      description: '跟著節奏一起跳舞',
-      emoji: '🎵',
-      color: 'from-pink-300 to-rose-400',
-      difficulty: '中等',
-      points: 130
-    },
-    {
-      id: 6,
-      title: '科學實驗',
-      description: '探索科學的神奇魔力',
-      emoji: '🔬',
-      color: 'from-teal-300 to-green-400',
-      difficulty: '困難',
-      points: 200
-    },
-    {
       id: 7,
-      title: '爬梯子抽禮物',
+      title: '抽禮物',
       description: '設定玩家和禮物，開始抽獎',
       emoji: '🎁',
       color: 'from-purple-300 to-pink-400',
@@ -79,35 +53,83 @@ export function GamesSection() {
     }
   ];
 
-  const achievements = [
-    { icon: Trophy, label: '遊戲達人', count: 12 },
-    { icon: Star, label: '每日挑戰', count: 45 },
-    { icon: Target, label: '完美通關', count: 8 },
-    { icon: Zap, label: '連勝紀錄', count: 23 }
-  ];
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      if (session) {
+        fetchDailyStats(session.access_token);
+      }
+    });
+
+    fetchLeaderboard();
+  }, []);
+
+  const fetchLeaderboard = async () => {
+    try {
+      const res = await fetch(`${API_BASE}/game/leaderboard`);
+      const data = await res.json();
+      if (data.success) {
+        setLeaderboard(data.data);
+      }
+    } catch (error) {
+      console.error('Error fetching leaderboard:', error);
+    }
+  };
+
+  const fetchDailyStats = async (token: string) => {
+    try {
+      const res = await fetch(`${API_BASE}/game/daily-challenge`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.success) {
+        setDailyStats({ count: data.count, points: data.points });
+      }
+    } catch (error) {
+      console.error('Error fetching daily stats:', error);
+    }
+  };
+
+  const handleSaveScore = async (gameId: number, score: number, gameName: string) => {
+    if (!session) return;
+    try {
+      const res = await fetch(`${API_BASE}/game/score`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`
+        },
+        body: JSON.stringify({ gameId, score, gameName }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast.success(`分數已儲存！目前排名第 ${data.leaderboard.findIndex((p: any) => p.timestamp === Date.now()) + 1} 名`); // Rough estimate
+        fetchLeaderboard();
+        fetchDailyStats(session.access_token);
+      }
+    } catch (error) {
+      console.error('Error saving score:', error);
+      toast.error('無法儲存分數');
+    }
+  };
 
   // 根據選擇的遊戲顯示對應的遊戲畫面
   if (selectedGame === 1) {
-    return <MathAdventure onClose={() => setSelectedGame(null)} />;
-  }
-  if (selectedGame === 2) {
-    return <AlphabetForest onClose={() => setSelectedGame(null)} />;
+    return <MathAdventure onClose={() => setSelectedGame(null)} onSaveScore={(score) => handleSaveScore(1, score, '數字冒險')} session={session} />;
   }
   if (selectedGame === 3) {
-    return <MemoryGame onClose={() => setSelectedGame(null)} />;
-  }
-  if (selectedGame === 4) {
-    return <PuzzleParadise onClose={() => setSelectedGame(null)} />;
-  }
-  if (selectedGame === 5) {
-    return <MusicRhythm onClose={() => setSelectedGame(null)} />;
-  }
-  if (selectedGame === 6) {
-    return <ScienceExperiment onClose={() => setSelectedGame(null)} />;
+    return <MemoryGame onClose={() => setSelectedGame(null)} onSaveScore={(score) => handleSaveScore(3, score, '記憶大師')} session={session} />;
   }
   if (selectedGame === 7) {
-    return <LadderLottery onClose={() => setSelectedGame(null)} />;
+    return <LadderLottery onClose={() => setSelectedGame(null)} session={session} />;
   }
+
+  const achievements = [
+    { icon: Trophy, label: '遊戲達人', count: leaderboard.length > 0 ? leaderboard.length * 5 : 12 }, // Mock or Real
+    { icon: Star, label: '每日挑戰', count: dailyStats.count },
+    { icon: Target, label: '累積積分', count: dailyStats.points },
+    { icon: Zap, label: '連勝紀錄', count: 23 }
+  ];
 
   return (
     <section className="container mx-auto px-4 py-12">
@@ -127,6 +149,11 @@ export function GamesSection() {
         <p className="text-gray-600 max-w-2xl mx-auto">
           選擇你喜歡的遊戲，開始有趣的學習之旅！每個遊戲都能幫助你變得更聰明喔！
         </p>
+        {!session && (
+          <p className="text-sm text-orange-500 mt-2">
+            💡 爸爸媽媽登入後，可以幫你記錄分數和查看排名喔！
+          </p>
+        )}
       </motion.div>
 
       {/* Achievements */}
@@ -172,7 +199,11 @@ export function GamesSection() {
             <div className="bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow">
               <div className={`bg-gradient-to-br ${game.color} p-8 relative overflow-hidden`}>
                 <motion.div
-                  animate={{ rotate: [0, 10, -10, 0], y: [0, -10, 0] }}
+                  animate={
+                    game.id === 1
+                      ? { y: [0, -10, 0] }
+                      : { rotate: [0, 10, -10, 0], y: [0, -10, 0] }
+                  }
                   transition={{ duration: 3, repeat: Infinity }}
                   className="text-8xl text-center"
                 >
@@ -236,24 +267,39 @@ export function GamesSection() {
             </motion.div>
             <h3 className="text-amber-900">本週排行榜</h3>
           </div>
-          <span className="text-gray-600">前3名可獲得獎勵！</span>
+          <span className="text-gray-600">前10名可獲得獎勵！</span>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-4">
-          {['🥇 小明', '🥈 小華', '🥉 小美'].map((player, index) => (
-            <motion.div
-              key={index}
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.8 + index * 0.1, type: "spring" }}
-              whileHover={{ scale: 1.05 }}
-              className="bg-white rounded-2xl p-4 text-center shadow-md"
-            >
-              <div className="text-3xl mb-2">{player}</div>
-              <div className="text-orange-500">{5000 - index * 500} 分</div>
-            </motion.div>
-          ))}
-        </div>
+        {leaderboard.length > 0 ? (
+          <div className="grid md:grid-cols-3 gap-4">
+            {leaderboard.map((player, index) => (
+              <motion.div
+                key={index}
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.8 + index * 0.1, type: "spring" }}
+                whileHover={{ scale: 1.05 }}
+                className="bg-white rounded-2xl p-4 text-center shadow-md relative overflow-hidden"
+              >
+                <div className="text-3xl mb-2">{player.userName}</div>
+                <div className="text-orange-500 font-bold text-xl">{player.score} 分</div>
+                
+                {/* Rank Badge */}
+                <div className={`absolute top-2 right-2 w-8 h-8 rounded-full flex items-center justify-center text-white font-bold ${
+                  index === 0 ? 'bg-yellow-400' :
+                  index === 1 ? 'bg-gray-400' :
+                  index === 2 ? 'bg-orange-400' : 'bg-blue-200'
+                }`}>
+                  {index + 1}
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-8 text-gray-500">
+            目前還沒有人上榜，快來當第一名！
+          </div>
+        )}
       </motion.div>
     </section>
   );

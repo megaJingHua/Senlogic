@@ -10,6 +10,7 @@ import { GamesSection } from "./components/GamesSection";
 import { ParentingSection } from "./components/ParentingSection";
 import { TechSection } from "./components/TechSection";
 import { ArticleDetail } from "./components/ArticleDetail";
+import { ParentZone } from "./components/ParentZone";
 
 
 export default function App() {
@@ -33,6 +34,7 @@ export default function App() {
             path="/tech/:techId"
             element={<TechSection />}
           />
+          <Route path="/parent" element={<ParentZone />} />
           <Route
             path="*"
             element={<Navigate to="/" replace />}

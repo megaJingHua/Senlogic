@@ -4,6 +4,8 @@ import { Trophy, Star, RotateCcw, Home, Heart } from 'lucide-react';
 
 interface MathAdventureProps {
   onClose: () => void;
+  onSaveScore?: (score: number) => void;
+  session?: any;
 }
 
 interface Question {
@@ -13,7 +15,7 @@ interface Question {
   correctAnswer: number;
 }
 
-export function MathAdventure({ onClose }: MathAdventureProps) {
+export function MathAdventure({ onClose, onSaveScore, session }: MathAdventureProps) {
   const [question, setQuestion] = useState<Question | null>(null);
   const [userAnswer, setUserAnswer] = useState('');
   const [score, setScore] = useState(0);
@@ -23,6 +25,7 @@ export function MathAdventure({ onClose }: MathAdventureProps) {
   const [showFeedback, setShowFeedback] = useState(false);
   const [isWon, setIsWon] = useState(false);
   const [isGameOver, setIsGameOver] = useState(false);
+  const [hasSaved, setHasSaved] = useState(false);
 
   // 生成新問題
   const generateQuestion = () => {
@@ -56,17 +59,25 @@ export function MathAdventure({ onClose }: MathAdventureProps) {
 
   // 檢查獲勝條件
   useEffect(() => {
-    if (score >= 10) {
+    if (score >= 10 && !isWon) {
       setIsWon(true);
+      if (session && onSaveScore && !hasSaved) {
+        onSaveScore(100); // Base points for winning
+        setHasSaved(true);
+      }
     }
-  }, [score]);
+  }, [score, isWon, session, onSaveScore, hasSaved]);
 
   // 檢查遊戲結束
   useEffect(() => {
     if (lives <= 0) {
       setIsGameOver(true);
+      if (session && onSaveScore && !hasSaved && score > 0) {
+        onSaveScore(score * 10); // 10 points per correct answer
+        setHasSaved(true);
+      }
     }
-  }, [lives]);
+  }, [lives, session, onSaveScore, hasSaved, score]);
 
   // 處理答案提交
   const handleSubmit = () => {
@@ -101,6 +112,7 @@ export function MathAdventure({ onClose }: MathAdventureProps) {
     setTotalQuestions(0);
     setIsWon(false);
     setIsGameOver(false);
+    setHasSaved(false);
     generateQuestion();
   };
 
@@ -132,7 +144,7 @@ export function MathAdventure({ onClose }: MathAdventureProps) {
             </motion.button>
             
             <motion.div
-              animate={{ rotate: [0, 10, -10, 0], y: [0, -5, 0] }}
+              animate={{ y: [0, -5, 0] }}
               transition={{ duration: 2, repeat: Infinity }}
               className="text-6xl"
             >
@@ -208,8 +220,6 @@ export function MathAdventure({ onClose }: MathAdventureProps) {
                     {question.num1}
                   </motion.span>
                   <motion.span
-                    animate={{ rotate: [0, 360] }}
-                    transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
                     className="text-amber-500"
                   >
                     {question.operator}
@@ -337,6 +347,12 @@ export function MathAdventure({ onClose }: MathAdventureProps) {
                   </div>
                 </div>
 
+                {session && hasSaved && (
+                  <div className="mb-6 p-3 bg-green-50 text-green-700 rounded-xl text-center text-sm">
+                    ✨ 分數已儲存到排行榜！
+                  </div>
+                )}
+
                 <div className="flex gap-3">
                   <motion.button
                     whileHover={{ scale: 1.05 }}
@@ -391,6 +407,12 @@ export function MathAdventure({ onClose }: MathAdventureProps) {
                     <span className="text-amber-600">{totalQuestions} 題</span>
                   </div>
                 </div>
+
+                {session && hasSaved && (
+                  <div className="mb-6 p-3 bg-green-50 text-green-700 rounded-xl text-center text-sm">
+                    ✨ 分數已儲存 ({score * 10} 分)
+                  </div>
+                )}
 
                 <div className="flex gap-3">
                   <motion.button

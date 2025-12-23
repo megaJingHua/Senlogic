@@ -1,5 +1,5 @@
 import { motion } from "motion/react";
-import { Home, Gamepad2, Heart, Code } from "lucide-react";
+import { Home, Gamepad2, Heart, Code, Users } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import bunnyIcon from "figma:asset/590019623cd421e334ef14f2b64fb07cc0267a3f.png";
 
@@ -27,6 +27,12 @@ export function Header() {
       icon: Code,
       path: "/tech",
     },
+    {
+      id: "parent",
+      label: "家長專區",
+      icon: Users,
+      path: "/parent",
+    },
   ];
 
   const isActive = (path: string) => {
@@ -50,9 +56,6 @@ export function Header() {
             className="flex items-center gap-2 cursor-pointer"
             onClick={() => navigate("/")}
           >
-            <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm">
-              <img src={bunnyIcon} alt="兔子" className="w-8 h-8" />
-            </div>
             <span className="text-amber-900">森森邏輯</span>
           </motion.div>
 

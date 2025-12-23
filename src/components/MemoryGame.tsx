@@ -11,9 +11,11 @@ interface Card {
 
 interface MemoryGameProps {
   onClose: () => void;
+  onSaveScore?: (score: number) => void;
+  session?: any;
 }
 
-export function MemoryGame({ onClose }: MemoryGameProps) {
+export function MemoryGame({ onClose, onSaveScore, session }: MemoryGameProps) {
   const [cards, setCards] = useState<Card[]>([]);
   const [flippedCards, setFlippedCards] = useState<number[]>([]);
   const [moves, setMoves] = useState(0);
@@ -21,6 +23,7 @@ export function MemoryGame({ onClose }: MemoryGameProps) {
   const [isWon, setIsWon] = useState(false);
   const [timeElapsed, setTimeElapsed] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [hasSaved, setHasSaved] = useState(false);
 
   // 可愛的emoji卡片內容
   const emojis = ['🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼'];
@@ -42,6 +45,7 @@ export function MemoryGame({ onClose }: MemoryGameProps) {
     setIsWon(false);
     setTimeElapsed(0);
     setIsPlaying(true);
+    setHasSaved(false);
   };
 
   // 計時器
@@ -62,11 +66,20 @@ export function MemoryGame({ onClose }: MemoryGameProps) {
 
   // 檢查是否獲勝
   useEffect(() => {
-    if (matches === emojis.length && matches > 0) {
+    if (matches === emojis.length && matches > 0 && !isWon) {
       setIsWon(true);
       setIsPlaying(false);
+      
+      // Calculate score based on moves and time (lower is better, but points should be higher for better performance)
+      // Base: 200 - (moves * 2) - (time * 1)
+      const calculatedScore = Math.max(50, 200 - (moves * 2) - timeElapsed);
+
+      if (session && onSaveScore && !hasSaved) {
+        onSaveScore(calculatedScore);
+        setHasSaved(true);
+      }
     }
-  }, [matches]);
+  }, [matches, isWon, moves, timeElapsed, session, onSaveScore, hasSaved]);
 
   // 處理卡片翻轉
   const handleCardClick = (id: number) => {
@@ -306,10 +319,16 @@ export function MemoryGame({ onClose }: MemoryGameProps) {
                     <span className="text-gray-700">獲得積分</span>
                     <span className="text-amber-600 flex items-center gap-1">
                       <Star className="w-5 h-5 fill-current" />
-                      150
+                      {Math.max(50, 200 - (moves * 2) - timeElapsed)}
                     </span>
                   </div>
                 </div>
+
+                {session && hasSaved && (
+                  <div className="mb-6 p-3 bg-green-50 text-green-700 rounded-xl text-center text-sm">
+                    ✨ 分數已儲存到排行榜！
+                  </div>
+                )}
 
                 <div className="flex gap-3">
                   <motion.button

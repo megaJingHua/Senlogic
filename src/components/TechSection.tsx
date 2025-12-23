@@ -7,10 +7,49 @@ import { ScrollToTop } from './ScrollToTop';
 import { RichText } from './RichText';
 import piniaImage from 'figma:asset/bb39f016a3dd8893163ade79d95a27bddfd0cbdf.png';
 import { useParams, useNavigate } from 'react-router-dom';
+import { projectId } from '../utils/supabase/info';
 
 export function TechSection() {
   const { techId } = useParams();
   const navigate = useNavigate();
+  const [articleViews, setArticleViews] = useState<Record<string, number>>({});
+  
+  // Fetch dynamic view counts
+  useEffect(() => {
+    const fetchViews = async () => {
+      try {
+        const response = await fetch(
+          `https://${projectId}.supabase.co/functions/v1/make-server-ff545811/articles/views`
+        );
+        const result = await response.json();
+        if (result.success && result.data) {
+          setArticleViews(result.data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch article views:", error);
+      }
+    };
+    
+    fetchViews();
+  }, []);
+
+  const incrementView = async (id: number | string) => {
+    try {
+      // Optimistic update
+      setArticleViews(prev => ({
+        ...prev,
+        [id]: (prev[id] || 0) + 1
+      }));
+      
+      await fetch(
+        `https://${projectId}.supabase.co/functions/v1/make-server-ff545811/articles/${id}/views`,
+        { method: 'POST' }
+      );
+    } catch (error) {
+      console.error("Failed to increment view:", error);
+    }
+  };
+
   const [showVue30Days, setShowVue30Days] = useState(false);
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
   const [selectedTech, setSelectedTech] = useState<string | null>(null);
@@ -3952,7 +3991,7 @@ describe('加法測試', () => {
                     </div>
                     <div className="flex items-center gap-1">
                       <Eye className="w-4 h-4" />
-                      <span>2,450</span>
+                      <span>{articleViews[2] || 0}</span>
                     </div>
                   </div>
                 </div>
@@ -4009,7 +4048,7 @@ describe('加法測試', () => {
                     </div>
                     <div className="flex items-center gap-1">
                       <Eye className="w-4 h-4" />
-                      <span>1,850</span>
+                      <span>{articleViews[3] || 0}</span>
                     </div>
                   </div>
                 </div>
@@ -4066,7 +4105,7 @@ describe('加法測試', () => {
                     </div>
                     <div className="flex items-center gap-1">
                       <Eye className="w-4 h-4" />
-                      <span>1,650</span>
+                      <span>{articleViews[4] || 0}</span>
                     </div>
                   </div>
                 </div>
@@ -4123,7 +4162,7 @@ describe('加法測試', () => {
                     </div>
                     <div className="flex items-center gap-1">
                       <Eye className="w-4 h-4" />
-                      <span>1,920</span>
+                      <span>{articleViews[5] || 0}</span>
                     </div>
                   </div>
                 </div>
@@ -4180,7 +4219,7 @@ describe('加法測試', () => {
                     </div>
                     <div className="flex items-center gap-1">
                       <Eye className="w-4 h-4" />
-                      <span>2,100</span>
+                      <span>{articleViews[6] || 0}</span>
                     </div>
                   </div>
                 </div>
@@ -4237,7 +4276,7 @@ describe('加法測試', () => {
                     </div>
                     <div className="flex items-center gap-1">
                       <Eye className="w-4 h-4" />
-                      <span>1,780</span>
+                      <span>{articleViews[7] || 0}</span>
                     </div>
                   </div>
                 </div>
@@ -4282,6 +4321,10 @@ describe('加法測試', () => {
                 </div>
                 <h1 className="text-white mb-2">🧩 UiPath 全貌</h1>
                 <p className="text-white/90">從開發流程、平台架構到 Host / Tenant / Folder 管理全解析</p>
+                <div className="flex items-center gap-2 mt-3 text-white/80">
+                  <Eye className="w-4 h-4" />
+                  <span>{articleViews[2] || 0} 次閱讀</span>
+                </div>
               </div>
 
               {/* Content */}
@@ -4576,6 +4619,10 @@ Robots（執行端）`}
                 </div>
                 <h1 className="text-white mb-2">UiPath Orchestrator（OC）Host 最高管理員</h1>
                 <p className="text-white/90">Tenant 建立、授權分配、License 更新全流程</p>
+                <div className="flex items-center gap-2 mt-3 text-white/80">
+                  <Eye className="w-4 h-4" />
+                  <span>{articleViews[3] || 0} 次閱讀</span>
+                </div>
               </div>
 
               {/* Content */}
@@ -4888,6 +4935,10 @@ Robots（執行端）`}
                 </div>
                 <h1 className="text-white mb-2 text-3xl font-bold">UiPath Orchestrator（OC）Management 帳號權限管理</h1>
                 <p className="text-white/90 text-lg">Host 與 Tenant 兩種 Management 有何不同？一次搞懂身份管理與平台控管架構</p>
+                <div className="flex items-center gap-2 mt-3 text-white/80">
+                  <Eye className="w-4 h-4" />
+                  <span>{articleViews[4] || 0} 次閱讀</span>
+                </div>
               </div>
 
               {/* Content */}
@@ -5289,6 +5340,10 @@ Robots（執行端）`}
                   <div>
                     <h1 className="text-white mb-2">UiPath OC Tenant 功能解析</h1>
                     <p className="text-white/90">從 Robots、Folders、Packages、Machines 到安全性與監控，一篇搞懂 Tenant 可以做什麼</p>
+                    <div className="flex items-center gap-2 mt-2 text-white/80 text-sm">
+                      <Eye className="w-4 h-4" />
+                      <span>{articleViews[5] || 0} 次閱讀</span>
+                    </div>
                   </div>
                 </div>
                 <div className="flex gap-2 flex-wrap">
@@ -5642,6 +5697,10 @@ Robots（執行端）`}
                   <div>
                     <h1 className="text-white mb-2">UiPath OC Folder 資料夾管理</h1>
                     <p className="text-white/90">Folder 是一個部門級、專案級的自動化管理空間</p>
+                    <div className="flex items-center gap-2 mt-2 text-white/80 text-sm">
+                      <Eye className="w-4 h-4" />
+                      <span>{articleViews[6] || 0} 次閱讀</span>
+                    </div>
                   </div>
                 </div>
                 <div className="flex gap-2 flex-wrap">
@@ -6266,6 +6325,10 @@ Robots（執行端）`}
                   <div>
                     <h1 className="text-white mb-2">UiPath Assistant 連線與授權設定（開發者）</h1>
                     <p className="text-white/90">Service URL 與 Machine Key 的差異、使用情境與設定方式總整理</p>
+                    <div className="flex items-center gap-2 mt-2 text-white/80 text-sm">
+                      <Eye className="w-4 h-4" />
+                      <span>{articleViews[7] || 0} 次閱讀</span>
+                    </div>
                   </div>
                 </div>
                 <div className="flex gap-2 flex-wrap">
@@ -6751,6 +6814,10 @@ Robots（執行端）`}
               <p className="text-white/90 text-center max-w-2xl mx-auto">
                 從零開始學習 Vue3，每天一個主題，用生活化的比喻理解複雜概念。30 天後，你也能建立完整的 Vue3 專案！
               </p>
+              <div className="flex items-center justify-center gap-2 mt-4 text-white/80">
+                <Eye className="w-4 h-4" />
+                <span>{articleViews[1] || 0} 次閱讀</span>
+              </div>
             </div>
           </div>
 
@@ -7051,6 +7118,7 @@ Robots（執行端）`}
                 setArticleEntrySource('main');
                 setSelectedTech(null);
                 setShowUiPathOrchestrator(true);
+                incrementView(2);
               }}
               className="lg:col-span-1 group cursor-pointer"
             >
@@ -7077,7 +7145,7 @@ Robots（執行端）`}
                     <span className="text-orange-500">UiPath</span>
                     <span className="flex items-center gap-1 text-gray-500">
                       <Eye className="w-4 h-4" />
-                      2,450
+                      {articleViews[2] || 0}
                     </span>
                   </div>
 
@@ -7157,6 +7225,7 @@ Robots（執行端）`}
                         onClick={() => {
                           setArticleEntrySource('main');
                           setShowVue30Days(true);
+                          incrementView(1);
                         }}
                         className="bg-white text-gray-900 px-8 py-3 rounded-full shadow-lg hover:shadow-xl transition-shadow inline-flex items-center gap-2"
                       >
@@ -7165,7 +7234,7 @@ Robots（執行端）`}
                       </motion.button>
                       <span className="flex items-center gap-1 text-white">
                         <Eye className="w-4 h-4" />
-                        {articles[0].views} 次觀看
+                        {articleViews[1] || 0} 次觀看
                       </span>
                     </div>
                   </motion.div>
@@ -7211,6 +7280,7 @@ Robots（執行端）`}
                 className="group cursor-pointer"
                 onClick={() => {
                   setArticleEntrySource('main');
+                  incrementView(article.id);
                   if (article.category === 'UiPath') {
                     if (article.id === 2) {
                       setShowUiPathOrchestrator(true);
@@ -7251,7 +7321,7 @@ Robots（執行端）`}
                       <span className="text-orange-500">{article.category}</span>
                       <span className="flex items-center gap-1 text-gray-500">
                         <Eye className="w-4 h-4" />
-                        {article.views}
+                        {articleViews[article.id] || 0}
                       </span>
                     </div>
 
