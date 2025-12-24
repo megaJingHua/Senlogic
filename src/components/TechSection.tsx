@@ -7,7 +7,7 @@ import { ScrollToTop } from './ScrollToTop';
 import { RichText } from './RichText';
 import piniaImage from 'figma:asset/bb39f016a3dd8893163ade79d95a27bddfd0cbdf.png';
 import { useParams, useNavigate } from 'react-router-dom';
-import { projectId } from '../utils/supabase/info';
+import { projectId, publicAnonKey } from '../utils/supabase/info';
 
 export function TechSection() {
   const { techId } = useParams();
@@ -19,7 +19,12 @@ export function TechSection() {
     const fetchViews = async () => {
       try {
         const response = await fetch(
-          `https://${projectId}.supabase.co/functions/v1/make-server-ff545811/articles/views`
+          `https://${projectId}.supabase.co/functions/v1/make-server-ff545811/articles/views`,
+          {
+            headers: {
+              'Authorization': `Bearer ${publicAnonKey}`
+            }
+          }
         );
         const result = await response.json();
         if (result.success && result.data) {
@@ -43,7 +48,12 @@ export function TechSection() {
       
       await fetch(
         `https://${projectId}.supabase.co/functions/v1/make-server-ff545811/articles/${id}/views`,
-        { method: 'POST' }
+        { 
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${publicAnonKey}`
+          }
+        }
       );
     } catch (error) {
       console.error("Failed to increment view:", error);

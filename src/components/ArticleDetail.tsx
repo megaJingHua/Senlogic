@@ -3,7 +3,7 @@ import { ArrowLeft, Clock, Heart, Share2, Bookmark, User, Calendar, Tag, Eye } f
 import { useNavigate, useParams } from 'react-router-dom';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import { useEffect, useState } from 'react';
-import { projectId } from '../utils/supabase/info';
+import { projectId, publicAnonKey } from '../utils/supabase/info';
 
 export function ArticleDetail() {
   const navigate = useNavigate();
@@ -19,7 +19,12 @@ export function ArticleDetail() {
       // 1. Fetch all views for popular articles
       try {
         const viewsRes = await fetch(
-          `https://${projectId}.supabase.co/functions/v1/make-server-ff545811/articles/views`
+          `https://${projectId}.supabase.co/functions/v1/make-server-ff545811/articles/views`,
+          {
+            headers: {
+              'Authorization': `Bearer ${publicAnonKey}`
+            }
+          }
         );
         const viewsResult = await viewsRes.json();
         if (viewsResult.success && viewsResult.data) {
@@ -34,7 +39,12 @@ export function ArticleDetail() {
       try {
         const response = await fetch(
           `https://${projectId}.supabase.co/functions/v1/make-server-ff545811/articles/${articleId}/views`,
-          { method: 'POST' }
+          { 
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${publicAnonKey}`
+            }
+          }
         );
         const result = await response.json();
         if (result.success) {

@@ -12,7 +12,7 @@ import { useNavigate } from "react-router-dom";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { ScrollToTop } from "./ScrollToTop";
 import { useEffect, useState } from "react";
-import { projectId } from "../utils/supabase/info";
+import { projectId, publicAnonKey } from "../utils/supabase/info";
 
 export function ParentingSection() {
   const navigate = useNavigate();
@@ -23,7 +23,12 @@ export function ParentingSection() {
     const fetchViews = async () => {
       try {
         const response = await fetch(
-          `https://${projectId}.supabase.co/functions/v1/make-server-ff545811/articles/views`
+          `https://${projectId}.supabase.co/functions/v1/make-server-ff545811/articles/views`,
+          {
+            headers: {
+              'Authorization': `Bearer ${publicAnonKey}`
+            }
+          }
         );
         const result = await response.json();
         if (result.success && result.data) {

@@ -89,7 +89,10 @@ export function ParentZone() {
       // Use our server endpoint for auto-confirm signup
       const res = await fetch(`${API_BASE}/auth/signup`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${publicAnonKey}`
+        },
         body: JSON.stringify({ email, password, name }),
       });
       
