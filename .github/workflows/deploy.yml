@@ -5,7 +5,7 @@ on:
     branches: [ main ]
 
 permissions:
-  contents: read
+  contents: write # 改成 write 才能讓 sed 修改檔案並執行後續動作
   pages: write
   id-token: write
 
@@ -24,14 +24,21 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      # --- 這裡加入自動修正 ---
+      - name: Fix Vite Config Base
+        run: |
+          sed -i "/base:/d" vite.config.ts
+          sed -i "/plugins: \[/i \  base: '/Senlogic/'," vite.config.ts
+      # ----------------------
+
       - name: Build
         run: npm run build
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./build   # ← 這裡改成 build！
-          
+          path: ./dist   # 注意：Vite 預設輸出通常是 dist，如果你的專案手動改成了 build 再維持 ./build
+
   deploy:
     runs-on: ubuntu-latest
     needs: build
