@@ -17,7 +17,7 @@ export function Header() {
     },
     {
       id: "parenting",
-      label: "教養文章",
+      label: "親子文章",
       icon: Heart,
       path: "/parenting",
     },

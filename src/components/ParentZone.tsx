@@ -1,15 +1,9 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Users, Lock, LogIn, UserPlus, Clock, Save, LogOut, CheckCircle, Shield } from 'lucide-react';
-import { createClient } from '@supabase/supabase-js';
 import { projectId, publicAnonKey } from '../utils/supabase/info';
+import { supabase } from '../utils/supabase/client';
 import { toast } from 'sonner@2.0.3';
-
-// Initialize Supabase client
-const supabase = createClient(
-  `https://${projectId}.supabase.co`,
-  publicAnonKey
-);
 
 const API_BASE = `https://${projectId}.supabase.co/functions/v1/make-server-ff545811`;
 

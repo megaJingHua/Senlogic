@@ -5,15 +5,9 @@ import { useState, useEffect } from 'react';
 import { MemoryGame } from './MemoryGame';
 import { MathAdventure } from './MathAdventure';
 import { LadderLottery } from './LadderLottery';
-import { projectId, publicAnonKey } from '../utils/supabase/info';
-import { createClient } from '@supabase/supabase-js';
+import { projectId } from '../utils/supabase/info';
+import { supabase } from '../utils/supabase/client';
 import { toast } from 'sonner@2.0.3';
-
-// Initialize Supabase client
-const supabase = createClient(
-  `https://${projectId}.supabase.co`,
-  publicAnonKey
-);
 
 const API_BASE = `https://${projectId}.supabase.co/functions/v1/make-server-ff545811`;
 

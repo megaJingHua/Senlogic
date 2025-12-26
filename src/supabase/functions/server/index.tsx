@@ -34,6 +34,13 @@ const getSupabaseClient = async () => {
   );
 };
 
+// ==========================================
+// TABLE 1: REGISTERED ACCOUNTS (Users)
+// Storage: Supabase Auth + KV Mirror
+// Key Schema: user:profile:{userId}
+// Value: { id, email, name, createdAt }
+// ==========================================
+
 // Sign Up Route (Auto Confirm)
 app.post("/make-server-ff545811/auth/signup", async (c) => {
   try {
@@ -55,12 +62,29 @@ app.post("/make-server-ff545811/auth/signup", async (c) => {
       throw error;
     }
 
+    // Create Profile in KV "Table"
+    if (data.user) {
+      await kv.set(`user:profile:${data.user.id}`, {
+        id: data.user.id,
+        email: data.user.email,
+        name: name || 'Parent',
+        createdAt: Date.now()
+      });
+    }
+
     return c.json({ success: true, data });
   } catch (error) {
     console.error("Signup error:", error);
     return c.json({ error: error.message }, 400);
   }
 });
+
+// ==========================================
+// TABLE 2: USER SETTINGS
+// Storage: KV Store
+// Key Schema: user:settings:{userId}
+// Value: { limit: number, updatedAt: number }
+// ==========================================
 
 // Get User Settings (Time Limit)
 app.get("/make-server-ff545811/settings/time-limit", async (c) => {
@@ -76,7 +100,7 @@ app.get("/make-server-ff545811/settings/time-limit", async (c) => {
       return c.json({ error: "Invalid token" }, 401);
     }
 
-    const settings = await kv.get(`user-settings:${user.id}`);
+    const settings = await kv.get(`user:settings:${user.id}`);
     
     return c.json({ 
       success: true, 
@@ -104,8 +128,8 @@ app.post("/make-server-ff545811/settings/time-limit", async (c) => {
 
     const { limit } = await c.req.json();
     
-    // Save to KV
-    await kv.set(`user-settings:${user.id}`, { 
+    // Save to KV "Table"
+    await kv.set(`user:settings:${user.id}`, { 
       limit: parseInt(limit) || 0,
       updatedAt: Date.now()
     });
@@ -116,6 +140,60 @@ app.post("/make-server-ff545811/settings/time-limit", async (c) => {
     return c.json({ error: "Failed to save settings" }, 500);
   }
 });
+
+// ==========================================
+// TABLE 3: ARTICLE VIEWS
+// Storage: KV Store
+// Key Schema: article:views:{articleId}
+// Value: number
+// ==========================================
+
+// Get all article views
+app.get("/make-server-ff545811/articles/views", async (c) => {
+  try {
+    const supabase = await getSupabaseClient();
+    const { data, error } = await supabase
+      .from("kv_store_ff545811")
+      .select("key, value")
+      .like("key", "article:views:%");
+      
+    if (error) throw error;
+    
+    const viewsMap: Record<string, number> = {};
+    data?.forEach(item => {
+      const id = item.key.replace("article:views:", "");
+      viewsMap[id] = Number(item.value);
+    });
+    
+    return c.json({ success: true, data: viewsMap });
+  } catch (error) {
+    console.error("Get all views error:", error);
+    return c.json({ error: "Failed to fetch views" }, 500);
+  }
+});
+
+// Increment Article Views
+app.post("/make-server-ff545811/articles/:id/views", async (c) => {
+  try {
+    const articleId = c.req.param("id");
+    if (!articleId) return c.json({ error: "Missing article ID" }, 400);
+
+    const key = `article:views:${articleId}`;
+    const current = await kv.get(key);
+    const views = (typeof current === 'number' ? current : 0) + 1;
+    
+    await kv.set(key, views);
+    
+    return c.json({ success: true, views });
+  } catch (error) {
+    console.error("Increment views error:", error);
+    return c.json({ error: "Failed to increment views" }, 500);
+  }
+});
+
+// ==========================================
+// OTHER TABLES (Games, Lottery, etc.)
+// ==========================================
 
 // Save Game Score & Update Leaderboard
 app.post("/make-server-ff545811/game/score", async (c) => {
@@ -162,9 +240,6 @@ app.post("/make-server-ff545811/game/score", async (c) => {
     });
 
     // 3. Update Weekly Leaderboard
-    // Get current week number or just use a simple "weekly" key that we reset manually or by cron (not available here)
-    // For simplicity in this demo, we use a single global leaderboard key per game.
-    // In production, we'd key this by week number.
     const leaderboardKey = `leaderboard:weekly:${gameId}`;
     let leaderboard = await kv.get(leaderboardKey) || [];
     
@@ -194,9 +269,6 @@ app.post("/make-server-ff545811/game/score", async (c) => {
 // Get Leaderboard
 app.get("/make-server-ff545811/game/leaderboard", async (c) => {
   try {
-    // For the "Home" leaderboard, maybe aggregate top scores from all games?
-    // Or just return specific game leaderboards.
-    // Let's return a general list or accept a gameId query.
     const gameId = c.req.query("gameId");
     
     if (gameId) {
@@ -204,9 +276,6 @@ app.get("/make-server-ff545811/game/leaderboard", async (c) => {
       return c.json({ success: true, data: leaderboard });
     }
 
-    // If no gameId, maybe return an aggregated "Top Players" list?
-    // For simplicity, let's mock the "Weekly Leaderboard" on the main page by fetching "Math Adventure" (id: 1) as default
-    // or aggregating a few.
     const leaderboard1 = await kv.get(`leaderboard:weekly:1`) || []; // Math
     const leaderboard3 = await kv.get(`leaderboard:weekly:3`) || []; // Memory
 
@@ -249,7 +318,6 @@ app.get("/make-server-ff545811/game/daily-challenge", async (c) => {
   }
 });
 
-
 // Save lottery result
 app.post("/make-server-ff545811/lottery/save", async (c) => {
   try {
@@ -260,10 +328,6 @@ app.post("/make-server-ff545811/lottery/save", async (c) => {
       return c.json({ error: "Missing lotteryId or data" }, 400);
     }
     
-    // Check if user is authenticated (Optional but recommended, though the prompt says "when logged in, allow saving")
-    // The previous implementation didn't check auth token on server for saving lottery, but client side check is what matters for UI.
-    // For deleting, we definitely want some control, but since it's a simple app, we can just check if authenticated.
-
     // Save to KV store with prefix "lottery:"
     await kv.set(`lottery:${lotteryId}`, {
       ...data,
@@ -288,10 +352,6 @@ app.post("/make-server-ff545811/lottery/save", async (c) => {
 app.delete("/make-server-ff545811/lottery/:id", async (c) => {
   try {
     const lotteryId = c.req.param("id");
-    
-    // Optional: Check auth
-    // const authHeader = c.req.header("Authorization");
-    // if (!authHeader) return c.json({ error: "Unauthorized" }, 401);
 
     if (!lotteryId) {
       return c.json({ error: "Missing lottery ID" }, 400);
@@ -397,49 +457,6 @@ app.get("/make-server-ff545811/lottery", async (c) => {
       error: "Failed to fetch lottery results", 
       details: error.message 
     }, 500);
-  }
-});
-
-// Get all article views
-app.get("/make-server-ff545811/articles/views", async (c) => {
-  try {
-    const supabase = await getSupabaseClient();
-    const { data, error } = await supabase
-      .from("kv_store_ff545811")
-      .select("key, value")
-      .like("key", "article:views:%");
-      
-    if (error) throw error;
-    
-    const viewsMap: Record<string, number> = {};
-    data?.forEach(item => {
-      const id = item.key.replace("article:views:", "");
-      viewsMap[id] = Number(item.value);
-    });
-    
-    return c.json({ success: true, data: viewsMap });
-  } catch (error) {
-    console.error("Get all views error:", error);
-    return c.json({ error: "Failed to fetch views" }, 500);
-  }
-});
-
-// Increment Article Views
-app.post("/make-server-ff545811/articles/:id/views", async (c) => {
-  try {
-    const articleId = c.req.param("id");
-    if (!articleId) return c.json({ error: "Missing article ID" }, 400);
-
-    const key = `article:views:${articleId}`;
-    const current = await kv.get(key);
-    const views = (typeof current === 'number' ? current : 0) + 1;
-    
-    await kv.set(key, views);
-    
-    return c.json({ success: true, views });
-  } catch (error) {
-    console.error("Increment views error:", error);
-    return c.json({ error: "Failed to increment views" }, 500);
   }
 });
 

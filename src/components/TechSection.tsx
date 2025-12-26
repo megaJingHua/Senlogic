@@ -98,6 +98,19 @@ export function TechSection() {
     }
   }, [selectedDay, showUiPathOrchestrator, showUiPathHost, showEngineerDaily, showUiPathTenant, showUiPathFolder, showUiPathManagement, showUiPathAssistant]);
 
+  // Inject Google AdSense Script
+  useEffect(() => {
+    const scriptId = 'google-adsense-script';
+    if (!document.getElementById(scriptId)) {
+      const script = document.createElement('script');
+      script.id = scriptId;
+      script.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2478415673828631";
+      script.async = true;
+      script.crossOrigin = "anonymous";
+      document.head.appendChild(script);
+    }
+  }, []);
+
   const vue30Days = [
     { 
       day: 1, 
@@ -4422,7 +4435,7 @@ Robots（執行端）`}
                     UiPath Orchestrator 的資源架構是階層式的。理解這個階層很重要，因為所有管理邏輯都建立在這個概念上。
                   </p>
                   <p className="text-gray-700 mb-4">
-                    下圖可視為 OC 的「土地 → 建物 → 部門 → 流程」概念：
+                    下圖可視為 OC 的「土地 → 建物 → 部門 → ��程」概念：
                   </p>
 
                   <div className="bg-white rounded-xl p-4 mb-6">
